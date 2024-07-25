@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import ActivityLogs from '../views/ActivityLogs.vue'
 import Categories from '../views/Categories.vue'
-import Dasbboard from '../views/Dasbboard.vue'
+import Dashboard from '../views/Dasbboard.vue'
 import Tickets from '../views/Tickets.vue'
 import Users from '../views/Users.vue'
 
