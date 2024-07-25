@@ -1,16 +1,10 @@
 package com.example.helpdesk.backend.model;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import javax.persistence.*;
 import java.util.Date;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
+@Table(name = "tickets")
 public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
