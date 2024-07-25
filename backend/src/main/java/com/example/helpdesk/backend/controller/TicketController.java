@@ -18,8 +18,18 @@ public class TicketController {
         return ticketService.getAllTickets ();
     }
 
+    @GetMapping("{id}")
+    public Ticket getTicketById(@PathVariable Long id) {
+        return ticketService.getTicketById (id);
+    }
+
     @PostMapping
     public Ticket createTicket(@RequestBody Ticket ticket) {
         return ticketService.createTicket (ticket);
+    }
+
+    @DeleteMapping
+    public void deleteTicketById(@PathVariable Long id) {
+        ticketService.deleteTicketById (id);
     }
 }

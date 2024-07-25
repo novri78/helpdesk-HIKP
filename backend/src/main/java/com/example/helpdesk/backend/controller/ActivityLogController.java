@@ -19,8 +19,18 @@ public class ActivityLogController {
         return activityLogService.getAllActivityLogs ();
     }
 
+    @GetMapping("/{id}")
+    public ActivityLog getActivityLogById(@PathVariable Long id) {
+        return  activityLogService.getActivityLogById (id);
+    }
+
     @PostMapping
     public ActivityLog createActivityLog(@RequestBody ActivityLog activityLog) {
         return activityLogService.createActivityLog (activityLog);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteActivityLogById(@PathVariable Long id) {
+        activityLogService.deleteActivityLogById (id);
     }
 }
