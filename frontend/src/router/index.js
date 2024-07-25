@@ -1,9 +1,18 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import ActivityLogs from '../views/ActivityLogs.vue'
+import Categories from '../views/Categories.vue'
+import Dasbboard from '../views/Dasbboard.vue'
+import Tickets from '../views/Tickets.vue'
+import Users from '../views/Users.vue'
 
 const routes = [
+  { path: '/', name: 'Dashboard', component: Dashboard },
+  { path: '/users', name: 'Users', component: Users },
+  { path: '/tickets', name: 'Tickets', component: Tickets },
+  { path: '/categories', name: 'Categories', component: Categories },
+  { path: '/activity-logs', name: 'ActivityLogs', component: ActivityLogs },
   {
-    path: '/',
+    path: '/home',
     name: 'home',
     component: HomeView
   },
