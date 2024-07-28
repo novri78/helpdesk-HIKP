@@ -10,8 +10,8 @@ import EditUser from '../views/Users/EditUser.vue';
 const routes = [
   { path: '/', name: 'Dashboard', component: Dashboard },
   { path: '/users', name: 'Users', component: Users },
-  { path: '/addUser', name: 'AddUser', component: AddUser },
-  { path: '/editUser', name: 'EditUser', component: EditUser },
+  { path: '/user/add', name: 'AddUser', component: AddUser },
+  { path: '/user/edit/:id', name: 'EditUser', component: EditUser },
   { path: '/tickets', name: 'Tickets', component: Tickets },
   { path: '/categories', name: 'Categories', component: Categories },
   { path: '/activity-logs', name: 'ActivityLogs', component: ActivityLogs }
