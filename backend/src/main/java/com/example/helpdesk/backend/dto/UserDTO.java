@@ -1,6 +1,7 @@
 package com.example.helpdesk.backend.dto;
 
 import lombok.Data;
+import java.util.Set;
 
 @Data
 public class UserDTO {
@@ -11,4 +12,5 @@ public class UserDTO {
     private String department;
     private String email;
     private String phoneNumber;
+    private Set<TicketDTO> tickets;
 }

@@ -1,5 +1,6 @@
 package com.example.helpdesk.backend.service;
 
+import com.example.helpdesk.backend.dto.TicketDTO;
 import com.example.helpdesk.backend.dto.UserDTO;
 import com.example.helpdesk.backend.model.User;
 import com.example.helpdesk.backend.repository.UserRepository;
@@ -7,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,25 +19,41 @@ public class UserService {
     private UserDTO convertToDTO(User user) {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
-        userDTO.setUsername(user.getUsername());
-        userDTO.setFullName (user.getFullName ());
-        userDTO.setPosition (user.getPosition ());
         userDTO.setDepartment (user.getDepartment ());
         userDTO.setEmail(user.getEmail());
+        userDTO.setFullName (user.getFullName ());
         userDTO.setPhoneNumber (user.getPhoneNumber ());
+        userDTO.setPosition (user.getPosition ());
+        userDTO.setUsername(user.getUsername());
+        userDTO.setTickets (user.getTickets ().stream ()
+                .map (ticket -> {
+                    TicketDTO ticketDTO = new TicketDTO ();
+                    ticketDTO.setId(ticket.getId());
+                    ticketDTO.setTitle(ticket.getTitle());
+                    ticketDTO.setDescription(ticket.getDescription());
+                    ticketDTO.setPriority(ticket.getPriority());
+                    ticketDTO.setStatus(ticket.getStatus());
+                    ticketDTO.setCreationDate(ticket.getCreationDate());
+                    ticketDTO.setClosureDate(ticket.getClosureDate());
+                    ticketDTO.setUserId(ticket.getUser().getId());
+                    ticketDTO.setCategoryId(ticket.getCategory().getId());
+                    return ticketDTO;
+                })
+                .collect(Collectors.toSet ())
+        );
         return userDTO;
     }
 
     // Convert UserDTO to User
-    private User converToEntity(UserDTO userDTO) {
+    private User convertToEntity(UserDTO userDTO) {
         User user = new User (  );
         user.setId (userDTO.getId ());
-        user.setUsername (userDTO.getUsername ());
-        user.setFullName (userDTO.getFullName ());
-        user.setPosition (userDTO.getPosition ());
         user.setDepartment (userDTO.getDepartment ());
         user.setEmail (userDTO.getEmail ());
-        user.setEmail (userDTO.getEmail ());
+        user.setFullName (userDTO.getFullName ());
+        user.setPhoneNumber (userDTO.getPhoneNumber ());
+        user.setPosition (userDTO.getPosition ());
+        user.setUsername (userDTO.getUsername ());
         return user;
     }
 
@@ -56,18 +72,18 @@ public class UserService {
     public UserDTO updateUserById(Long id, UserDTO userDetails) {
         User user = userRepository.findById (id)
                 .orElseThrow (() -> new RuntimeException ( "User not found for id :: " + id  ));
-        user.setUsername(userDetails.getUsername());
-        user.setFullName(userDetails.getFullName());
-        user.setPosition(userDetails.getPosition());
         user.setDepartment(userDetails.getDepartment());
         user.setEmail(userDetails.getEmail());
+        user.setFullName(userDetails.getFullName());
         user.setPhoneNumber(userDetails.getPhoneNumber());
+        user.setPosition(userDetails.getPosition());
+        user.setUsername(userDetails.getUsername());
         userRepository.save (user);
         return convertToDTO (user);
     }
 
     public UserDTO createUser(UserDTO userDTO) {
-        User user = converToEntity (userDTO);
+        User user = convertToEntity (userDTO);
         userRepository.save (user);
         return convertToDTO (user);
     }

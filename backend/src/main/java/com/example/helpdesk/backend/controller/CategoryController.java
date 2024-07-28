@@ -1,14 +1,10 @@
 package com.example.helpdesk.backend.controller;
 
-import com.example.helpdesk.backend.model.Category;
-import com.example.helpdesk.backend.repository.CategoryRepository;
+import com.example.helpdesk.backend.dto.CategoryDTO;
 import com.example.helpdesk.backend.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,18 +14,23 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @GetMapping
-    public List<Category> getAllCategories() {
+    public List<CategoryDTO> getAllCategories() {
         return categoryService.getAllCategories ();
     }
 
     @GetMapping("/{id}")
-    public Category getCategoryById(Long id) {
+    public CategoryDTO getCategoryById(@PathVariable Long id) {
         return categoryService.getCategoryById (id);
     }
 
+    @PutMapping(value = "/{id}")
+    public CategoryDTO updateCategoryById(@PathVariable Long id, @RequestBody CategoryDTO categoryDetails) {
+        return categoryService.updateCategoryById (id, categoryDetails);
+    }
+
     @PostMapping
-    public Category createCategory(@RequestBody Category category) {
-        return  categoryService.createCategory (category);
+    public CategoryDTO createCategory(@RequestBody CategoryDTO categoryDTO) {
+        return  categoryService.createCategory (categoryDTO);
     }
 
     @DeleteMapping("/{id}")

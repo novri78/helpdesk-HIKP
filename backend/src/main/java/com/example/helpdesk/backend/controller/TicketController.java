@@ -1,5 +1,6 @@
 package com.example.helpdesk.backend.controller;
 
+import com.example.helpdesk.backend.dto.TicketDTO;
 import com.example.helpdesk.backend.model.Ticket;
 import com.example.helpdesk.backend.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,18 +15,19 @@ public class TicketController {
     private TicketService ticketService;
 
     @GetMapping
-    public List<Ticket> getAllTickets() {
+    public List<TicketDTO> getAllTickets() {
         return ticketService.getAllTickets ();
     }
 
     @GetMapping("{id}")
-    public Ticket getTicketById(@PathVariable Long id) {
+    public TicketDTO getTicketById(@PathVariable Long id) {
         return ticketService.getTicketById (id);
     }
 
     @PostMapping
-    public Ticket createTicket(@RequestBody Ticket ticket) {
-        return ticketService.createTicket (ticket);
+    public TicketDTO createTicket(@RequestBody TicketDTO ticketDTO) {
+        System.out.println("Received ticket :" + ticketDTO);
+        return ticketService.createTicket (ticketDTO);
     }
 
     @DeleteMapping
