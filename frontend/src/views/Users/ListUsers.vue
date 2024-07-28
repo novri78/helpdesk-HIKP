@@ -71,8 +71,8 @@ export default {
             iD: user.id,
             dept: user.department, // Adjust this field name according to your API response
             email: user.email,
-            fullName: user.full_name, // Adjust this field name according to your API response
-            phone: user.phone_number, // Adjust this field name according to your API response
+            fullName: user.fullName, // Adjust this field name according to your API response
+            phone: user.phoneNumber, // Adjust this field name according to your API response
             position: user.position, // Adjust this field name according to your API response
             username: user.username // Adjust this field name according to your API response
           }));
@@ -84,6 +84,7 @@ export default {
     },
     routeToEditUser(id) {
       this.$router.push({ name: "EditUser",  params: { id }  });
+      console.log("no id", id);
     },
     confirmDelete(id) {
       if (confirm("Are you sure you want to delete this user no ID: " + id)) {

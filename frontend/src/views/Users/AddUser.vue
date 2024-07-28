@@ -34,8 +34,8 @@ export default {
             form: {
                 department: '',	
                 email: '',	
-                full_name: '',	
-                phone_number: '',	
+                fullName: '',	
+                phoneNumber: '',	
                 position: '',	
                 username: '',
             },
