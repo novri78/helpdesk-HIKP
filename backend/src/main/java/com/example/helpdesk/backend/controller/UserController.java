@@ -1,6 +1,6 @@
 package com.example.helpdesk.backend.controller;
 
-import com.example.helpdesk.backend.model.User;
+import com.example.helpdesk.backend.dto.UserDTO;
 import com.example.helpdesk.backend.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -19,22 +19,27 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public List<User> getAllUsers() {
+    public List<UserDTO> getAllUsers() {
         return userService.getAllUsers ();
     }
 
-    @PutMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
+    @GetMapping(value = "/{id}")
+    public  UserDTO getUserById(@PathVariable Long id) {
         return userService.getUserById (id);
     }
 
-    @PostMapping
-    public User createUser(@RequestBody User user) {
-        System.out.println ("Received user :" + user );
-        return userService.createUser (user);
+    @PutMapping(value = "/{id}")
+    public UserDTO updateUserById(@PathVariable Long id, @RequestBody UserDTO userDetails) {
+        return userService.updateUserById(id, userDetails);
     }
 
-    @DeleteMapping
+    @PostMapping
+    public UserDTO createUser(@RequestBody UserDTO userDTO) {
+        System.out.println ("Received user :" + userDTO );
+        return userService.createUser (userDTO);
+    }
+
+    @DeleteMapping(value = "/{id}")
     public void deleteUserById(@PathVariable Long id) {
         userService.deleteUserById (id);
     }

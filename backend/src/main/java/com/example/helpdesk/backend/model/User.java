@@ -3,7 +3,9 @@ package com.example.helpdesk.backend.model;
 import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.util.Set;
@@ -13,6 +15,8 @@ import java.util.Set;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,4 +43,5 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private Set<Ticket> tickets;
+
 }
