@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -15,12 +14,12 @@ public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    // Convert Category to CategoryrDTO
+    // Convert Category to CategoryDTO
     private CategoryDTO convertToDTO(Category category) {
-        CategoryDTO categoryDTO = new CategoryDTO ();
-        categoryDTO.setId (categoryDTO.getId ( ));
-        categoryDTO.setName (categoryDTO.getName ( ));
-        categoryDTO.setDescription (categoryDTO.getDescription ( ));
+        CategoryDTO categoryDTO = new CategoryDTO();
+        categoryDTO.setId(category.getId()); // Ambil ID dari entity Category
+        categoryDTO.setName(category.getName()); // Ambil Name dari entity Category
+        categoryDTO.setDescription(category.getDescription()); // Ambil Description dari entity Category
         return categoryDTO;
     }
 

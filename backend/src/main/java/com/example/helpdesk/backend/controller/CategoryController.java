@@ -2,12 +2,18 @@ package com.example.helpdesk.backend.controller;
 
 import com.example.helpdesk.backend.dto.CategoryDTO;
 import com.example.helpdesk.backend.service.CategoryService;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
+@RequestMapping("/api/category")
+@AllArgsConstructor
+@NoArgsConstructor
 @Service
 public class CategoryController {
     @Autowired
