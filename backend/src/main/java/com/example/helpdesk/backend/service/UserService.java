@@ -1,6 +1,5 @@
 package com.example.helpdesk.backend.service;
 
-import com.example.helpdesk.backend.dto.TicketDTO;
 import com.example.helpdesk.backend.dto.UserDTO;
 import com.example.helpdesk.backend.model.User;
 import com.example.helpdesk.backend.repository.UserRepository;
@@ -25,22 +24,6 @@ public class UserService {
         userDTO.setPhoneNumber (user.getPhoneNumber ());
         userDTO.setPosition (user.getPosition ());
         userDTO.setUsername(user.getUsername());
-        userDTO.setTickets (user.getTickets ().stream ()
-                .map (ticket -> {
-                    TicketDTO ticketDTO = new TicketDTO ();
-                    ticketDTO.setId(ticket.getId());
-                    ticketDTO.setTitle(ticket.getTitle());
-                    ticketDTO.setDescription(ticket.getDescription());
-                    ticketDTO.setPriority(ticket.getPriority());
-                    ticketDTO.setStatus(ticket.getStatus());
-                    ticketDTO.setCreationDate(ticket.getCreationDate());
-                    ticketDTO.setClosureDate(ticket.getClosureDate());
-                    ticketDTO.setUserId(ticket.getUser().getId());
-                    ticketDTO.setCategoryId(ticket.getCategory().getId());
-                    return ticketDTO;
-                })
-                .collect(Collectors.toSet ())
-        );
         return userDTO;
     }
 

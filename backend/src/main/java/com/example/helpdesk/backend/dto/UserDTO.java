@@ -13,5 +13,4 @@ public class UserDTO {
     private String department;
     private String email;
     private String phoneNumber;
-    private Set<TicketDTO> tickets;
 }

@@ -41,7 +41,4 @@ public class User {
     @JsonProperty("phone_number")
     private String phoneNumber;
 
-    @OneToMany(mappedBy = "user")
-    private Set<Ticket> tickets;
-
 }
