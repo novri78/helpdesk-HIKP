@@ -1,10 +1,10 @@
 <template>
   <header>
-    <h1 class="text-center white">Form Add User</h1>
+    <h1 class="text-center white">Form Edit User</h1>
   </header>
   <main>
     <div class="form-container">
-      <form @submit.prevent="addUser">
+      <form @submit.prevent="editCategory">
         <div class="form-group" v-for="(value, key) in form" :key="key">
           <label :for="key">{{ key.replace('_', ' ').toUpperCase() }}:</label>
           <input
@@ -16,8 +16,8 @@
           />
         </div>
         <div class="button-group">
-          <button type="button" class="btn btn-secondary" @click="cancelAdd">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-secondary" @click="cancelEdit">Cancel</button>
+          <button type="submit" class="btn btn-primary" @click="editCategory">Save</button>
         </div>
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       </form>
@@ -26,40 +26,54 @@
   <footer></footer>
 </template>
 
+
 <script>
 export default {
-    name: 'AddUser',
-    data() {
-        return {
-            form: {
-                department: '',	
-                email: '',	
-                fullName: '',	
-                phoneNumber: '',	
-                position: '',	
-                username: '',
-            },
-            errorMessage: ''
-        };
+  name: 'EditCategory',
+  data() {
+    return {
+      form: {
+        id: this.$route.params.id,
+        name: '',
+        description: '',
+      },
+      category: [],
+      errorMessage: ''
+    };
+  },
+  mounted() {
+    this.fetchCategoryData();
+  },
+  methods: {
+    cancelEdit() {
+      this.$router.push({ name: "Categories" });
     },
-    methods: {
-        cancelAdd() {
-            this.$router.push({ name: "Users" });
-        },
-        addUser() {
-            this.$axios
-            .post("/users", this.form)
-            .then( () => {
-                this.$router.push( {name: "Users"} )
-                .then( () => {
-                    return alert("You have been succeed add data user.");
-                } );
-            } )
-            .catch((error) => {
-          this.errorMessage = "Error adding organization: " + error.message;
-            } );
-        },
+    fetchCategoryData() {
+      const id = this.$route.params.id; // Assuming the user ID is passed as a route parameter
+      this.$axios
+        .get(`/category/${id}`)
+        .then((response) => {
+        this.form = response.data; // Simpan data category
+        console.log("Data Category by Id", this.form); // Log data category
+        })
+        .catch((error) => {
+          this.errorMessage = "Error fetching user data: " + error.message;
+        });
     },
+    editCategory() {
+    const categoryData = this.form;
+    this.$axios
+        .put(`/category/${this.form.id}`, categoryData)
+        .then(() => {
+          this.$router.push({ name: "Categories" }).then(() => {
+            alert("Category data updated successfully.");
+          });
+        })
+        .catch((error) => {
+          this.errorMessage = "Error updating category data: " + error.message;
+        });
+    },
+  },
 };
 </script>
 
