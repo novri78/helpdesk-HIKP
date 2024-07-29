@@ -1,7 +1,9 @@
 package com.example.helpdesk.backend.service;
 
+import com.example.helpdesk.backend.dto.ActivityDTO;
 import com.example.helpdesk.backend.model.ActivityLog;
 import com.example.helpdesk.backend.repository.ActivityLogRepository;
+import com.example.helpdesk.backend.repository.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,18 @@ import java.util.Optional;
 public class ActivityLogService {
     @Autowired
     private ActivityLogRepository activityLogRepository;
+
+    @Autowired
+    private TicketRepository ticketRepository;
+
+    private ActivityDTO convertToDTO (ActivityLog activityLog) {
+        ActivityDTO activityDTO = new ActivityDTO ();
+        activityDTO.setId (activityLog.getId ( ));
+        activityDTO.setTimestamp (activityLog.getTimestamp ());
+        activityDTO.setDescription (activityLog.getDescription ( ));
+        activityDTO.setTicketId (activityLog.getTicket ().getId ());
+        return activityDTO;
+    }
 
     public List<ActivityLog> getAllActivityLogs() {
         return activityLogRepository.findAll ();

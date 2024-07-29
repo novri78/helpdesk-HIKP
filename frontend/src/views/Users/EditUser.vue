@@ -21,15 +21,6 @@
         </div>
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       </form>
-      <!-- Display tickets data -->
-      <div v-if="tickets.length">
-        <h2>User Tickets</h2>
-        <ul>
-          <li v-for="ticket in tickets" :key="ticket.id">
-            {{ ticket.detail }} <!-- Assuming 'detail' is a property of 'ticket' -->
-          </li>
-        </ul>
-      </div>
     </div>
   </main>
   <footer></footer>
@@ -66,9 +57,8 @@ export default {
       this.$axios
         .get(`/users/${id}`)
         .then((response) => {
-        this.form = response.data;this.tickets = response.data.tickets; // Simpan data tickets
+        this.form = response.data;
         console.log("Data User by Id", this.form); // Log data user
-        console.log("User Tickets", this.tickets); // Log data tickets
         })
         .catch((error) => {
           this.errorMessage = "Error fetching user data: " + error.message;
