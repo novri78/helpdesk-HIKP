@@ -6,6 +6,7 @@ import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @SuperBuilder
 @AllArgsConstructor
@@ -45,4 +46,7 @@ public class Ticket {
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+
+    @OneToMany(mappedBy = "ticketId", cascade = CascadeType.ALL)
+    private List<ActivityLog> activityLogs;
 }

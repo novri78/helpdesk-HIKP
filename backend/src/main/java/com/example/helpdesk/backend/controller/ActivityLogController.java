@@ -1,9 +1,9 @@
 package com.example.helpdesk.backend.controller;
 
+import com.example.helpdesk.backend.dto.ActivityDTO;
 import com.example.helpdesk.backend.model.ActivityLog;
 import com.example.helpdesk.backend.service.ActivityLogService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,18 +15,18 @@ public class ActivityLogController {
     private ActivityLogService activityLogService;
 
     @GetMapping
-    public List<ActivityLog> getAllActivityLogs() {
+    public List<ActivityDTO> getAllActivityLogs() {
         return activityLogService.getAllActivityLogs ();
     }
 
     @GetMapping("/{id}")
-    public ActivityLog getActivityLogById(@PathVariable Long id) {
-        return  activityLogService.getActivityLogById (id);
+    public ActivityDTO getActivityLogById(@PathVariable Long id) {
+        return activityLogService.getActivityLogById (id);
     }
 
     @PostMapping
-    public ActivityLog createActivityLog(@RequestBody ActivityLog activityLog) {
-        return activityLogService.createActivityLog (activityLog);
+    public ActivityDTO createActivityLog(@RequestBody ActivityDTO activityDTO) {
+        return activityLogService.createActivityLog (activityDTO);
     }
 
     @DeleteMapping("/{id}")

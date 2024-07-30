@@ -26,8 +26,13 @@ public class TicketController {
 
     @PostMapping
     public TicketDTO createTicket(@RequestBody TicketDTO ticketDTO) {
-        System.out.println("Received ticket :" + ticketDTO);
+        System.out.println("Received ticketId :" + ticketDTO);
         return ticketService.createTicket (ticketDTO);
+    }
+
+    @PutMapping("{id}")
+    public  TicketDTO updateTicket(@PathVariable Long id, @RequestBody TicketDTO ticketDTO) {
+        return ticketService.updateTicket (id, ticketDTO);
     }
 
     @DeleteMapping

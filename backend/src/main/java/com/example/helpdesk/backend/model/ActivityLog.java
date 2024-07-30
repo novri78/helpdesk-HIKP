@@ -11,7 +11,7 @@ import java.util.Date;
 @Entity
 @SuperBuilder
 @Data
-@Table(name = "activityLog")
+@Table(name = "activity_log")
 public class ActivityLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,5 +21,9 @@ public class ActivityLog {
 
     @ManyToOne
     @JoinColumn(name = "ticket_id", nullable = false)
-    private Ticket ticket;
+    private Ticket ticketId;
+
+    @ManyToOne
+    @JoinColumn(name = "ticket_status", nullable = false)
+    private Ticket ticketStatus;
 }

@@ -8,43 +8,49 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ActivityLogService {
     @Autowired
     private ActivityLogRepository activityLogRepository;
 
-    @Autowired
-    private TicketRepository ticketRepository;
-
-    private ActivityDTO convertToDTO (ActivityLog activityLog) {
-        ActivityDTO activityDTO = new ActivityDTO ();
-        activityDTO.setId (activityLog.getId ( ));
-        activityDTO.setTimestamp (activityLog.getTimestamp ());
-        activityDTO.setDescription (activityLog.getDescription ( ));
-        activityDTO.setTicketId (activityLog.getTicket ().getId ());
+    private ActivityDTO convertToDTO(ActivityLog activityLog) {
+        ActivityDTO activityDTO = new ActivityDTO();
+        activityDTO.setId(activityLog.getId());
+        activityDTO.setTimestamp(activityLog.getTimestamp());
+        activityDTO.setDescription(activityLog.getDescription());
+        activityDTO.setTicketStatus (activityLog.getTicketStatus ().getStatus ());
+        activityDTO.setTicketId(activityLog.getTicketId ( ).getId ());
         return activityDTO;
     }
 
-    public List<ActivityLog> getAllActivityLogs() {
-        return activityLogRepository.findAll ();
+    private ActivityLog convertToEntity(ActivityDTO activityDTO) {
+        ActivityLog activityLog = new ActivityLog();
+        activityLog.setTimestamp(activityDTO.getTimestamp());
+        activityLog.setDescription(activityDTO.getDescription());
+        return activityLog;
     }
 
-    public ActivityLog getActivityLogById(Long id) {
-        Optional<ActivityLog> activityLog = activityLogRepository.findById (id);
-        if(activityLog.isPresent ()) {
-            return activityLog.get ();
-        } else {
-            throw new RuntimeException("User not found for id :: " + id);
-        }
+    public List<ActivityDTO> getAllActivityLogs() {
+        return activityLogRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
-    public ActivityLog createActivityLog(ActivityLog activityLog) {
-        return activityLogRepository.save (activityLog);
+    public ActivityDTO getActivityLogById(Long id) {
+        ActivityLog activityLog = activityLogRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Activity log not found"));
+        return convertToDTO(activityLog);
     }
+
+//    public ActivityDTO createActivityLog(ActivityDTO activityDTO) {
+//        ActivityLog activityLog = convertToEntity(activityDTO);
+//        activityLog = activityLogRepository.save(activityLog);
+//        return convertToDTO(activityLog);
+//    }
 
     public void deleteActivityLogById(Long id) {
-        activityLogRepository.deleteById (id);
+        activityLogRepository.deleteById(id);
     }
 }

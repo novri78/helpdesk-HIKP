@@ -8,5 +8,6 @@ public class ActivityDTO {
     private Long id;
     private Date timestamp;
     private String description;
+    private String ticketStatus;
     private Long ticketId;
 }
