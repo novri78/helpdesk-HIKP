@@ -44,11 +44,11 @@ public class ActivityLogService {
         return convertToDTO(activityLog);
     }
 
-//    public ActivityDTO createActivityLog(ActivityDTO activityDTO) {
-//        ActivityLog activityLog = convertToEntity(activityDTO);
-//        activityLog = activityLogRepository.save(activityLog);
-//        return convertToDTO(activityLog);
-//    }
+    public ActivityDTO createActivityLog(ActivityDTO activityDTO) {
+        ActivityLog activityLog = convertToEntity(activityDTO);
+        activityLog = activityLogRepository.save(activityLog);
+        return convertToDTO(activityLog);
+    }
 
     public void deleteActivityLogById(Long id) {
         activityLogRepository.deleteById(id);
