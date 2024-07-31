@@ -1,5 +1,6 @@
 package com.example.helpdesk.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -15,15 +16,24 @@ import java.util.Date;
 public class ActivityLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty("id")
     private Long id;
+
+    @JsonProperty("timestamp")
     private Date timestamp;
+
+    @JsonProperty("description")
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "ticket_id", nullable = false)
-    private Ticket ticketId;
+    @JsonProperty("tickets_status")
+    @JoinColumn(name = "tickets_status", nullable = false)
+    private int ticketStatus;
 
     @ManyToOne
-    @JoinColumn(name = "ticket_status", nullable = false)
-    private Ticket ticketStatus;
+    @JsonProperty("tickets_id")
+    @JoinColumn(name = "tickets_id", nullable = false)
+    private Ticket ticket;
+
+
+
 }

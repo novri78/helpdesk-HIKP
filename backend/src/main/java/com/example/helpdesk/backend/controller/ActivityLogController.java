@@ -1,9 +1,9 @@
 package com.example.helpdesk.backend.controller;
 
 import com.example.helpdesk.backend.dto.ActivityDTO;
-import com.example.helpdesk.backend.model.ActivityLog;
 import com.example.helpdesk.backend.service.ActivityLogService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,22 +15,14 @@ public class ActivityLogController {
     private ActivityLogService activityLogService;
 
     @GetMapping
-    public List<ActivityDTO> getAllActivityLogs() {
-        return activityLogService.getAllActivityLogs ();
+    public ResponseEntity<List<ActivityDTO>> getAllActivity() {
+        List<ActivityDTO> activityDTOList = activityLogService.getActivityLogs ();
+        return ResponseEntity.ok ( activityDTOList );
     }
 
-    @GetMapping("/{id}")
-    public ActivityDTO getActivityLogById(@PathVariable Long id) {
-        return activityLogService.getActivityLogById (id);
-    }
-
-    @PostMapping
-    public ActivityDTO createActivityLog(@RequestBody ActivityDTO activityDTO) {
-        return activityLogService.createActivityLog (activityDTO);
-    }
-
-    @DeleteMapping("/{id}")
-    public void deleteActivityLogById(@PathVariable Long id) {
-        activityLogService.deleteActivityLogById (id);
+    @GetMapping("/ticket/{ticketId}")
+    public ResponseEntity<List<ActivityDTO>> getActivityLogsByTicketId(@PathVariable Long ticketId) {
+        List<ActivityDTO> activityLogs = activityLogService.getActivityLogsByTicketId(ticketId);
+        return ResponseEntity.ok(activityLogs);
     }
 }

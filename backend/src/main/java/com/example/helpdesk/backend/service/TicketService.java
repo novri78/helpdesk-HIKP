@@ -1,22 +1,23 @@
 package com.example.helpdesk.backend.service;
 
-import com.example.helpdesk.backend.dto.ActivityDTO;
 import com.example.helpdesk.backend.dto.TicketDTO;
 import com.example.helpdesk.backend.model.ActivityLog;
-import com.example.helpdesk.backend.model.Category;
 import com.example.helpdesk.backend.model.Ticket;
-import com.example.helpdesk.backend.model.User;
+import com.example.helpdesk.backend.repository.ActivityLogRepository;
 import com.example.helpdesk.backend.repository.CategoryRepository;
 import com.example.helpdesk.backend.repository.TicketRepository;
 import com.example.helpdesk.backend.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class TicketService {
     @Autowired
     private TicketRepository ticketRepository;
@@ -28,118 +29,100 @@ public class TicketService {
     private CategoryRepository categoryRepository;
 
     @Autowired
+    private ActivityLogRepository activityLogRepository;
+
+    @Autowired
     private ActivityLogService activityLogService;
 
-    private TicketDTO convertToDTO(Ticket ticket) {
+    private TicketDTO mapToDTO(Ticket ticket) {
         TicketDTO ticketDTO = new TicketDTO();
         ticketDTO.setId(ticket.getId());
         ticketDTO.setTitle(ticket.getTitle());
         ticketDTO.setDescription(ticket.getDescription());
         ticketDTO.setPriority(ticket.getPriority());
-        ticketDTO.setStatus(ticket.getStatus());
+        ticketDTO.setStatus(ticket.getStatus ());
+        ticketDTO.setCreatedBy(ticket.getCreatedBy());
         ticketDTO.setCreationDate(ticket.getCreationDate());
         ticketDTO.setClosureDate(ticket.getClosureDate());
-        ticketDTO.setUserId(ticket.getUser().getId());
-        ticketDTO.setCategoryId(ticket.getCategory().getId());
+        ticket.setUser(userRepository.findById(ticketDTO.getUserid ()).orElse (null));
+        ticket.setCategory(categoryRepository.findById(ticketDTO.getCategoryId()).orElse(null));
         return ticketDTO;
     }
 
-    private Ticket convertToEntity(TicketDTO ticketDTO) {
+    private Ticket mapToEntity(TicketDTO ticketDTO) {
         Ticket ticket = new Ticket();
+        ticket.setId(ticketDTO.getId());
         ticket.setTitle(ticketDTO.getTitle());
         ticket.setDescription(ticketDTO.getDescription());
         ticket.setPriority(ticketDTO.getPriority());
-        ticket.setStatus(ticketDTO.getStatus());
+        ticket.setStatus(ticketDTO.getStatus ());
+        ticket.setCreatedBy(ticketDTO.getCreatedBy());
         ticket.setCreationDate(ticketDTO.getCreationDate());
         ticket.setClosureDate(ticketDTO.getClosureDate());
+        ticket.setUser(userRepository.getById (ticketDTO.getUserid ()));
+        ticket.setCategory(categoryRepository.getById (ticketDTO.getCategoryId()));
         return ticket;
     }
 
-//    private Long generateTicketId(User user) {
-//        SimpleDateFormat sdf = new SimpleDateFormat("ddMMyy");
-//        String datePart = sdf.format(new Date());
-//        String departmentInitials = user.getDepartment().substring(0, 2).toUpperCase();
-//
-//        // Get the count of tickets created today
-//        String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-//        long countToday = ticketRepository.countByCreationDate(today);
-//        String dailySequence = String.format("%04d", countToday + 1); // 4 digits sequence number starting from 1
-//
-//        // Combine parts to create a unique ID
-//        String customId = dailySequence + departmentInitials + datePart;
-//        return Long.valueOf(customId.hashCode()); // Use hashcode to generate a unique long value
-//    }
-
-    private long generateTicketId() {
-        // Get the highest ID currently in use and increment it
-        Long maxId = ticketRepository.findMaxId();
-        return (maxId == null ? 0 : maxId) + 1;
-    }
-
-    private ActivityDTO convertToActivityDTO(ActivityLog activityLog) {
-        ActivityDTO activityDTO = new ActivityDTO ();
-        activityDTO.setId (activityLog.getId ( ));
-        activityDTO.setTimestamp (activityLog.getTimestamp ());
-        activityDTO.setDescription (activityLog.getDescription ());
-        activityDTO.setTicketStatus (activityLog.getTicketStatus ().getStatus ());
-        activityDTO.setTicketId (activityLog.getTicketId ().getId ());
-        return activityDTO;
-    }
-
-    public List<TicketDTO> getAllTickets() {
-        return ticketRepository.findAll ().stream ()
-                .map (this::convertToDTO)
-                .collect(Collectors.toList());
-    }
-
-    public TicketDTO getTicketById(Long id) {
-       Ticket ticket =  ticketRepository.findById (id)
-               .orElseThrow ( () -> new RuntimeException ("Ticket not found"));
-       return convertToDTO (ticket);
-    }
-
     private void logActivity(Ticket ticket, String description) {
-        ActivityDTO activityDTO = new ActivityDTO ();
-        activityDTO.setTimestamp(new Date());
-        activityDTO.setDescription(description);
-        activityLogService.createActivityLog (activityDTO);
+        ActivityLog activityLog = new ActivityLog();
+        activityLog.setTimestamp(new Date());
+        activityLog.setDescription(description);
+        activityLog.setTicketStatus(ticket.getStatus ());
+        activityLog.setTicket (ticket);
+
+        activityLogRepository.save(activityLog);
     }
 
     public TicketDTO createTicket(TicketDTO ticketDTO) {
-        Ticket ticket = convertToEntity (ticketDTO);
-        User user = userRepository.findById (ticketDTO.getUserId ())
-                .orElseThrow (() -> new RuntimeException ("Ticket not found"));
-        Category category = categoryRepository.findById (ticketDTO.getCategoryId ())
-                        .orElseThrow (()-> new RuntimeException ("Ticket not found"));
-        ticket.setUser (user);
-        ticket.setCategory (category);
-        ticket.setTitle (ticketDTO.getTitle ());
-        ticket.setDescription (ticketDTO.getDescription ());
-        ticket.setCreationDate(new Date());
-        ticket.setClosureDate (new Date (  ));
-        ticket.setId(generateTicketId()); // Set sequential ticketId ID
-        ticket.setPriority (ticketDTO.getPriority ());
-        ticketRepository.save (ticket);
-        logActivity (ticket, "Ticket successfully created ");
-        return convertToDTO (ticket);
+        //Ticket ticket = new Ticket();
+        Ticket ticket = mapToEntity(ticketDTO);
+        ticket.setTitle(ticketDTO.getTitle());
+        ticket.setDescription(ticketDTO.getDescription());
+        ticket.setPriority(ticketDTO.getPriority());
+        ticket.setStatus(ticketDTO.getStatus ());
+        ticket.setCreatedBy(ticketDTO.getCreatedBy());
+        ticket.setCreationDate(ticketDTO.getCreationDate());
+        ticket.setClosureDate(ticketDTO.getClosureDate());
+        ticket.setUser(userRepository.getById (ticketDTO.getUserid ()));
+        ticket.setCategory(categoryRepository.getById(ticketDTO.getCategoryId()));
+
+        Ticket savedTicket = ticketRepository.save(ticket);
+        logActivity(savedTicket, "Ticket created");
+
+        return mapToDTO(savedTicket);
     }
 
-    public  TicketDTO updateTicket(Long id, TicketDTO ticketDTO) {
-        Ticket ticket = ticketRepository.findById (id)
-                .orElseThrow ( ()-> new RuntimeException("Ticket not found") );
-        ticket.setDescription (ticketDTO.getDescription ());
-        ticket.setPriority (ticketDTO.getPriority ());
-        ticket.setStatus (ticketDTO.getStatus ());
-        ticket.setClosureDate (ticketDTO.getClosureDate ());
-        ticketRepository.save (ticket);
-        logActivity (ticket, "Ticket successfully updated");
-        return convertToDTO (ticket);
+    public TicketDTO getTicketById(Long id) {
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Ticket not found for id :: " + id));
+        return mapToDTO(ticket);
     }
 
-    public void deleteTicketById(Long id) {
-        Ticket ticket = ticketRepository.findById (id)
-                        .orElseThrow ( () -> new RuntimeException("Ticket not found"));
-        logActivity(ticket, "Ticket deleted"); // Log activity
-        ticketRepository.deleteById (id);
+    public TicketDTO updateTicket(Long id, TicketDTO ticketDTO) {
+        Optional<Ticket> optionalTicket = ticketRepository.findById(id);
+        if (optionalTicket.isPresent()) {
+            Ticket ticket = optionalTicket.get();
+            ticket.setTitle(ticketDTO.getTitle());
+            ticket.setDescription(ticketDTO.getDescription());
+            ticket.setPriority(ticketDTO.getPriority());
+            ticket.setStatus(ticketDTO.getStatus ());
+            ticket.setCreatedBy(ticketDTO.getCreatedBy());
+            ticket.setCreationDate(ticketDTO.getCreationDate());
+            ticket.setClosureDate(ticketDTO.getClosureDate());
+            ticket.setUser(userRepository.getById(ticketDTO.getUserid ()));
+            ticket.setCategory(categoryRepository.getById(ticketDTO.getCategoryId()));
+
+            Ticket updatedTicket = ticketRepository.save(ticket);
+            logActivity(updatedTicket, "Ticket updated");
+            return mapToDTO(updatedTicket);
+        }
+        return null;
     }
+
+    public List<TicketDTO> getAllTickets() {
+        List<Ticket> tickets = ticketRepository.findAll();
+        return tickets.stream().map(this::mapToDTO).collect(Collectors.toList());
+    }
+
 }

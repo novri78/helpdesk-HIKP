@@ -15,42 +15,28 @@ public class ActivityLogService {
     @Autowired
     private ActivityLogRepository activityLogRepository;
 
-    private ActivityDTO convertToDTO(ActivityLog activityLog) {
+    @Autowired
+    private TicketRepository ticketRepository;
+
+    private ActivityDTO mapToDTO(ActivityLog activityLog) {
         ActivityDTO activityDTO = new ActivityDTO();
         activityDTO.setId(activityLog.getId());
         activityDTO.setTimestamp(activityLog.getTimestamp());
         activityDTO.setDescription(activityLog.getDescription());
-        activityDTO.setTicketStatus (activityLog.getTicketStatus ().getStatus ());
-        activityDTO.setTicketId(activityLog.getTicketId ( ).getId ());
+        activityDTO.setTicketStatus(activityLog.getTicketStatus ());
+        activityDTO.setTicketId (activityLog.getTicket ().getId ());
         return activityDTO;
     }
 
-    private ActivityLog convertToEntity(ActivityDTO activityDTO) {
-        ActivityLog activityLog = new ActivityLog();
-        activityLog.setTimestamp(activityDTO.getTimestamp());
-        activityLog.setDescription(activityDTO.getDescription());
-        return activityLog;
+    public List<ActivityDTO> getActivityLogs() {
+        List<ActivityLog> activityLogs = activityLogRepository.findAll ();
+        return activityLogs.stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
-    public List<ActivityDTO> getAllActivityLogs() {
-        return activityLogRepository.findAll().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+    public List<ActivityDTO> getActivityLogsByTicketId(Long ticketId) {
+        List<ActivityLog> activityLogs = activityLogRepository.findByTicketId(ticketId);
+        return activityLogs.stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
-    public ActivityDTO getActivityLogById(Long id) {
-        ActivityLog activityLog = activityLogRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Activity log not found"));
-        return convertToDTO(activityLog);
-    }
 
-    public ActivityDTO createActivityLog(ActivityDTO activityDTO) {
-        ActivityLog activityLog = convertToEntity(activityDTO);
-        activityLog = activityLogRepository.save(activityLog);
-        return convertToDTO(activityLog);
-    }
-
-    public void deleteActivityLogById(Long id) {
-        activityLogRepository.deleteById(id);
-    }
 }

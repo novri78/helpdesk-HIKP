@@ -21,6 +21,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("id")
+    @Column(nullable = false)
     private Long id;
 
     @JsonProperty("username")
@@ -40,5 +41,8 @@ public class User {
 
     @JsonProperty("phone_number")
     private String phoneNumber;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Ticket> tickets;
 
 }

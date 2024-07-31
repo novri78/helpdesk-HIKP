@@ -1,7 +1,10 @@
 package com.example.helpdesk.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
@@ -31,7 +34,10 @@ public class Ticket {
     private String priority;
 
     @JsonProperty("status")
-    private String status;
+    private int status;
+
+    @JsonProperty("createdBy")
+    private String createdBy;
 
     @JsonProperty("creationDate")
     private Date creationDate;
@@ -47,6 +53,7 @@ public class Ticket {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @OneToMany(mappedBy = "ticketId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "ticket")
     private List<ActivityLog> activityLogs;
+
 }
