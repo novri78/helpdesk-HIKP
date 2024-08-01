@@ -4,7 +4,7 @@ import Dashboard from '../views/ListDashboard.vue';
 import Categories from '../views/Categories/ListCategories.vue';
 import AddCategory from '../views/Categories/AddCategory.vue';
 import EditCategory from '../views/Categories/EditCategory.vue';
-import Tickets from '../views/Tickets/ListTickets.vue';
+import Tickets from '../views/Tickets/ListTickets.vue'
 import AddTicket from '../views/Tickets/AddTicket.vue';
 import EditTicket from '../views/Tickets/EditTicket.vue';
 import Users from '../views/Users/ListUsers.vue';

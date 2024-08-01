@@ -13,6 +13,9 @@
             <th>Description</th>
             <th>Priority</th>
             <th>Status</th>
+            <th>Create By</th>
+            <th>Open Date</th>
+            <th>Close Date</th>
             <th>User ID</th>
             <th>Category ID</th>
             <th>Actions</th>
@@ -20,16 +23,24 @@
         </thead>
         <tbody>
           <tr v-for="ticket in tickets" :key="ticket.id">
-            <td>{{ ticket.id }}</td>
+            <td>{{ ticket.iD }}</td>
             <td>{{ ticket.title }}</td>
-            <td>{{ ticket.description }}</td>
-            <td>{{ ticket.priority }}</td>
-            <td>{{ ticket.status }}</td>
-            <td>{{ ticket.userId }}</td>
-            <td>{{ ticket.categoryId }}</td>
+            <td>{{ ticket.desc }}</td>
+            <td>{{ ticket.prior }}</td>
+            <td>{{ ticket.stat }}</td>
+            <td>{{ ticket.by }}</td>
+            <td>{{ ticket.openDate }}</td>
+            <td>{{ ticket.closeDate }}</td>
+
             <td>
-              <button class="btn btn-primary" @click="editTicket(ticket.id)">Edit</button>
-              <button class="btn btn-danger" @click="confirmDeleteTicket(ticket.id)">Delete</button>
+              {{ ticket.userId }}
+            </td>
+
+            <td>
+              {{ ticket.categoryId  }}</td>
+            <td>
+              <button class="btn btn-primary" @click="editTicket(ticket.iD)">Edit</button>
+              <button class="btn btn-danger" @click="confirmDeleteTicket(ticket.iD)">Delete</button>
             </td>
           </tr>
         </tbody>
@@ -44,6 +55,8 @@ export default {
   data() {
     return {
       tickets: [],
+      users: [],
+      categories: [],
       errorMessage: ''
     };
   },
@@ -56,15 +69,18 @@ export default {
     },
     fetchTickets() {
       this.$axios
-      .get("tickets")
+      .get("/tickets")
       .then(res => {
         console.log("API Response", res.data); // Log the entire response
         this.tickets = res.data.map(ticket => ({
-            id: ticket.id,
+            iD: ticket.id,
             title: ticket.title,
             desc: ticket.description,
             prior: ticket.priority,
-            stat: ticket.status,
+            stat: ticket.ticketStatus,
+            by: ticket.createdBy,
+            openDate: ticket.creationDate,
+            closeDate: ticket.closureDate,
             userId: ticket.userId,
             categoryId: ticket.categoryId
         }));

@@ -6,40 +6,27 @@
     <main>
       <div class="form-container">
         <form @submit.prevent="addTicket">
-          <div class="form-group">
-            <label for="title">Title:</label>
-            <input type="text" v-model="form.title" id="title" class="form-control" required />
-          </div>
-
-          <div class="form-group">
-            <label for="description">Description:</label>
-            <textarea v-model="form.description" id="description" class="form-control" required></textarea>
-          </div>
-
-          <div class="form-group">
-            <label for="priority">Priority:</label>
-            <input type="text" v-model="form.priority" id="priority" class="form-control" required />
-          </div>
-
-          <div class="form-group">
-            <label for="status">Status:</label>
-            <input type="text" v-model="form.status" id="status" class="form-control" required />
-          </div>
-
-          <div class="form-group">
-            <label for="userId">User:</label>
-            <select v-model="form.userId" id="userId" class="form-control" required>
-              <option v-for="user in users" :key="user.id" :value="user.id">
-                {{ user.fullName }}
-              </option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="categoryId">Category:</label>
-            <select v-model="form.categoryId" id="categoryId" class="form-control" required>
-              <option v-for="category in categories" :key="category.id" :value="category.id">
-                {{ category.name }}
+          <div class="form-group" v-for="(field, key) in formFields" :key="key">
+            <label :for="key">{{ field.label }}:</label>
+            <component
+              :is="field.type"
+              v-model="form[key]"
+              :id="key"
+              :class="['form-control', field.class]"
+              :required="field.required"
+              :placeholder="field.placeholder"
+              :type="field.inputType"
+              v-if="field.type === 'input' || field.type === 'textarea'"
+            ></component>
+            <select
+              v-model="form[key]"
+              :id="key"
+              class="form-control"
+              :required="field.required"
+              v-if="field.type === 'select'"
+            >
+              <option v-for="option in field.options" :key="option.value" :value="option.value">
+                {{ option.text }}
               </option>
             </select>
           </div>
@@ -64,13 +51,36 @@ export default {
         title: '',
         description: '',
         priority: '',
-        status: '',
+        status: '1',
+        createdBy: '',
+        creationDate:'',
+        closureDate:'',
         userId: '',
         categoryId: '',
       },
       users: [],
       categories: [],
-      errorMessage: ''
+      errorMessage: '',
+      formFields: {
+        title: { label: 'Title', type: 'input', required: true, placeholder: 'Enter title' },
+        description: { label: 'Description', type: 'textarea', required: true, placeholder: 'Enter description' },
+        priority: { label: 'Priority', type: 'input', required: true, placeholder: 'Enter priority' },
+        status: {
+          label: 'Status',
+          type: 'select',
+          required: true,
+          options: [
+            { value: '1', text: 'Open' },
+            { value: '2', text: 'In Progress' },
+            { value: '3', text: 'Closed' },
+          ],
+        },
+        createdBy: { label: 'Created By', type: 'input', required: true, placeholder: 'Enter your name' },
+        creationDate: { label: 'Creation Date', type: 'input', inputType: 'datetime-local', required: true },
+        closureDate: { label: 'Closure Date', type: 'input', inputType: 'datetime-local' },
+        userId: { label: 'User', type: 'select', required: true, options: [] },
+        categoryId: { label: 'Category', type: 'select', required: true, options: [] },
+      },
     };
   },
   mounted() {
@@ -84,10 +94,10 @@ export default {
         .then(res => {
           console.log("API Response", res.data); // Log the entire response
           this.users = res.data.map(user => ({
-            id: user.id,
-            fullName: user.fullName // Adjust this field name according to your API response
+            value: user.id,
+            text: user.fullName,
           }));
-          console.log("Mapped Users", this.users); // Log the mapped users
+          this.formFields.userId.options = this.users;
         })
         .catch(error => {
           this.errorMessage = "Failed to fetch users: " + error.message;
@@ -99,10 +109,10 @@ export default {
         .then(res => {
           console.log("API Response", res.data); // Log the entire response
           this.categories = res.data.map(cat => ({
-            id: cat.id,
-            name: cat.name // Adjust this field name according to your API response
+            value: cat.id,
+            text: cat.name,
           }));
-          console.log("Mapped Categories", this.categories); // Log the mapped categories
+          this.formFields.categoryId.options = this.categories;
         })
         .catch(error => {
           this.errorMessage = "Failed to fetch categories: " + error.message;
