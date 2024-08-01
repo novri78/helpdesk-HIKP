@@ -2,9 +2,8 @@ package com.example.helpdesk.backend.controller;
 
 import com.example.helpdesk.backend.dto.TicketDTO;
 import com.example.helpdesk.backend.service.TicketService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,21 +12,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/tickets")
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class TicketController {
-    @Autowired
-    private TicketService ticketService;
+
+    private final TicketService ticketService;
 
     @PostMapping
-    public ResponseEntity<TicketDTO> createTicket(@RequestBody TicketDTO ticketDTO) {
-        try {
-            TicketDTO createdTicket = ticketService.createTicket(ticketDTO);
-            return ResponseEntity.ok(createdTicket);
-        } catch (Exception e) {
-            log.error("Error creating ticket: ", e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
+    public ResponseEntity<TicketDTO> createTicket(@RequestBody TicketDTO ticketDto) {
+        TicketDTO createdTicket = ticketService.createTicket(ticketDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdTicket);
     }
 
     @GetMapping("/{id}")
@@ -36,7 +30,7 @@ public class TicketController {
             TicketDTO ticketDTO = ticketService.getTicketById(id);
             return ResponseEntity.ok(ticketDTO);
         } catch (RuntimeException e) {
-            log.error("Ticket not found for id :: " + id, e);
+            log.error("Ticket not found for id: " + id, e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
@@ -54,7 +48,7 @@ public class TicketController {
 
     @GetMapping
     public ResponseEntity<List<TicketDTO>> getAllTickets() {
-        List<TicketDTO> tickets = ticketService.getAllTickets();
-        return ResponseEntity.ok(tickets);
+        List<TicketDTO> ticketDTOs = ticketService.getAllTickets ();
+        return ResponseEntity.ok(ticketDTOs);
     }
 }

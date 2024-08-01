@@ -3,8 +3,7 @@ package com.example.helpdesk.backend.model;
 public enum TicketStatus {
     OPEN(1),
     IN_PROGRESS(2),
-    CLOSED(3),
-    RESOLVED(4);
+    CLOSED(3);
 
     private final int value;
 
@@ -12,16 +11,17 @@ public enum TicketStatus {
         this.value = value;
     }
 
-    public int getValue() {
-        return value;
-    }
-
     public static TicketStatus fromValue(int value) {
         for (TicketStatus status : TicketStatus.values()) {
-            if (status.getValue() == value) {
+            if (status.value == value) {
                 return status;
             }
         }
         throw new IllegalArgumentException("Invalid TicketStatus value: " + value);
     }
+
+    public int getValue() {
+        return value;
+    }
 }
+

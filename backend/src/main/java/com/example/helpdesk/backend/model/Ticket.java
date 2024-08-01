@@ -34,7 +34,7 @@ public class Ticket {
     private String priority;
 
     @JsonProperty("status")
-    private int status;
+    private int ticketStatus;
 
     @JsonProperty("createdBy")
     private String createdBy;
@@ -55,5 +55,6 @@ public class Ticket {
 
     @OneToMany(mappedBy = "ticket")
     private List<ActivityLog> activityLogs;
+
 
 }
