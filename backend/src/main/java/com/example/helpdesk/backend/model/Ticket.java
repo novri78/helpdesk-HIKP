@@ -24,6 +24,9 @@ public class Ticket {
     @JsonProperty("id")
     private Long id;
 
+    @JsonProperty("ticketNo")
+    private String ticketNo;
+
     @JsonProperty("title")
     private String title;
 
@@ -31,7 +34,7 @@ public class Ticket {
     private String description;
 
     @JsonProperty("priority")
-    private String priority;
+    private int priorityStatus;
 
     @JsonProperty("status")
     private int ticketStatus;
@@ -53,7 +56,7 @@ public class Ticket {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @OneToMany(mappedBy = "ticket")
+    @OneToMany(mappedBy = "ticketId")
     private List<ActivityLog> activityLogs;
 
 

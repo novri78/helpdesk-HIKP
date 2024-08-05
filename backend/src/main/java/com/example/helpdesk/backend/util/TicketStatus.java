@@ -1,4 +1,4 @@
-package com.example.helpdesk.backend.model;
+package com.example.helpdesk.backend.util;
 
 public enum TicketStatus {
     OPEN(1),

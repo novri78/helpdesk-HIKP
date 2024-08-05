@@ -9,6 +9,7 @@ import com.example.helpdesk.backend.repository.TicketRepository;
 import com.example.helpdesk.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -29,9 +30,10 @@ public class TicketService {
         }
         TicketDTO ticketDTO = new TicketDTO();
         ticketDTO.setId(ticket.getId()); // Set the id
+        ticketDTO.setTicketNo (ticket.getTicketNo ());
         ticketDTO.setTitle(ticket.getTitle());
         ticketDTO.setDescription(ticket.getDescription());
-        ticketDTO.setPriority(ticket.getPriority());
+        ticketDTO.setPriorityStatus(ticket.getPriorityStatus ());
         ticketDTO.setTicketStatus(ticket.getTicketStatus ( ));
         ticketDTO.setCreatedBy(ticket.getCreatedBy());
         ticketDTO.setCreationDate(ticket.getCreationDate());
@@ -45,9 +47,10 @@ public class TicketService {
     private Ticket mapToEntity(TicketDTO ticketDTO) {
         Ticket ticket = new Ticket();
         ticket.setId (ticketDTO.getId ());
+        ticket.setTicketNo (ticketDTO.getTicketNo ( ));
         ticket.setTitle(ticketDTO.getTitle());
         ticket.setDescription(ticketDTO.getDescription());
-        ticket.setPriority(ticketDTO.getPriority());
+        ticket.setPriorityStatus (ticketDTO.getPriorityStatus ());
         ticket.setTicketStatus(ticketDTO.getTicketStatus ( )); // Correctly map TicketStatus
         ticket.setCreatedBy(ticketDTO.getCreatedBy());
         ticket.setCreationDate(ticketDTO.getCreationDate());
@@ -64,7 +67,7 @@ public class TicketService {
         activityLog.setTimestamp(new Date());
         activityLog.setDescription(description);
         activityLog.setTicketStatus(ticket.getTicketStatus());
-        activityLog.setTicket(ticket);
+        activityLog.setTicketId (ticket.getId ());
         activityLogRepository.save(activityLog);
     }
 
@@ -75,6 +78,7 @@ public class TicketService {
                 .collect(Collectors.toList ());
     }
 
+    @Transactional
     public TicketDTO createTicket(TicketDTO ticketDTO) {
         Ticket ticket = mapToEntity(ticketDTO);
         Ticket savedTicket = ticketRepository.save(ticket);
@@ -88,13 +92,14 @@ public class TicketService {
         return mapToDTO(ticket);
     }
 
+    @Transactional
     public TicketDTO updateTicket(Long id, TicketDTO ticketDTO) {
         Ticket existingTicket = ticketRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ticket not found for id: " + id));
 
         existingTicket.setTitle(ticketDTO.getTitle());
         existingTicket.setDescription(ticketDTO.getDescription());
-        existingTicket.setPriority(ticketDTO.getPriority());
+        existingTicket.setPriorityStatus (ticketDTO.getPriorityStatus ());
         existingTicket.setTicketStatus (ticketDTO.getTicketStatus ( ));
         existingTicket.setCreatedBy(ticketDTO.getCreatedBy());
         existingTicket.setCreationDate(ticketDTO.getCreationDate());

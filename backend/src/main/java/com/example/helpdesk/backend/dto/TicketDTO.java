@@ -1,6 +1,5 @@
 package com.example.helpdesk.backend.dto;
 
-import com.example.helpdesk.backend.model.TicketStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,9 +11,10 @@ import java.util.Date;
 @NoArgsConstructor
 public class TicketDTO {
     private Long id;
+    private String ticketNo;
     private String title;
     private String description;
-    private String priority;
+    private int priorityStatus;
     private int ticketStatus;
     private String createdBy;
     private Date creationDate;

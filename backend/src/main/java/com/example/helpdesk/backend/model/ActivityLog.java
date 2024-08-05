@@ -9,9 +9,10 @@ import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 @SuperBuilder
-@Data
+@Entity
+@Getter
+@Setter
 @Table(name = "activity_log")
 public class ActivityLog {
     @Id
@@ -32,7 +33,7 @@ public class ActivityLog {
     @ManyToOne
     @JsonProperty("tickets_id")
     @JoinColumn(name = "tickets_id", nullable = false)
-    private Ticket ticket;
+    private Long ticketId;
 
 
 
