@@ -24,7 +24,7 @@ public class ActivityLogService {
         activityDTO.setTimestamp(activityLog.getTimestamp());
         activityDTO.setDescription(activityLog.getDescription());
         activityDTO.setTicketStatus(activityLog.getTicketStatus ());
-        activityDTO.setTicketId (activityLog.getTicket ( ).getId ( ));
+        activityDTO.setTicketId (activityLog.getTicketId ());
         return activityDTO;
     }
 

@@ -7,6 +7,7 @@ import com.example.helpdesk.backend.repository.ActivityLogRepository;
 import com.example.helpdesk.backend.repository.CategoryRepository;
 import com.example.helpdesk.backend.repository.TicketRepository;
 import com.example.helpdesk.backend.repository.UserRepository;
+import com.example.helpdesk.backend.util.TicketStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,8 +78,8 @@ public class TicketService {
         ActivityLog activityLog = new ActivityLog();
         activityLog.setTimestamp(new Date());
         activityLog.setDescription(description);
-        activityLog.setTicketStatus(ticket.getTicketStatus());
-        activityLog.setTicketId (ticket.getId ());
+        activityLog.setTicketStatus (TicketStatus.fromValue (ticket.getTicketStatus ()));
+        activityLog.setTicketId (activityLog.getTicketId ( ));
         activityLogRepository.save(activityLog);
     }
 

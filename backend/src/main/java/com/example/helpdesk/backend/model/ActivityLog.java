@@ -1,5 +1,6 @@
 package com.example.helpdesk.backend.model;
 
+import com.example.helpdesk.backend.util.TicketStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -28,12 +29,12 @@ public class ActivityLog {
 
     @JsonProperty("tickets_status")
     @JoinColumn(name = "tickets_status", nullable = false)
-    private int ticketStatus;
+    private TicketStatus ticketStatus;
 
     @ManyToOne
     @JsonProperty("tickets_id")
     @JoinColumn(name = "tickets_id", nullable = false)
-    private Long ticketId;
+    private Ticket ticketId;
 
 
 
