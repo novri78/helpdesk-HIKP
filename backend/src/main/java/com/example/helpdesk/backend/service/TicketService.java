@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +24,16 @@ public class TicketService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final ActivityLogRepository activityLogRepository;
+
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat ( "ddMMyy" );
+
+    private String generateTicketNo(Ticket ticket) {
+        String date = dateFormat.format (new Date());
+        String categoryName = ticket.getCategory ().getName ();
+        String categoryInitial = categoryName.length () >= 3 ? categoryName.substring (0, 3).toUpperCase() : categoryName.toUpperCase ();
+        int sequenceNumber = ticketRepository.countByCreationDate(new Date()) + 1;
+        return String.format ("%03d/%s/%s", sequenceNumber, categoryInitial, date);
+    }
 
     private TicketDTO mapToDTO(Ticket ticket) {
         if (ticket.getId () == null) {
@@ -81,6 +92,7 @@ public class TicketService {
     @Transactional
     public TicketDTO createTicket(TicketDTO ticketDTO) {
         Ticket ticket = mapToEntity(ticketDTO);
+        ticket.setTicketNo (generateTicketNo (ticket));
         Ticket savedTicket = ticketRepository.save(ticket);
         logActivity(savedTicket, "Ticket created");
         return mapToDTO(savedTicket);
