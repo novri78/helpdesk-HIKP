@@ -18,6 +18,12 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @PostMapping
+    public UserDTO createUser(@RequestBody UserDTO userDTO) {
+        System.out.println ("Received user :" + userDTO );
+        return userService.createUser (userDTO);
+    }
+
     @GetMapping
     public List<UserDTO> getAllUsers() {
         return userService.getAllUsers ();
@@ -31,12 +37,6 @@ public class UserController {
     @PutMapping(value = "/{id}")
     public UserDTO updateUserById(@PathVariable Long id, @RequestBody UserDTO userDetails) {
         return userService.updateUserById(id, userDetails);
-    }
-
-    @PostMapping
-    public UserDTO createUser(@RequestBody UserDTO userDTO) {
-        System.out.println ("Received user :" + userDTO );
-        return userService.createUser (userDTO);
     }
 
     @DeleteMapping(value = "/{id}")

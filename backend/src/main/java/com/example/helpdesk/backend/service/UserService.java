@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -17,13 +18,13 @@ public class UserService {
     // Convert User to UserDTO
     private UserDTO convertToDTO(User user) {
         UserDTO userDTO = new UserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setDepartment (user.getDepartment ());
-        userDTO.setEmail(user.getEmail());
+        userDTO.setId (user.getId ());
+        userDTO.setEmail (user.getEmail ());
         userDTO.setFullName (user.getFullName ());
+        userDTO.setPassword (user.getPassword ());
+        userDTO.setRole (user.getRole ());
+        userDTO.setDepartment (user.getDepartment ());
         userDTO.setPhoneNumber (user.getPhoneNumber ());
-        userDTO.setPosition (user.getPosition ());
-        userDTO.setUsername(user.getUsername());
         return userDTO;
     }
 
@@ -31,13 +32,19 @@ public class UserService {
     private User convertToEntity(UserDTO userDTO) {
         User user = new User (  );
         user.setId (userDTO.getId ());
-        user.setDepartment (userDTO.getDepartment ());
         user.setEmail (userDTO.getEmail ());
         user.setFullName (userDTO.getFullName ());
+        user.setPassword (userDTO.getPassword ());
+        user.setRole (userDTO.getRole ());
+        user.setDepartment (userDTO.getDepartment ());
         user.setPhoneNumber (userDTO.getPhoneNumber ());
-        user.setPosition (userDTO.getPosition ());
-        user.setUsername (userDTO.getUsername ());
         return user;
+    }
+
+    public UserDTO createUser(UserDTO userDTO) {
+        User user = convertToEntity (userDTO);
+        userRepository.save (user);
+        return convertToDTO (user);
     }
 
     public List<UserDTO> getAllUsers() {
@@ -55,18 +62,12 @@ public class UserService {
     public UserDTO updateUserById(Long id, UserDTO userDetails) {
         User user = userRepository.findById (id)
                 .orElseThrow (() -> new RuntimeException ( "User not found for id :: " + id  ));
-        user.setDepartment(userDetails.getDepartment());
         user.setEmail(userDetails.getEmail());
         user.setFullName(userDetails.getFullName());
+        user.setPassword (userDetails.getPassword ( ));
+        user.setRole (userDetails.getRole ());
+        user.setDepartment (userDetails.getDepartment ());
         user.setPhoneNumber(userDetails.getPhoneNumber());
-        user.setPosition(userDetails.getPosition());
-        user.setUsername(userDetails.getUsername());
-        userRepository.save (user);
-        return convertToDTO (user);
-    }
-
-    public UserDTO createUser(UserDTO userDTO) {
-        User user = convertToEntity (userDTO);
         userRepository.save (user);
         return convertToDTO (user);
     }
