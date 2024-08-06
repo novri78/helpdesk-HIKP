@@ -18,13 +18,28 @@ const axiosInstance = axios.create({
     }
 });
 
+// Intercept requests to include authorization token if available
+axiosInstance.interceptors.request.use(
+    (config) => {
+        const token = store.state.token;
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
 // Initialize Vue app
 const app = createApp(App);
 
 // Make axios accessible globally
-app.config.globalProperties.$axios = {...axiosInstance}; 
+app.config.globalProperties.$axios = { ...axiosInstance };
 
 app.use(store);
 app.use(router);
 app.use(createBootstrap({ components: true, directives: true }));
-app.mount('#app')
+store.dispatch('checkAuth'); // Dispatch the action to check auth status
+app.mount('#app');
