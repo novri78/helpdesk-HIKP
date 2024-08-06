@@ -5,7 +5,7 @@
   <main>
     <div class="form-container">
       <form @submit.prevent="addUser">
-        <div class="form-group" v-for="(value, key) in form" :key="key">
+        <div class="form-group" v-for="(value, key) in form" :key="key" v-if="key !== 'role' && key !== 'department'">
           <label :for="key">{{ key.replace('_', ' ').toUpperCase() }}:</label>
           <input
             :type="key === 'email' ? 'email' : 'text'"
@@ -15,6 +15,27 @@
             required
           />
         </div>
+
+        <div class="form-group">
+          <label for="department">DEPARTMENT:</label>
+          <select v-model="form.department" id="department" class="form-control" required>
+            <option value="" disabled>Select Department</option>
+            <option v-for="department in departments" :key="department" :value="department">
+              {{ department }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="role">ROLE:</label>
+          <select v-model="form.role" id="role" class="form-control" required>
+            <option value="" disabled>Select Role</option>
+            <option v-for="role in roles" :key="role" :value="role">
+              {{ role }}
+            </option>
+          </select>
+        </div>
+
         <div class="button-group">
           <button type="button" class="btn btn-secondary" @click="cancelAdd">Cancel</button>
           <button type="submit" class="btn btn-primary">Save</button>
@@ -28,40 +49,60 @@
 
 <script>
 export default {
-    name: 'AddUser',
-    data() {
-        return {
-            form: {
-                department: '',	
-                email: '',	
-                fullName: '',	
-                phoneNumber: '',	
-                position: '',	
-                username: '',
-            },
-            errorMessage: ''
-        };
+  name: 'AddUser',
+  data() {
+    return {
+      form: {
+        email: '',	
+        fullName: '',
+        password: '',
+        role: '',
+        department: '',	
+        phoneNumber: '',	
+      },
+      errorMessage: '',
+      departments: [
+        'OPERATION',
+        'FINANCE',
+        'FUNDING',
+        'ITSUPPORT',
+        'DIRECTOR',
+        'ITDEVELOPER',
+        'GAOPERATION',
+        'SUPERADMIN'
+      ],
+      roles: [
+        'ADMIN',
+        'USER',
+        'SUPPORT'
+      ]
+    };
+  },
+  methods: {
+    cancelAdd() {
+      this.$router.push({ name: "Users" });
     },
-    methods: {
-        cancelAdd() {
-            this.$router.push({ name: "Users" });
-        },
-        addUser() {
-            this.$axios
-            .post("/users", this.form)
-            .then( () => {
-                this.$router.push( {name: "Users"} )
-                .then( () => {
-                    return alert("You have been succeed add data user.");
-                } );
-            } )
-            .catch((error) => {
+    addUser() {
+      this.$axios
+        .post("/users", this.form)
+        .then(() => {
+          this.$router.push({ name: "Users" })
+            .then(() => {
+              return alert("You have been succeed add data user.");
+            });
+        })
+        .catch((error) => {
           this.errorMessage = "Error adding organization: " + error.message;
-            } );
-        },
+        });
     },
+  },
+  mounted() {
+  console.log(this.departments);
+  console.log(this.roles);
+}
 };
 </script>
+
 
 <style scoped>
 * {
@@ -108,7 +149,7 @@ label {
   color: #333;
 }
 
-input {
+input, select {
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;

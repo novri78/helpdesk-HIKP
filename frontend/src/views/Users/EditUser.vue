@@ -5,7 +5,7 @@
   <main>
     <div class="form-container">
       <form @submit.prevent="editUser">
-        <div class="form-group" v-for="(value, key) in form" :key="key">
+        <div class="form-group" v-for="(value, key) in form" :key="key" v-if="key !== 'role' && key !== 'department'">
           <label :for="key">{{ key.replace('_', ' ').toUpperCase() }}:</label>
           <input
             :type="key === 'email' ? 'email' : 'text'"
@@ -15,6 +15,27 @@
             required
           />
         </div>
+
+        <div class="form-group">
+          <label for="department">DEPARTMENT:</label>
+          <select v-model="form.department" id="department" class="form-control" required>
+            <option value="" disabled>Select Department</option>
+            <option v-for="department in departments" :key="department" :value="department">
+              {{ department }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="role">ROLE:</label>
+          <select v-model="form.role" id="role" class="form-control" required>
+            <option value="" disabled>Select Role</option>
+            <option v-for="role in roles" :key="role" :value="role">
+              {{ role }}
+            </option>
+          </select>
+        </div>
+
         <div class="button-group">
           <button type="button" class="btn btn-secondary" @click="cancelEdit">Cancel</button>
           <button type="submit" class="btn btn-primary">Save</button>
@@ -25,7 +46,6 @@
   </main>
   <footer></footer>
 </template>
-
 
 <script>
 export default {
@@ -40,9 +60,24 @@ export default {
         phoneNumber: '',
         position: '',
         username: '',
+        role: ''
       },
-      tickets: [],
-      errorMessage: ''
+      errorMessage: '',
+      departments: [
+        'OPERATION',
+        'FINANCE',
+        'FUNDING',
+        'ITSUPPORT',
+        'DIRECTOR',
+        'ITDEVELOPER',
+        'GAOPERATION',
+        'SUPERADMIN'
+      ],
+      roles: [
+        'ADMIN',
+        'USER',
+        'SUPPORT'
+      ]
     };
   },
   created() {
@@ -57,18 +92,16 @@ export default {
       this.$axios
         .get(`/users/${id}`)
         .then((response) => {
-        this.form = response.data;
-        console.log("Data User by Id", this.form); // Log data user
+          this.form = response.data;
+          console.log("Data User by Id", this.form); // Log data user
         })
         .catch((error) => {
           this.errorMessage = "Error fetching user data: " + error.message;
         });
     },
     editUser() {
-    // Remove tickets from form data before sending it to the server
-    const { tickets, ...userData } = this.form;
-    this.$axios
-        .put(`/users/${this.form.id}`, userData)
+      this.$axios
+        .put(`/users/${this.form.id}`, this.form)
         .then(() => {
           this.$router.push({ name: "Users" }).then(() => {
             alert("User data updated successfully.");
@@ -127,7 +160,7 @@ label {
   color: #333;
 }
 
-input {
+input, select {
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;

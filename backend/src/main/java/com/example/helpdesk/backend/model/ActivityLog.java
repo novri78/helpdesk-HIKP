@@ -1,6 +1,6 @@
 package com.example.helpdesk.backend.model;
 
-import com.example.helpdesk.backend.util.TicketStatus;
+import com.example.helpdesk.backend.constant.TicketStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

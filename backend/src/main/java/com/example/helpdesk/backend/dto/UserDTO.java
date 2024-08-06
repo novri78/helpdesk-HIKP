@@ -1,7 +1,7 @@
 package com.example.helpdesk.backend.dto;
 
-import com.example.helpdesk.backend.util.Department;
-import com.example.helpdesk.backend.util.Role;
+import com.example.helpdesk.backend.constant.Department;
+import com.example.helpdesk.backend.constant.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

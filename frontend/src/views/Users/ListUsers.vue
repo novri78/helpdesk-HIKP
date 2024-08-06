@@ -10,12 +10,12 @@
           <tr>
             <th>No.</th>
             <th>Id</th>
-            <th>Departemen</th>
             <th>Email</th>
             <th>Full Name</th>
+            <th>Password</th>
+            <th>Department</th>
             <th>Phone</th>
-            <th>Position</th>
-            <th>User Name</th>
+            <th>Role</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -23,12 +23,12 @@
           <tr v-for="(user, index) in users" :key="user.id">
             <td>{{ index + 1 }}</td>
             <td>{{ user.iD }}</td>
-            <td>{{ user.dept }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.fullName }}</td>
+            <td>{{ user.pass }}</td>
+            <td>{{ user.dept }}</td>
             <td>{{ user.phone }}</td>
-            <td>{{ user.position }}</td>
-            <td>{{ user.username }}</td>
+            <td>{{ user.roles }}</td>
             <td>
               <button class="btn btn-secondary btn-sm" @click="routeToEditUser(user.iD)">
                 Edit
@@ -69,12 +69,12 @@ export default {
           console.log("API Response", res.data); // Log the entire response
           this.users = res.data.map(user => ({
             iD: user.id,
-            dept: user.department, // Adjust this field name according to your API response
             email: user.email,
+            pass: user.password,
             fullName: user.fullName, // Adjust this field name according to your API response
             phone: user.phoneNumber, // Adjust this field name according to your API response
-            position: user.position, // Adjust this field name according to your API response
-            username: user.username // Adjust this field name according to your API response
+            dept: user.department, // Adjust this field name according to your API response
+            roles: user.role // Adjust this field name according to your API response
           }));
           console.log("Mapped Users", this.users); // Log the mapped users
         })

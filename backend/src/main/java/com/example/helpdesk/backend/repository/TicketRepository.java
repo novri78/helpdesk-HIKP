@@ -11,6 +11,4 @@ import java.util.Date;
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
     @Query("SELECT COUNT(t) FROM Ticket t WHERE FUNCTION('DATE', t.creationDate) = CURRENT_DATE")
     int countByCreationDate();
-
-    int countByCreationDate(Date date);
 }

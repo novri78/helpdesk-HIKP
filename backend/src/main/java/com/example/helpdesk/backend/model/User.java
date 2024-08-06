@@ -1,7 +1,7 @@
 package com.example.helpdesk.backend.model;
 
-import com.example.helpdesk.backend.util.Department;
-import com.example.helpdesk.backend.util.Role;
+import com.example.helpdesk.backend.constant.Department;
+import com.example.helpdesk.backend.constant.Role;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,8 +22,8 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty("id")
     @Column(nullable = false)
+    @JsonProperty("id")
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -34,8 +34,8 @@ public class User {
     @JsonProperty("full_name")
     private String fullName;
 
-    @JsonProperty("password")
     @Column(nullable = false)
+    @JsonProperty("password")
     private String password;
 
     @Enumerated(EnumType.STRING)
@@ -51,5 +51,8 @@ public class User {
     @Column(nullable = false)
     @JsonProperty("phone_number")
     private String phoneNumber;
+
+    @Column(name = "is_deleted")
+    private Boolean isDeleted = false;
 
 }

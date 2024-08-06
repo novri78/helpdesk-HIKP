@@ -1,4 +1,4 @@
-package com.example.helpdesk.backend.util;
+package com.example.helpdesk.backend.constant;
 
 public enum Role {
     ADMIN,

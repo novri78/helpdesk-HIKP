@@ -1,4 +1,4 @@
-package com.example.helpdesk.backend.util;
+package com.example.helpdesk.backend.constant;
 
 public enum Department {
     OPERATION,
@@ -7,7 +7,8 @@ public enum Department {
     ITSUPPORT,
     DIRECTOR,
     ITDEVELOPER,
-    GAOPERATION
+    GAOPERATION,
+    SUPERADMIN
 
 //    OPERATION(1),
 //    FINANCE(2),

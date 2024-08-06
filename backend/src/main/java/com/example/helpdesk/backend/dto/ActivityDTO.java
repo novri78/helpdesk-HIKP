@@ -1,7 +1,7 @@
 package com.example.helpdesk.backend.dto;
 
 import com.example.helpdesk.backend.model.Ticket;
-import com.example.helpdesk.backend.util.TicketStatus;
+import com.example.helpdesk.backend.constant.TicketStatus;
 import lombok.Data;
 
 import java.util.Date;
