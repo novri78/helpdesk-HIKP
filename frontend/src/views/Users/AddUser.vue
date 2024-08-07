@@ -17,16 +17,6 @@
         </div>
 
         <div class="form-group">
-          <label for="department">DEPARTMENT:</label>
-          <select v-model="form.department" id="department" class="form-control" required>
-            <option value="" disabled>Select Department</option>
-            <option v-for="department in departments" :key="department" :value="department">
-              {{ department }}
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group">
           <label for="role">ROLE:</label>
           <select v-model="form.role" id="role" class="form-control" required>
             <option value="" disabled>Select Role</option>
@@ -35,6 +25,16 @@
             </option>
           </select>
         </div>
+
+        <div class="form-group">
+          <label for="department">DEPARTMENT:</label>
+          <select v-model="form.department" id="department" class="form-control" required>
+            <option value="" disabled>Select Department</option>
+            <option v-for="department in departments" :key="department" :value="department">
+              {{ department }}
+            </option>
+          </select>
+        </div>        
 
         <div class="button-group">
           <button type="button" class="btn btn-secondary" @click="cancelAdd">Cancel</button>
@@ -92,7 +92,7 @@ export default {
             });
         })
         .catch((error) => {
-          this.errorMessage = "Error adding organization: " + error.message;
+          this.errorMessage = "Error adding user: " + error.message;
         });
     },
   },

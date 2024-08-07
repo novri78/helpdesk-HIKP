@@ -26,7 +26,7 @@ public class UserService {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
         userDTO.setEmail(user.getEmail());
-        userDTO.setFullName(user.getFullName());
+        userDTO.setName (user.getName());
         userDTO.setPassword(user.getPassword());
         userDTO.setRole(Role.valueOf (user.getRole ().name ()));
         userDTO.setDepartment(Department.valueOf (user.getDepartment ().name ()));
@@ -39,7 +39,7 @@ public class UserService {
         User user = new User();
         user.setId(userDTO.getId());
         user.setEmail(userDTO.getEmail());
-        user.setFullName(userDTO.getFullName());
+        user.setName (userDTO.getName ());
         user.setPassword(userDTO.getPassword());
         try{
             user.setRole(Role.valueOf (userDTO.getRole ( ).name ( ).toUpperCase ()));
@@ -89,7 +89,7 @@ public class UserService {
                     return new RuntimeException("User not found for id :: " + id);
                 });
         user.setEmail(userDetails.getEmail());
-        user.setFullName(userDetails.getFullName());
+        user.setName (userDetails.getName ());
         user.setPassword (userDetails.getPassword ( ));
         user.setRole (Role.valueOf (userDetails.getRole ().name ().toUpperCase ()));
         user.setDepartment (Department.valueOf (userDetails.getDepartment ().name ().toUpperCase ()));

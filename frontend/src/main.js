@@ -22,7 +22,7 @@ const axiosInstance = axios.create({
 const app = createApp(App);
 
 // Make axios accessible globally
-app.config.globalProperties.$axios = {...axiosInstance}; 
+app.config.globalProperties.$axios = axiosInstance; 
 
 app.use(store);
 app.use(router);

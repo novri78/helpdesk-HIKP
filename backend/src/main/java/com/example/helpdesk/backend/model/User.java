@@ -31,8 +31,8 @@ public class User {
     private String email;
 
     @Column(nullable = false)
-    @JsonProperty("full_name")
-    private String fullName;
+    @JsonProperty("name")
+    private String name;
 
     @Column(nullable = false)
     @JsonProperty("password")
