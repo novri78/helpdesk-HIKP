@@ -15,7 +15,7 @@ import store from '@/store';
 import cookie from 'js-cookie'
 
 const routes = [
-  { path: '/', name: 'Login', component: Login, meta: {  guest: true } },
+  { path: '/', name: 'Login', component: Login, meta: { guest: true } },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard, meta: { requiresAuth: true } },
   { path: '/users', name: 'Users', component: Users, meta: { requiresAuth: true } },
   { path: '/user/add', name: 'AddUser', component: AddUser, meta: { requiresAuth: true, role: 'ADMIN' } },
@@ -26,8 +26,8 @@ const routes = [
   { path: '/categories', name: 'Categories', component: Categories, meta: { requiresAuth: true } },
   { path: '/category/add', name: 'AddCategory', component: AddCategory, meta: { requiresAuth: true } },
   { path: '/category/edit/:id', name: 'EditCategory', component: EditCategory, meta: { requiresAuth: true } },
-  { path: '/activity-logs', name: 'ActivityLogs', component: ActivityLogs, meta: { requiresAuth: true } }
-]
+  { path: '/activity-logs', name: 'ActivityLogs', component: ActivityLogs, meta: { requiresAuth: true } },
+];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
@@ -36,9 +36,16 @@ const router = createRouter({
 
 // store.dispatch('checkAuth');
 
-if(cookie.get('token') !== undefined){
-  let auth = cookie.get('token');
-  store.commit('SET_LOGIN', auth)
+// if(cookie.get('token') !== undefined){
+//   let auth = cookie.get('token');
+//   store.commit('SET_LOGIN', auth)
+// }
+
+// Check for token in cookies and set it in the store if available
+if (cookie.get('token') !== undefined) {
+  let token = cookie.get('token');
+  store.commit('SET_TOKEN', token);
+  store.dispatch('fetchUserData');
 }
 
 router.beforeEach((to, from, next) => {
