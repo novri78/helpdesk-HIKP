@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -48,8 +49,10 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findByEmail (email)
                 .orElseThrow(() -> new UsernameNotFoundException ("User not found"));
         if (passwordEncoder.matches(password, user.getPassword())) {
+            logger.info("User authenticated successfully: " + email);
             return userMapper.toDTO (user);
         } else {
+            logger.error("Invalid password for user: " + email);
             throw new BadCredentialsException ("Invalid password");
         }
     }
@@ -57,11 +60,14 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+                .orElseThrow(() -> {
+                    logger.error("User not found with email: " + email);
+                    return new UsernameNotFoundException ("User not found with email: "+email);
+                });
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
-                Collections.singletonList(user.getRole())
+                Collections.singletonList(new SimpleGrantedAuthority (user.getRole ().name ()))
         );
     }
 

@@ -26,11 +26,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/register", "/login").permitAll()
+                .antMatchers("/api/auth/register", "/api/auth/login").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .loginPage("/login")
+                .loginPage("/")
                 .defaultSuccessUrl("/dashboard")
                 .failureUrl("/login?error=true")
                 .and()
