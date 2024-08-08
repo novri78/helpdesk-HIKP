@@ -12,11 +12,12 @@ import Users from '../views/Users/ListUsers.vue';
 import AddUser from '../views/Users/AddUser.vue';
 import EditUser from '../views/Users/EditUser.vue';
 import store from '@/store';
+import cookie from 'js-cookie'
 
 const routes = [
-  { path: '/', name: 'Login', component: Login },
+  { path: '/', name: 'Login', component: Login, meta: {  guest: true } },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard, meta: { requiresAuth: true } },
-  { path: '/users', name: 'Users', component: Users, meta: { requiresAuth: true, role: 'ADMIN' } },
+  { path: '/users', name: 'Users', component: Users, meta: { requiresAuth: true } },
   { path: '/user/add', name: 'AddUser', component: AddUser, meta: { requiresAuth: true, role: 'ADMIN' } },
   { path: '/user/edit/:id', name: 'EditUser', component: EditUser, meta: { requiresAuth: true, role: 'ADMIN' } },
   { path: '/tickets', name: 'Tickets', component: Tickets, meta: { requiresAuth: true } },
@@ -33,10 +34,23 @@ const router = createRouter({
   routes
 })
 
+// store.dispatch('checkAuth');
+
+if(cookie.get('token') !== undefined){
+  let auth = cookie.get('token');
+  store.commit('SET_LOGIN', auth)
+}
+
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!store.getters.isAuthenticated) {
-      next( { name: 'Login' } );
+    if (!store.state.user) {
+      next({ name: 'Login' });
+    } else {
+      next();
+    }
+  } else if (to.matched.some((record) => record.meta.guest)) {
+    if (store.state.user) {
+      next({ name: 'Users' });
     } else {
       next();
     }

@@ -2,56 +2,55 @@ import { createStore } from 'vuex';
 import axios from 'axios';
 import cookie from 'js-cookie';
 
-const store = 
-  createStore({
-    state: {
-      user: null,
-      token: cookie.get('token') || '',
+export default createStore({
+  state: {
+    user: null,
+    token: null,
+  },
+  mutations: {
+    // SET_LOGIN(state, { user, token}) {
+    //   state.user = user;
+    //   state.token = token;
+    // },
+    SET_LOGIN(state, user) {
+      state.user = user;
     },
-    mutations: {
-      setUser(state, user) {
-        state.user = user;
-      },
-      setToken(state, token) {
-        state.token = token;
-        if (token) {
-          cookie.set('token', token, { expires: 1 });
-        } else {
-          cookie.remove('token');
-        }
-      },
-      CLEAR_AUTH(state) {
-        state.user = null;
-        state.token = '';
-        cookie.remove('token');
+    SET_LOGOUT(state) {
+      state.user = null;
+      state.token = null;
+    },
+  },
+  actions: {
+    async login({ commit }, { user, token}) {
+      try {
+        const resp = await this.$axios.post(`/auth/login`, credentials);
+        console.log('value_login', resp.data)
+
+        commit('SET_LOGIN', { user, token })
+        cookie.set('users', JSON.stringify({ user, token }), { expires: 1 });
+        
+      } catch (error) {
+        commit('SET_LOGOUT');
+        throw error;
       }
     },
-    actions: {
-      async login({ commit }, credentials) {
+    logout({ commit }) {
+      commit('SET_LOGOUT');
+      cookie.remove('userdata');
+    },
+    checkAuth( {commit} ) {
+      const cookieData = cookie.get('users');
+      if (cookieData) {
         try {
-          const resp = await axios.post(`/auth/login`, credentials);
-          const { token, user } = resp.data;
 
-          cookie.setToken('token', token);
-          commit('SET_USER', user);
-          commit('SET_TOKEN', token);
-
-          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
-        } catch(error) {
-          commit('CLEAR_AUTH');
-          throw error;
+        } catch (e) {
+          console.error("Failed to parse cookie data:", e);
         }
-      },
-      logout({ commit }) {
-        commit('CLEAR_AUTH');
-        delete axios.defaults.headers.common[`Authorization`];
-      },
+      }
     },
-    getters: {
-      isAuthenticated: state => !!state.token,
-      isUser: state => state.user
-    },
-  });
-
-  export default store;
+  },
+  getters: {
+    isAuthenticated: state => !!state.token,
+    isUser: state => state.user
+  },
+});
