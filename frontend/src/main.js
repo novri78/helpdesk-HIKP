@@ -19,24 +19,25 @@ const axiosInstance = axios.create({
     }
 });
 
-// axiosInstance.interceptors.request.use(
-//     (config) => {
-//         const token = store.state.token;
-//         if (token) {
-//             config.headers.Authorization = `Bearer ${token}`;
-//         }
-//         return config;
-//     },
-//     (error) => {
-//         return Promise.reject(error);
-//     }
-// );
+// Add a request interceptor
+axiosInstance.interceptors.request.use(
+    (config) => {
+        const token = store.state.token;
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
-// store.dispatch('checkAuth');
-
-if(cookie.get('token') !== undefined){
-    let auth = cookie.get('token');
-    store.commit('SET_LOGIN', auth)
+// Check for token in cookies and set it in the store if available
+if (cookie.get('token') !== undefined) {
+    let token = cookie.get('token');
+    store.commit('SET_TOKEN', token);
+    store.dispatch('fetchUserData');
 }
 
 // Initialize Vue app
