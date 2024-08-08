@@ -17,4 +17,7 @@ public class UserDTO {
     private Role role;
     private Department department;
     private String phoneNumber;
+
+    // Tambahkan field token
+    private String token;
 }
