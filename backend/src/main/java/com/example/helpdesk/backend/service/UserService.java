@@ -4,6 +4,7 @@ import com.example.helpdesk.backend.dto.UserDTO;
 import com.example.helpdesk.backend.mapper.UserMapper;
 import com.example.helpdesk.backend.model.User;
 import com.example.helpdesk.backend.repository.UserRepository;
+import com.example.helpdesk.backend.util.JwtTokenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,9 @@ public class UserService implements UserDetailsService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
     @Transactional
     public UserDTO registerUser(@Valid UserDTO userDTO) {
         logger.info("Registering user with email: {}", userDTO.getEmail());
@@ -50,7 +54,10 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException ("User not found"));
         if (passwordEncoder.matches(password, user.getPassword())) {
             logger.info("User authenticated successfully: " + email);
-            return userMapper.toDTO (user);
+            String token = jwtTokenUtil.generateToken (user.getEmail ());
+            UserDTO userDTO = userMapper.toDTO (user);
+            userDTO.setToken (token);               // Set token ke UserDTO
+            return userDTO;
         } else {
             logger.error("Invalid password for user: " + email);
             throw new BadCredentialsException ("Invalid password");
