@@ -15,41 +15,42 @@ const store =
       setToken(state, token) {
         state.token = token;
         if (token) {
-          cookie.set('token', token, { expires: 7 });
+          cookie.set('token', token, { expires: 1 });
         } else {
           cookie.remove('token');
         }
       },
+      CLEAR_AUTH(state) {
+        state.user = null;
+        state.token = '';
+        cookie.remove('token');
+      }
     },
     actions: {
       async login({ commit }, credentials) {
-        const response = await axios.post('/auth/login', credentials);
-        const { user, token } = response.data;
-        commit('setUser', user);
-        commit('setToken', token);
+        try {
+          const resp = await axios.post(`/auth/login`, credentials);
+          const { token, user } = resp.data;
+
+          cookie.setToken('token', token);
+          commit('SET_USER', user);
+          commit('SET_TOKEN', token);
+
+          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+        } catch(error) {
+          commit('CLEAR_AUTH');
+          throw error;
+        }
       },
       logout({ commit }) {
-        commit('setUser', null);
-        commit('setToken', '');
-      },
-      checkAuth({ commit }) {
-        const token = cookie.get('token');
-        if (token) {
-          axios.get('/auth/me', {
-            headers: { Authorization: `Bearer ${token}` },
-          })
-          .then(response => {
-            commit('setUser', response.data);
-          })
-          .catch(() => {
-            commit('setToken', '');
-          });
-        }
+        commit('CLEAR_AUTH');
+        delete axios.defaults.headers.common[`Authorization`];
       },
     },
     getters: {
-      isAuthenticated: state => !!state.user,
-      isUser: state => state.user?.role === 'USER',
+      isAuthenticated: state => !!state.token,
+      isUser: state => state.user
     },
   });
 

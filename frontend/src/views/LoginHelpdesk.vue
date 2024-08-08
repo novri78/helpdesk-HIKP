@@ -1,48 +1,46 @@
 <template>
-  <div class="login-container">
-    <h1>Login</h1>
-    <form @submit.prevent="login">
-      <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" v-model="username" id="username" required />
-      </div>
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" v-model="password" id="password" required />
-      </div>
-      <button type="submit">Login</button>
-    </form>
-    <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-  </div>
+  <header>
+    <h2>Helpdesk Login</h2>
+  </header>
+
+  <main>
+    <div class="login-container">
+      <form @submit.prevent="login">
+        <div>
+          <label>Email:</label>
+          <input type="email" v-model="email" required />
+        </div>
+        <div>
+          <label>Password:</label>
+          <input type="password" v-model="password" required />
+        </div>
+        <button type="submit">Login</button>
+        <p v-if="error">{{ error }}</p>
+      </form>
+    </div>
+  </main>
+
+  <footer></footer>
 </template>
 
 <script>
 export default {
+  name: "Login",
   data() {
     return {
-      username: '',
-      password: '',
-      errorMessage: ''
+      email: "",
+      password: "",
+      error: "",
     };
   },
   methods: {
-    login() {
-      this.$store.dispatch('login', {
-        username: this.username,
-        password: this.password,
-      })
-      .then(() => {
-        const role = this.$store.state.user.role;
-        if (role === 'USER') {
-          this.$router.push({ name: 'UserDashboard' });
-        } else {
-          this.$router.push({ name: 'AdminDashboard' });
-        }
-      })
-      .catch(() => {
-        this.errorMessage = 'Invalid username or password';
-      });
-    },
+    async login( ) {
+      try {
+        const resp = await $store.dispatch()
+      } catch (e) {
+        this.error = 'Invalid email or password';
+      }
+    }
   },
 };
 </script>
