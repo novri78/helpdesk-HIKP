@@ -19,11 +19,11 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping
-    public UserDTO createUser(@RequestBody UserDTO userDTO) {
-        System.out.println ("Received user :" + userDTO );
-        return userService.createUser (userDTO);
-    }
+//    @PostMapping
+//    public UserDTO createUser(@RequestBody UserDTO userDTO) {
+//        System.out.println ("Received user :" + userDTO );
+//        return userService.createUser (userDTO);
+//    }
 
     @GetMapping
     public List<UserDTO> getAllUsers() {

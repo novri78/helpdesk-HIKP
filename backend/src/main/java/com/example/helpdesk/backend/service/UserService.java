@@ -1,101 +1,96 @@
 package com.example.helpdesk.backend.service;
 
-import com.example.helpdesk.backend.constant.Department;
-import com.example.helpdesk.backend.constant.Role;
 import com.example.helpdesk.backend.dto.UserDTO;
+import com.example.helpdesk.backend.mapper.UserMapper;
 import com.example.helpdesk.backend.model.User;
 import com.example.helpdesk.backend.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     private UserRepository userRepository;
 
-    // Convert User to UserDTO
-    private UserDTO convertToDTO(User user) {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setEmail(user.getEmail());
-        userDTO.setName (user.getName());
-        userDTO.setPassword(user.getPassword());
-        userDTO.setRole(Role.valueOf (user.getRole ().name ()));
-        userDTO.setDepartment(Department.valueOf (user.getDepartment ().name ()));
-        userDTO.setPhoneNumber(user.getPhoneNumber());
-        return userDTO;
-    }
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    // Convert UserDTO to User
-    private User convertToEntity(UserDTO userDTO) {
-        User user = new User();
-        user.setId(userDTO.getId());
-        user.setEmail(userDTO.getEmail());
-        user.setName (userDTO.getName ());
-        user.setPassword(userDTO.getPassword());
-        try{
-            user.setRole(Role.valueOf (userDTO.getRole ( ).name ( ).toUpperCase ()));
-            user.setDepartment(Department.valueOf(userDTO.getDepartment ().name ().toUpperCase ()));
-        }
-        catch (IllegalArgumentException e) {
-            logger.error ("Invalid enum value for Role or Department", e);
-            throw e;
-        }
-        user.setPhoneNumber(userDTO.getPhoneNumber());
-        return user;
-    }
+    @Autowired
+    private UserMapper userMapper;
 
     @Transactional
-    public UserDTO createUser(UserDTO userDTO) {
-        logger.info("Creating user with email: {}", userDTO.getEmail());
-        User user = convertToEntity (userDTO);
-        userRepository.save (user);
-        return convertToDTO (user);
+    public UserDTO registerUser(@Valid UserDTO userDTO) {
+        logger.info("Registering user with email: {}", userDTO.getEmail());
+        userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        User user = userMapper.toEntity(userDTO);
+        userRepository.save(user);
+        return userMapper.toDTO(user);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
+    public UserDTO authenticateUser(String email, String password) {
+        logger.info("Authenticating user with email: {}", email);
+        User user = userRepository.findByEmail (email)
+                .orElseThrow(() -> new UsernameNotFoundException ("User not found"));
+        if (passwordEncoder.matches(password, user.getPassword())) {
+            return userMapper.toDTO (user);
+        } else {
+            throw new BadCredentialsException ("Invalid password");
+        }
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getPassword(),
+                Collections.singletonList(user.getRole())
+        );
+    }
+
+
+
+    @Transactional(readOnly = true)
     public List<UserDTO> getAllUsers() {
         logger.info("Fetching all users");
         return  userRepository.findAll ().stream ()
-                .map(this::convertToDTO)
+                .map(userMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public UserDTO getUserById(Long id) {
         logger.info("Fetching user with id: {}", id);
-        User user = userRepository.findById (id)
-                .orElseThrow(() -> {
-                    logger.error("User not found for id: {}", id);
-                    return new RuntimeException("User not found for id :: " + id);
-                });
-       return convertToDTO (user);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found for id :: " + id));
+       return userMapper.toDTO (user);
     }
 
     @Transactional
-    public UserDTO updateUserById(Long id, UserDTO userDetails) {
+    public UserDTO updateUserById(Long id, @Valid UserDTO userDetails) {
         logger.info("Updating user with id: {}", id);
         User user = userRepository.findById (id)
-                .orElseThrow(() -> {
-                    logger.error("User not found for id: {}", id);
-                    return new RuntimeException("User not found for id :: " + id);
-                });
-        user.setEmail(userDetails.getEmail());
-        user.setName (userDetails.getName ());
-        user.setPassword (userDetails.getPassword ( ));
-        user.setRole (Role.valueOf (userDetails.getRole ().name ().toUpperCase ()));
-        user.setDepartment (Department.valueOf (userDetails.getDepartment ().name ().toUpperCase ()));
-        user.setPhoneNumber(userDetails.getPhoneNumber());
+                .orElseThrow(() -> new RuntimeException("User not found for id :: " + id));
+        userMapper.updateEntity (userDetails, user);
         userRepository.save (user);
-        return convertToDTO (user);
+        return userMapper.toDTO (user);
     }
 
     @Transactional
