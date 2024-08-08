@@ -6,7 +6,9 @@ import com.example.helpdesk.backend.dto.UserDTO;
 import com.example.helpdesk.backend.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UserMapper {
     private static final Logger logger = LoggerFactory.getLogger(UserMapper.class);
 
