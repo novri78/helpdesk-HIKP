@@ -29,4 +29,12 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
         return ResponseEntity.ok ( userService.authenticateUser (userDTO.getEmail (), userDTO.getPassword ()) );
     }
+
+    @PostMapping("/me")
+    public ResponseEntity<?> getAuthenticatedUser(@RequestBody UserDTO userDTO) {
+        // Retrieve the authenticated user's email from the SecurityContext
+//        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+//        UserDTO userDTO = userService.findUserByEmail(userEmail);
+        return ResponseEntity.ok(userService.getAuthenticatedUser (userDTO.getToken ()));
+    }
 }

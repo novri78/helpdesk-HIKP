@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
@@ -76,6 +77,19 @@ public class UserService implements UserDetailsService {
                 user.getPassword(),
                 Collections.singletonList(new SimpleGrantedAuthority (user.getRole ().name ()))
         );
+    }
+
+    @Transactional(readOnly = true)
+    public UserDTO getAuthenticatedUser(String token) {
+        logger.info("Getting authenticated user from token");
+        String email = jwtTokenUtil.getUsernameFromToken(token);
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isPresent()) {
+            return userMapper.toDTO(user.get());
+        } else {
+            logger.error("User not found with email: " + email);
+            throw new UsernameNotFoundException("User not found with email: " + email);
+        }
     }
 
 
