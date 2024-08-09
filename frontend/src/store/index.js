@@ -1,71 +1,60 @@
 import { createStore } from 'vuex';
-import axios from 'axios';
 import cookie from 'js-cookie';
 
 export default createStore({
-  state: {
-    user: null,
-    token: null,
-  },
-  mutations: {
-    SET_LOGIN(state, {user,token}) {
-      state.user = user;
-      state.token = token;
+    state: {
+        user: null,
+        token: null,
+        errorMessage: null,
     },
-    SET_LOGOUT(state) {
-      state.user = null;
-      state.token = null;
+    mutations: {
+        setUser(state, userData) {
+            state.user = userData;
+        },
+        setToken(state, tokenData) {
+            state.token = tokenData;
+        },
+        setErrorMessage(state, message) {
+            state.errorMessage = message;
+        },
     },
-  },
-  actions: {
-    // async login({ commit }, { user, token}) {
-    //   try {
-    //     const resp = await this.$axios.post(`/auth/login`, credentials);
-    //     console.log('value_login', resp.data)
+    actions: {
+        async authenticateUser({ commit }, { email, password }) {
+            try {
+                // Ensure the Axios instance from the store is used
+                const axiosInstance = this.$axios;
 
-    //     commit('SET_LOGIN', { user, token })
-    //     cookie.set('users', JSON.stringify({ user, token }), { expires: 1 });
-        
-    //   } catch (error) {
-    //     commit('SET_LOGOUT');
-    //     throw error;
-    //   }
-    // },
-    async login({ commit }, credentials) {
-      try {
-        const resp = await axios.post(`/auth/login`, credentials);
-        const { token, user } = resp.data;
+                // Make the API request
+                const response = await axiosInstance.post('/auth/login', { email, password });
+                const { token, ...userData } = response.data;
 
-        commit('SET_LOGIN', user);
-        commit('SET_TOKEN', token);
-        cookie.set('token', token, { expires: 1 });
-        cookie.set('user', JSON.stringify(user), { expires: 1 });
-      } catch (error) {
-        commit('SET_LOGOUT');
-        throw error;
-      }
+                // Commit the user and token data to the store
+                commit('setUser', userData);
+                commit('setToken', token);
+                cookie.set('authToken', token);
+
+                console.log('Login successful:', response.data);
+                return true;
+            } catch (error) {
+                let errorMsg = 'Login failed';
+                if (error.response) {
+                    errorMsg = error.response.data?.message || error.response.statusText || errorMsg;
+                }
+                commit('setErrorMessage', errorMsg);
+                console.error('Login error:', errorMsg);
+                return false;
+            }
+        },
+        logoutUser({ commit }) {
+            commit('setUser', null);
+            commit('setToken', null);
+            cookie.remove('authToken');
+            console.log('User logged out');
+        },
     },
-    logout({ commit }) {
-      commit('SET_LOGOUT');
-      cookie.remove('user');
-      cookie.remove('token');
+    getters: {
+        isAuthenticated: state => !!state.token,
+        getUserRole: state => state.user ? state.user.role : null,
+        getErrorMessage: state => state.errorMessage,
     },
-    checkAuth({ commit }) {
-      const token = cookie.get('token');
-      if (token) {
-        commit('SET_TOKEN', token);
-        this.dispatch('fetchUserData');
-      }
-    },
-    fetchUserData({ commit }) {
-      const user = JSON.parse(cookie.get('user'));
-      if (user) {
-        commit('SET_LOGIN', user);
-      }
-    },
-  },
-  getters: {
-    isAuthenticated: state => !!state.token,
-    isUser: state => state.user
-  },
 });

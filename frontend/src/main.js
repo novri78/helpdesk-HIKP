@@ -4,47 +4,28 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import axios from 'axios';
-import cookie from 'js-cookie'
 
 import { createBootstrap } from 'bootstrap-vue-next';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue-next/dist/bootstrap-vue-next.css';
 
-// Set base URL for Axios
+// Create an Axios instance with the base URL
 const axiosInstance = axios.create({
-    baseURL: 'http://localhost:8080/api',
+    baseURL: 'http://localhost:8080/api', // Base URL for all API requests
     timeout: 180000,
     headers: {
         'Content-Type': 'application/json'
     }
 });
 
-// Add a request interceptor
-axiosInstance.interceptors.request.use(
-    (config) => {
-        const token = store.state.token;
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
-
-// Check for token in cookies and set it in the store if available
-if (cookie.get('token') !== undefined) {
-    let token = cookie.get('token');
-    store.commit('SET_TOKEN', token);
-    store.dispatch('fetchUserData');
-}
-
 // Initialize Vue app
 const app = createApp(App);
 
-// Make axios accessible globally
+// Make axiosInstance globally accessible through the app
 app.config.globalProperties.$axios = axiosInstance; 
+
+// Make axiosInstance available to the Vuex store by setting it on the store
+store.$axios = axiosInstance; // This is important
 
 app.use(store);
 app.use(router);
