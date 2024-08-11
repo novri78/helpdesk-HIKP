@@ -31,29 +31,69 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapActions } from "vuex";
+import cookie from "js-cookie";
 
 export default {
-  name: 'HelpdeskLogin',
+  name: "HelpdeskLogin",
   data() {
     return {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
+      errorMessage: "",
     };
   },
-  computed: {
-    ...mapState(['errorMessage']),
-  },
   methods: {
-    ...mapActions(['authenticateUser']),
+    ...mapActions(["checkAuth", "login", "logout"]),
     resetFields() {
-      this.email = '';
-      this.password = '';
+      this.email = "";
+      this.password = "";
     },
     async handleLogin() {
-      const loginSuccessful = await this.authenticateUser({ email: this.email, password: this.password });
-      if (loginSuccessful) {
-        this.$router.push({ name: 'Users' });
+      // Updated method name
+      try {
+        console.log("Submitting login request with:", {
+          email: this.email,
+          password: this.password,
+        });
+        const loginResponse = await this.$axios.post("/auth/login", {
+          email: this.email,
+          password: this.password,
+        });
+        
+        // Handle successful login
+        console.log("Login successful:", loginResponse.data);
+
+        // Store the token in Vuex
+        const { token } = loginResponse.data;
+        this.getDataUser(token); // Retrieve user data after login
+
+      } catch (error) {
+        console.error(
+          "Login failed with error:",
+          error.response ? error.response.data : error.message
+        );
+        this.errorMessage = error.response?.data?.message || "Login failed.";
+      }
+    },
+    async getDataUser(token) {
+      try {
+        const profileResp = await this.$axios.get("/users", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const user = profileResp.data;
+        console.log('info data: ', user);
+
+        this.login({ user, token }); // Dispatch Vuex login action
+        this.$router.push({ name: "Users" });
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          this.errorMessage = "Unauthorized access - please log in again.";
+          this.logout();
+        } else {
+          console.error(error);
+          this.errorMessage = "Failed to retrieve user data.";
+        }
       }
     },
   },

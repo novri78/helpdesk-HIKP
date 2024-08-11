@@ -62,6 +62,10 @@ export default {
     routeToAddUser() {
       this.$router.push({ name: "AddUser" });
     },
+    // async fetchUsers() {
+    //   const setListDataUser = await this.$store.dispatch(`checkDataListUsers`);
+    //   this.users = setListDataUser.data;
+    // },
     fetchUsers() {
       this.$axios
         .get('/users')
@@ -71,7 +75,7 @@ export default {
             iD: user.id,
             email: user.email,
             pass: user.password,
-            fullName: user.fullName, // Adjust this field name according to your API response
+            fullName: user.name, // Adjust this field name according to your API response
             phone: user.phoneNumber, // Adjust this field name according to your API response
             dept: user.department, // Adjust this field name according to your API response
             roles: user.role // Adjust this field name according to your API response

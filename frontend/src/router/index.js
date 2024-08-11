@@ -33,24 +33,47 @@ const router = createRouter({
   routes,
 });
 
+// router.beforeEach(async (to, from, next) => {
+
+//   await store.dispatch('fetchUserData'); // Ensure user data is loaded if token exists
+//   const isAuthenticated = store.getters.isAuthenticated;
+//   const userRole = store.getters.getUserRole;
+
+//   //CHECK STATUS AUTH & ROLE_USER
+//   console.log('Auth status:', isAuthenticated, 'User role:', userRole);
+
+//   if (to.matched.some(record => record.meta.requiresAuth)) {
+//     if (store.state.token == null) {
+//       console.log('Not authenticated, redirecting to login');
+//       return next({ name: 'Login' });
+//     } else if (to.meta.role && to.meta.role !== userRole) {
+//       console.log(`Unauthorized, role required: ${to.meta.role}, redirecting to dashboard`);
+//       return next({ name: 'Dashboard' });
+//     }
+//   } else if (to.matched.some(record => record.meta.guest) && !store.state.token == null) {
+//     console.log('Already authenticated, redirecting to user page list');
+//     return next({ name: 'Users' });
+//   }
+
+//   next();
+// });
+
 router.beforeEach((to, from, next) => {
-    const isAuthenticated = store.getters.isAuthenticated;
-    const userRole = store.getters.userRole;
-
-    if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (!isAuthenticated) {
-            console.log('Not authenticated, redirecting to login');
-            return next({ name: 'Login' });
-        } else if (to.meta.role && to.meta.role !== userRole) {
-            console.log(`Unauthorized, role required: ${to.meta.role}, redirecting to dashboard`);
-            return next({ name: 'Dashboard' });
-        }
-    } else if (to.matched.some(record => record.meta.guest) && isAuthenticated) {
-        console.log('Already authenticated, redirecting to dashboard');
-        return next({ name: 'Dashboard' });
+  const isAuthenticated = store.getters.isAuthenticated;
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!isAuthenticated) {
+      next('/');
     }
-
+    else if (to.matched.some(record => record.meta.guest) && isAuthenticated) {
+      next('/dashboard');
+    } else {
+      next();
+    }
+  } else if (to.meta.role && to.meta.role !== store.getters.getUserRole) {
+    next('/users');
+  } else {
     next();
+  }
 });
 
 export default router;
