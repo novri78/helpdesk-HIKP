@@ -53,9 +53,10 @@ public class UserService implements UserDetailsService {
         logger.info("Authenticating user with email: {}", email);
         User user = userRepository.findByEmail (email)
                 .orElseThrow(() -> new UsernameNotFoundException ("User not found"));
+
         if (passwordEncoder.matches(password, user.getPassword())) {
             logger.info("User authenticated successfully: " + email);
-            String token = jwtTokenUtil.generateToken (user.getEmail ());
+            String token = jwtTokenUtil.generateToken (user);
             UserDTO userDTO = userMapper.toDTO (user);
             userDTO.setToken (token);               // Set token ke UserDTO
             return userDTO;

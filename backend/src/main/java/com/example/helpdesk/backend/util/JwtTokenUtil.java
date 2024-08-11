@@ -1,8 +1,10 @@
 package com.example.helpdesk.backend.util;
 
+import com.example.helpdesk.backend.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -24,18 +26,19 @@ public class JwtTokenUtil {
                 .compact();
     }
 
-    public String generateToken(String username) {
+    public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        return doGenerateToken(claims, username);
+        claims.put("role", user.getRole().name()); // Adding role to claims
+        return doGenerateToken(claims, user.getEmail ());
     }
 
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
-    public Boolean validateToken(String token, String username) {
-        final String tokenUsername = getUsernameFromToken(token);
-        return (tokenUsername.equals(username) && !isTokenExpired(token));
+    public Boolean validateToken(String token, UserDetails userDetails) {
+        final String username = getUsernameFromToken(token);
+        return (username.equals(userDetails.getUsername ()) && !isTokenExpired(token));
     }
 
     private Claims getAllClaimsFromToken(String token) {
