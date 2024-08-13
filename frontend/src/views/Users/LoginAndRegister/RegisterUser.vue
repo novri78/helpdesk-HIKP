@@ -1,25 +1,48 @@
 <template>
-  <header>
-    <h1 class="text-center white">Form Add User</h1>
-  </header>
+  <header></header>
   <main>
     <div class="form-container">
-      <form @submit.prevent="addUser">
+      <h2>Register</h2>
+      <form @submit.prevent="registerUser">
         <div class="form-group">
           <label for="email">Email:</label>
-          <input type="email" v-model="form.email" id="email" class="form-control" required />
+          <input
+            type="email"
+            v-model="form.email"
+            id="email"
+            class="form-control"
+            required
+          />
         </div>
         <div class="form-group">
-          <label for="name">Full Name:</label>
-          <input type="text" v-model="form.name" id="name" class="form-control" required />
+          <label for="fullName">Full Name:</label>
+          <input
+            type="text"
+            v-model="form.fullName"
+            id="fullName"
+            class="form-control"
+            required
+          />
         </div>
         <div class="form-group">
           <label for="password">Password:</label>
-          <input type="password" v-model="form.password" id="password" class="form-control" required />
+          <input
+            type="password"
+            v-model="form.password"
+            id="password"
+            class="form-control"
+            required
+          />
         </div>
         <div class="form-group">
           <label for="phoneNumber">Phone Number:</label>
-          <input type="phoneNumber" v-model="form.phoneNumber" id="phoneNumber" class="form-control" required />
+          <input
+            type="phoneNumber"
+            v-model="form.phoneNumber"
+            id="phoneNumber"
+            class="form-control"
+            required
+          />
         </div>
         <div class="form-group">
           <label for="role">ROLE:</label>
@@ -32,16 +55,27 @@
         </div>
         <div class="form-group">
           <label for="department">DEPARTMENT:</label>
-          <select v-model="form.department" id="department" class="form-control" required>
+          <select
+            v-model="form.department"
+            id="department"
+            class="form-control"
+            required
+          >
             <option value="" disabled>Select Department</option>
-            <option v-for="department in departments" :key="department" :value="department">
+            <option
+              v-for="department in departments"
+              :key="department"
+              :value="department"
+            >
               {{ department }}
             </option>
           </select>
         </div>
         <div class="button-group">
-          <button type="button" class="btn btn-secondary" @click="cancelAdd">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-secondary" @click="cancelAdd">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary">Register</button>
         </div>
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       </form>
@@ -52,60 +86,69 @@
 
 <script>
 export default {
-  name: 'AddUser',
+  name: "RegisterUser",
   data() {
     return {
       form: {
-        email: '',	
-        name: '',
-        password: '',
-        role: '',
-        department: '',	
-        phoneNumber: '',	
+        email: "",
+        fullName: "",
+        password: "",
+        role: "USER", // Default role
+        department: "",
+        phoneNumber: "",
       },
-      errorMessage: '',
+      errorMessage: "",
+      roles: ["USER"], // Restrict registration roles
       departments: [
-        'OPERATION',
-        'FINANCE',
-        'FUNDING',
-        'ITSUPPORT',
-        'DIRECTOR',
-        'ITDEVELOPER',
-        'GAOPERATION',
-        'SUPERADMIN'
+        "OPERATION",
+        "FINANCE",
+        "FUNDING",
+        "ITSUPPORT",
+        "DIRECTOR",
+        "ITDEVELOPER",
+        "GAOPERATION",
+        "SUPERADMIN",
       ],
-      roles: [
-        'ADMIN',
-        'USER',
-        'SUPPORT'
-      ]
+      submitted: false,
     };
   },
   methods: {
     cancelAdd() {
-      this.$router.push({ name: "Users" });
+      this.$router.push({ name: "Login" });
     },
-    addUser() {
-      this.$axios
-        .post("/users", this.form)
-        .then(() => {
-          this.$router.push({ name: "Users" })
-            .then(() => {
-              return alert("You have been succeed add data user.");
-            });
-        })
-        .catch((error) => {
-          this.errorMessage = "Error adding user: " + error.message;
-        });
+    registerUser() {
+      this.submitted = true;
+      if (this.form) {
+        this.$axios
+          .post("/api/auth/register", {
+            ...this.form,
+            isApproved: false // New users are not approved by default
+          })
+          .then(() => {
+            alert("Registration successful! Please wait for admin approval.");
+            this.resetForm();
+          })
+          .catch((error) => {
+            console.error("Registration failed:", error);
+            alert("Registration failed. Please try again.");
+          });
+      } else {
+        alert("Please fill in all required fields.");
+      }
+    },
+    resetForm() {
+      this.form.email = "";
+      this.form.password = "";
+      this.form.fullName = "";
+      this.form.phoneNumber = "";
+      this.form.role = "USER";
+      this.form.department = "";
+      this.submitted = false;
     },
   },
-  mounted() {
-  console.log(this.departments);
-  console.log(this.roles);
-}
 };
-</script>
 
+</script>
 
 <style scoped>
 * {

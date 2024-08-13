@@ -3,7 +3,9 @@
     <header class="users-list">
       <h1>Users</h1>
     </header>
-    <button class="btn btn-primary mb-3" @click="routeToAddUser">Add User</button>
+    <button class="btn btn-primary mb-3" @click="routeToAddUser">
+      Add User
+    </button>
     <main class="table-responsive">
       <table class="table">
         <thead>
@@ -16,24 +18,38 @@
             <th>Department</th>
             <th>Phone</th>
             <th>Role</th>
+            <th>Approval Status</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(user, index) in users" :key="user.id">
             <td>{{ index + 1 }}</td>
-            <td>{{ user.iD }}</td>
+            <td>{{ user.id }}</td>
             <td>{{ user.email }}</td>
-            <td>{{ user.fullName }}</td>
-            <td>{{ user.pass }}</td>
-            <td>{{ user.dept }}</td>
-            <td>{{ user.phone }}</td>
-            <td>{{ user.roles }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.password }}</td>
+            <td>{{ user.department }}</td>
+            <td>{{ user.phoneNumber }}</td>
+            <td>{{ user.role }}</td>
+            <td>{{ user.isApproved ? "Approved" : "Pending" }}</td>
             <td>
-              <button class="btn btn-secondary btn-sm" @click="routeToEditUser(user.iD)">
+              <button
+                class="btn btn-secondary btn-sm"
+                @click="routeToApproveUser(user.id)"
+              >
+                Approve User
+              </button>
+              <button
+                class="btn btn-secondary btn-sm"
+                @click="routeToEditUser(user.id)"
+              >
                 Edit
               </button>
-              <button class="btn btn-danger btn-sm" @click="confirmDelete(user.iD)">
+              <button
+                class="btn btn-danger btn-sm"
+                @click="confirmDelete(user.id)"
+              >
                 Delete
               </button>
             </td>
@@ -62,52 +78,46 @@ export default {
     routeToAddUser() {
       this.$router.push({ name: "AddUser" });
     },
-    // async fetchUsers() {
-    //   const setListDataUser = await this.$store.dispatch(`checkDataListUsers`);
-    //   this.users = setListDataUser.data;
-    // },
     fetchUsers() {
       this.$axios
-        .get('/users')
-        .then(res => {
-          console.log("API Response", res.data); // Log the entire response
-          this.users = res.data.map(user => ({
-            iD: user.id,
-            email: user.email,
-            pass: user.password,
-            fullName: user.name, // Adjust this field name according to your API response
-            phone: user.phoneNumber, // Adjust this field name according to your API response
-            dept: user.department, // Adjust this field name according to your API response
-            roles: user.role // Adjust this field name according to your API response
+        .get("/users")
+        .then((response) => {
+          // Map the response data to ensure correct mapping of properties
+          this.users = response.data.map((user) => ({
+            ...user,
+            isApproved: user.isApproved, // Correctly map the is_Approved property to isApproved
           }));
-          console.log("Mapped Users", this.users); // Log the mapped users
+          console.log("Fetched Users", this.users); // Log the mapped users
         })
-        .catch(error => {
+        .catch((error) => {
           this.errorMessage = "Failed to fetch users: " + error.message;
+          console.error("Error fetching users:", error);
         });
     },
     routeToEditUser(id) {
-      this.$router.push({ name: "EditUser",  params: { id }  });
-      console.log("no id", id);
+      this.$router.push({ name: "EditUser", params: { id } });
+    },
+    routeToApproveUser(id) {
+      this.$router.push({ name: "ApproveUser", params: { id } });
     },
     confirmDelete(id) {
-      if (confirm("Are you sure you want to delete this user no ID: " + id)) {
+      if (confirm("Are you sure you want to delete this user?")) {
         this.$axios
           .delete(`/users/${id}`)
           .then(() => {
             this.fetchUsers(); // Refresh the list after deletion
           })
-          .catch(error => {
+          .catch((error) => {
             this.errorMessage = "Failed to delete user: " + error.message;
           });
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
 * {
   margin: 0;
@@ -116,7 +126,7 @@ export default {
 }
 
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   background-color: #f4f4f4;
   color: #333;
 }
@@ -131,7 +141,7 @@ header.users-list {
 }
 
 button {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .table-responsive {
@@ -147,7 +157,8 @@ button {
   margin: 0;
 }
 
-.table th, .table td {
+.table th,
+.table td {
   padding: 12px 15px;
   border-bottom: 1px solid #ddd;
   text-align: left;
@@ -211,15 +222,20 @@ button {
 }
 
 /* 3D Effects */
-.table, .btn {
+.table,
+.btn {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.table th, .table td, .btn {
+.table th,
+.table td,
+.btn {
   transition: transform 0.2s;
 }
 
-.table th:hover, .table td:hover, .btn:hover {
+.table th:hover,
+.table td:hover,
+.btn:hover {
   transform: translateY(-2px);
 }
 
@@ -228,7 +244,7 @@ button {
   .table thead {
     display: none;
   }
-  
+
   .table tr {
     display: block;
     margin-bottom: 10px;
@@ -237,7 +253,7 @@ button {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 10px;
   }
-  
+
   .table td {
     display: flex;
     justify-content: space-between;

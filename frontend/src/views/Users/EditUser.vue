@@ -5,33 +5,37 @@
   <main>
     <div class="form-container">
       <form @submit.prevent="editUser">
-        <div class="form-group" v-for="(value, key) in form" :key="key" v-if="key !== 'role' && key !== 'department'">
-          <label :for="key">{{ key.replace('_', ' ').toUpperCase() }}:</label>
-          <input
-            :type="key === 'email' ? 'email' : 'text'"
-            v-model="form[key]"
-            :id="key"
-            class="form-control"
-            required
-          />
-        </div>
-
         <div class="form-group">
-          <label for="department">DEPARTMENT:</label>
-          <select v-model="form.department" id="department" class="form-control" required>
-            <option value="" disabled>Select Department</option>
-            <option v-for="department in departments" :key="department" :value="department">
-              {{ department }}
-            </option>
-          </select>
+          <label for="email">Email:</label>
+          <input type="email" v-model="form.email" id="email" class="form-control" required />
         </div>
-
         <div class="form-group">
-          <label for="role">ROLE:</label>
+          <label for="fullName">Full Name:</label>
+          <input type="text" v-model="form.name" id="fullName" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input type="password" v-model="form.password" id="password" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label for="phoneNumber">Phone Number:</label>
+          <input type="text" v-model="form.phoneNumber" id="phoneNumber" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label for="role">Role:</label>
           <select v-model="form.role" id="role" class="form-control" required>
             <option value="" disabled>Select Role</option>
             <option v-for="role in roles" :key="role" :value="role">
               {{ role }}
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="department">Department:</label>
+          <select v-model="form.department" id="department" class="form-control" required>
+            <option value="" disabled>Select Department</option>
+            <option v-for="department in departments" :key="department" :value="department">
+              {{ department }}
             </option>
           </select>
         </div>
@@ -53,13 +57,12 @@ export default {
   data() {
     return {
       form: {
-        id: this.$route.params.id,
-        department: '',
+        id: '',
         email: '',
-        fullName: '',
+        name: '',
+        password: '',
         phoneNumber: '',
-        position: '',
-        username: '',
+        department: '',
         role: ''
       },
       errorMessage: '',
@@ -88,12 +91,18 @@ export default {
       this.$router.push({ name: "Users" });
     },
     fetchUserData() {
-      const id = this.$route.params.id; // Assuming the user ID is passed as a route parameter
+      const id = this.$route.params.id;
       this.$axios
         .get(`/users/${id}`)
         .then((response) => {
-          this.form = response.data;
-          console.log("Data User by Id", this.form); // Log data user
+          const user = response.data;
+          this.form.id = user.id;
+          this.form.email = user.email;
+          this.form.fullName = user.name;
+          this.form.password = user.password;
+          this.form.phoneNumber = user.phoneNumber;
+          this.form.department = user.department;
+          this.form.role = user.role;
         })
         .catch((error) => {
           this.errorMessage = "Error fetching user data: " + error.message;

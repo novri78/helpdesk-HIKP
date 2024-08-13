@@ -25,6 +25,10 @@
         <button type="submit">Login</button>
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       </form>
+      <p>
+        Don't have an account?
+        <router-link to="/register">Register here</router-link>
+      </p>
     </div>
   </main>
   <footer></footer>
@@ -45,54 +49,62 @@ export default {
   },
   methods: {
     ...mapActions(["checkAuth", "login", "logout"]),
+    
     resetFields() {
       this.email = "";
       this.password = "";
     },
+
     async handleLogin() {
-      // Updated method name
       try {
-        console.log("Submitting login request with:", {
-          email: this.email,
-          password: this.password,
-        });
+        console.log("Attempting login with:", { email: this.email, password: this.password });
+
         const loginResponse = await this.$axios.post("/auth/login", {
           email: this.email,
           password: this.password,
         });
-        
-        // Handle successful login
-        console.log("Login successful:", loginResponse.data);
 
-        // Store the token in Vuex
+        alert("Login successful");
+        console.log("Login response:", loginResponse.data);
+
         const { token } = loginResponse.data;
-        this.getDataUser(token); // Retrieve user data after login
+        this.fetchUserData(token);
 
       } catch (error) {
-        console.error(
-          "Login failed with error:",
-          error.response ? error.response.data : error.message
-        );
-        this.errorMessage = error.response?.data?.message || "Login failed.";
+        console.error("Login failed:", error.response ? error.response.data : error.message);
+        this.errorMessage = error.response?.data?.message || "Login failed. Please try again.";
       }
     },
-    async getDataUser(token) {
+
+    async fetchUserData(token) {
       try {
         const profileResp = await this.$axios.get("/users", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const user = profileResp.data;
-        console.log('info data: ', user);
 
-        this.login({ user, token }); // Dispatch Vuex login action
-        this.$router.push({ name: "Users" });
-      } catch (error) {
-        if (error.response && error.response.status === 401) {
-          this.errorMessage = "Unauthorized access - please log in again.";
-          this.logout();
+        const users = profileResp.data;
+        if (!Array.isArray(users) || users.length === 0) {
+          throw new Error("No users found");
+        }
+        
+        const user = users.find(u => u.email === this.email);
+
+        this.login({ user, token });
+
+        if (user.role === "ADMIN") {
+          this.$router.push({ name: "Users" });
+        } else if (["USER", "SUPPORT"].includes(user.role)) {
+          this.$router.push({ name: "Dashboard" });
         } else {
-          console.error(error);
-          this.errorMessage = "Failed to retrieve user data.";
+          this.errorMessage = "Unauthorized role.";
+          this.logout();
+        }
+
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+        this.errorMessage = "Failed to retrieve user data. Please try again.";
+        if (error.response && error.response.status === 401) {
+          this.logout();
         }
       }
     },
