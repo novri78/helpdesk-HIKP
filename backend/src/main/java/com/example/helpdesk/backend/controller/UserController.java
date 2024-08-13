@@ -5,8 +5,10 @@ import com.example.helpdesk.backend.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,6 +20,18 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @PutMapping("/{id}/approve")
+    public ResponseEntity<String> approveUser(@PathVariable Long id) {
+        userService.approveUser(id);
+        return ResponseEntity.ok("User approved successfully");
+    }
+
+    @PostMapping
+    public ResponseEntity<UserDTO> createNewUser(@RequestBody @Valid UserDTO userDTO) {
+        UserDTO createdUser = userService.createNewUser(userDTO);
+        return ResponseEntity.ok(createdUser);
+    }
 
     @GetMapping
     public List<UserDTO> getAllUsers() {

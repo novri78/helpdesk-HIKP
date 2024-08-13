@@ -52,7 +52,10 @@ public class User {
     @JsonProperty("phone_number")
     private String phoneNumber;
 
-    @Column(name = "is_deleted")
+    @Column(name = "isApproved")
+    private Boolean isApproved = false;
+
+    @Column(name = "isDeleted")
     private Boolean isDeleted = false;
 
 }

@@ -18,6 +18,9 @@ public class UserDTO {
     private Department department;
     private String phoneNumber;
 
-    // Tambahkan field token
+    //field approval status
+    private Boolean isApproved;
+
+    //field token
     private String token;
 }

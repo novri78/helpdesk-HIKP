@@ -18,9 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.Optional;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,19 +54,36 @@ public class UserService implements UserDetailsService {
             logger.error("Email already in use: {}", userDTO.getEmail());
             throw new RuntimeException("Email is already in use");
         }
+        userDTO.setEmail(userDTO.getEmail());
         // Validate the password strength
         validatePasswordStrength(userDTO.getPassword());
-
         // Encode the password before saving
         userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        userDTO.setRole (userDTO.getRole ());
+        userDTO.setDepartment (userDTO.getDepartment ());
+        userDTO.setIsApproved (false);
 
         // Convert DTO to entity and save the user
         User user = userMapper.toEntity(userDTO);
         userRepository.save(user);
 
+        // Generate JWT token
+        String token = jwtTokenUtil.generateToken(user);
+
         // Return the saved user as DTO
         return userMapper.toDTO(user);
     }
+
+    public void approveUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setIsApproved(true);
+        userRepository.save(user);
+        // Tambahkan log atau lakukan query langsung ke database untuk memverifikasi
+        userRepository.findById (id).ifPresent (updatedUser -> System.out.println ("User isApproved after save: "+updatedUser.getIsApproved ( )));
+    }
+
+
 
     // Method to authenticate a user
     @Transactional(readOnly = true)
@@ -111,20 +127,6 @@ public class UserService implements UserDetailsService {
                 });
     }
 
-//    @Override
-//    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-//        User user = userRepository.findByEmail(email)
-//                .orElseThrow(() -> {
-//                    logger.error("User not found with email: " + email);
-//                    return new UsernameNotFoundException ("User not found with email: "+email);
-//                });
-//        return new org.springframework.security.core.userdetails.User(
-//                user.getEmail(),
-//                user.getPassword(),
-//                Collections.singletonList(new SimpleGrantedAuthority (user.getRole ().name ()))
-//        );
-//    }
-
     // Method to get authenticated user from token
     @Transactional(readOnly = true)
     public UserDTO getAuthenticatedUser(String token) {
@@ -138,19 +140,30 @@ public class UserService implements UserDetailsService {
         return userMapper.toDTO(user);
     }
 
-//    @Transactional(readOnly = true)
-//    public UserDTO getAuthenticatedUser(String token) {
-//        logger.info("Getting authenticated user from token");
-//        String email = jwtTokenUtil.getUsernameFromToken(token);
-//
-//        Optional<User> user = userRepository.findByEmail(email);
-//        if (user.isPresent()) {
-//            return userMapper.toDTO(user.get());
-//        } else {
-//            logger.error("User not found with email: " + email);
-//            throw new UsernameNotFoundException("User not found with email: " + email);
-//        }
-//    }
+    @Transactional
+    public UserDTO createNewUser(@Valid UserDTO userDTO) {
+        logger.info("Creating new user with email: {}", userDTO.getEmail());
+
+        if (userRepository.existsByEmail(userDTO.getEmail())) {
+            logger.error("Email already in use: {}", userDTO.getEmail());
+            throw new RuntimeException("Email is already in use");
+        }
+
+        // Validate the password strength
+        validatePasswordStrength(userDTO.getPassword());
+
+        // Encode the password before saving
+        userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        userDTO.setIsApproved (true); // Automatically approve new user
+
+        // Convert DTO to entity and save the user
+        User user = userMapper.toEntity(userDTO);
+        userRepository.save(user);
+
+        return userMapper.toDTO(user);
+    }
+
+
 
     @Transactional(readOnly = true)
     public List<UserDTO> getAllUsers() {
