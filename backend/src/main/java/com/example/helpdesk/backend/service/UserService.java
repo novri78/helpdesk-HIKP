@@ -163,8 +163,6 @@ public class UserService implements UserDetailsService {
         return userMapper.toDTO(user);
     }
 
-
-
     @Transactional(readOnly = true)
     public List<UserDTO> getAllUsers() {
         logger.info("Fetching all users");
@@ -172,6 +170,12 @@ public class UserService implements UserDetailsService {
                 .map(userMapper::toDTO)
                 .collect(Collectors.toList());
     }
+
+    @Transactional(readOnly = true)
+    public List<UserDTO> getAllActiveUsers() {
+        return userRepository.findAllByIsDeletedFalse();
+    }
+
 
     @Transactional(readOnly = true)
     public UserDTO getUserById(Long id) {
@@ -193,8 +197,14 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public void deleteUserById(Long id) {
-        logger.info("Deleting user with id: {}", id);
-        userRepository.deleteById (id);
+        logger.info("Soft deleting user with id: {}", id);
+        // Get user by ID
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new RuntimeException("User not found with id " + id));
+
+        // Run soft delete
+        user.setIsDeleted (true);
+        userRepository.save(user);
     }
 
 }

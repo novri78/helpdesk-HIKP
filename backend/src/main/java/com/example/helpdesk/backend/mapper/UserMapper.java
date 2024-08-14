@@ -26,6 +26,7 @@ public class UserMapper {
         userDTO.setDepartment(Department.valueOf (user.getDepartment ().name ()));
         userDTO.setPhoneNumber(user.getPhoneNumber());
         userDTO.setIsApproved (user.getIsApproved ());
+        userDTO.setIsDeleted (user.getIsDeleted ());
         return userDTO;
     }
 
@@ -49,6 +50,7 @@ public class UserMapper {
         }
         user.setPhoneNumber(userDTO.getPhoneNumber());
         user.setIsApproved (userDTO.getIsApproved ());
+        user.setIsDeleted (userDTO.getIsDeleted ());
         return user;
     }
 
@@ -60,6 +62,8 @@ public class UserMapper {
             user.setRole(userDTO.getRole());
             user.setDepartment(userDTO.getDepartment());
             user.setPhoneNumber(userDTO.getPhoneNumber());
+            user.setIsApproved (userDTO.getIsApproved ());
+            user.setIsDeleted (userDTO.getIsDeleted ());
         }
     }
 }

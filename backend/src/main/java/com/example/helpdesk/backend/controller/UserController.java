@@ -38,6 +38,11 @@ public class UserController {
         return Collections.unmodifiableList (userService.getAllUsers ( ));
     }
 
+    @GetMapping("/users")
+    public List<UserDTO> getAllActiveUsers() {
+        return Collections.unmodifiableList (userService.getAllActiveUsers());
+    }
+
     @GetMapping(value = "/{id}")
     public  UserDTO getUserById(@PathVariable Long id) {
         return userService.getUserById (id);

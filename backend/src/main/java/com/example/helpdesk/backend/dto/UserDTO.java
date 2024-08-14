@@ -21,6 +21,9 @@ public class UserDTO {
     //field approval status
     private Boolean isApproved;
 
+    //field approval status
+    private Boolean isDeleted;
+
     //field token
     private String token;
 }
