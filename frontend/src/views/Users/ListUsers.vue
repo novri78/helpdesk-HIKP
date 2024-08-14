@@ -82,11 +82,13 @@ export default {
       this.$axios
         .get("/users")
         .then((response) => {
-          // Map the response data to ensure correct mapping of properties
-          this.users = response.data.map((user) => ({
-            ...user,
-            isApproved: user.isApproved, // Correctly map the is_Approved property to isApproved
-          }));
+          // Filter users to only include those with isDeleted: false
+          this.users = response.data
+            .filter((user) => !user.isDeleted)
+            .map((user) => ({
+              ...user,
+              isApproved: user.isApproved, // Map other necessary properties
+            }));
           console.log("Fetched Users", this.users); // Log the mapped users
         })
         .catch((error) => {
