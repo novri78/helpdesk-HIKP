@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Register from '@/views/Users/LoginAndRegister/RegisterUser.vue';
-import Login from '@/views/Users/LoginAndRegister/LoginHelpdesk.vue';
-import ApproveUser from '@/views/Users/LoginAndRegister/ApproveUser.vue';
+import Login from '@/views/LoginAndRegister/LoginHelpdesk.vue';
+import ApproveUser from '@/views/LoginAndRegister/ApproveUser.vue';
 //import ActivityLogs from '../views/ActivityLogs.vue';
 import Dashboard from '../views/ListDashboard.vue';
 //import Categories from '../views/Categories/ListCategories.vue';
@@ -18,7 +18,7 @@ import store from '@/store';
 const routes = [
   { path: '/', name: 'Login', component: Login, meta: { requiresAuth: false }, },
   { path: '/register', name: 'Register', component: Register, meta: { requiresAuth: false }, },
-  { path: '/approve-users/:id', name: 'ApproveUser', component: ApproveUser, meta: { requiresAuth: true } },
+  { path: '/approve-users/:id', name: 'ApproveUser', component: ApproveUser, meta: { requiresAuth: true, rolesAllowed: ['ADMIN'] } },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard, meta: { requiresAuth: true, rolesAllowed: ['USER', 'SUPPORT', 'ADMIN'] }, },
   { path: '/users', name: 'Users', component: Users, meta: { requiresAuth: true, rolesAllowed: ['ADMIN'] }, },
   { path: '/user/add', name: 'AddUser', component: AddUser, meta: { requiresAuth: true, rolesAllowed: ['ADMIN'] }, },
