@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Register from '@/views/Users/LoginAndRegister/RegisterUser.vue';
+import Register from '@/views/LoginAndRegister/RegisterUser.vue';
 import Login from '@/views/LoginAndRegister/LoginHelpdesk.vue';
 import ApproveUser from '@/views/LoginAndRegister/ApproveUser.vue';
 //import ActivityLogs from '../views/ActivityLogs.vue';
