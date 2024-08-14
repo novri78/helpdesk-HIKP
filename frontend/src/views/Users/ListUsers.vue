@@ -79,23 +79,23 @@ export default {
       this.$router.push({ name: "AddUser" });
     },
     fetchUsers() {
-      this.$axios
-        .get("/users")
-        .then((response) => {
-          // Filter users to only include those with isDeleted: false
-          this.users = response.data
-            .filter((user) => !user.isDeleted)
-            .map((user) => ({
-              ...user,
-              isApproved: user.isApproved, // Map other necessary properties
-            }));
-          console.log("Fetched Users", this.users); // Log the mapped users
-        })
-        .catch((error) => {
-          this.errorMessage = "Failed to fetch users: " + error.message;
-          console.error("Error fetching users:", error);
-        });
-    },
+  this.$axios
+    .get("/users")
+    .then((response) => {
+      // Filter users to only include those with isDeleted: false
+      this.users = response.data
+        .filter(user => !user.isDeleted)
+        .map((user) => ({
+          ...user,
+          isApproved: user.isApproved, // Map other necessary properties
+        }));
+      console.log("Fetched Users", this.users); // Log the mapped users
+    })
+    .catch((error) => {
+      this.errorMessage = "Failed to fetch users: " + error.message;
+      console.error("Error fetching users:", error);
+    });
+},
     routeToEditUser(id) {
       this.$router.push({ name: "EditUser", params: { id } });
     },
