@@ -11,7 +11,7 @@
         </div>
         <div class="form-group">
           <label for="fullName">Full Name:</label>
-          <input type="text" v-model="form.name" id="fullName" class="form-control" required />
+          <input type="text" v-model="form.fullName" id="fullName" class="form-control" required />
         </div>
         <div class="form-group">
           <label for="password">Password:</label>
