@@ -160,7 +160,7 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
 * {
-  margin: 15px;
+  margin: 20px;
   padding: 0;
   box-sizing: border-box;
 }
@@ -228,7 +228,7 @@ body {
   cursor: pointer;
   transition: background-color 0.3s;
   &-primary {
-    margin-left: 25px;
+    margin-left: 38px;
     background-color: #007bff;
     color: white;
     &:hover {
@@ -263,7 +263,7 @@ body {
   z-index: 1000;
   display: none;
   float: left;
-  min-width: 160px;
+  min-width: 100px;
   padding: 5px 0;
   margin: 0;
   font-size: 14px;
@@ -281,7 +281,7 @@ body {
 
 .dropdown-item {
   display: block;
-  width: 100%;
+  width: 70%;
   padding: 3px 20px;
   clear: both;
   font-weight: 400;
@@ -302,7 +302,7 @@ body {
 }
 
 .main-content.sidebar-open .users-container {
-  width: calc(100% - 200px); // Adjust according to sidebar width
+  width: calc(100% - 10px); // Adjust according to sidebar width
 }
 
 /* Responsive Design */

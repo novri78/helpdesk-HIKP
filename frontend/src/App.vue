@@ -1,29 +1,78 @@
 <template>
-  <nav>
-    <router-link to="/">Dashboard</router-link>
-  </nav>
-  <router-view/>
+  <div id="app">
+    <Sidebar v-if="isAuthenticated" @toggle-sidebar="handleSidebarToggle" :toggleSwitch="isSidebarOpen" />
+    <div :class="['main-content', { 'sidebar-open': isAuthenticated && isSidebarOpen }]">
+      <Nav v-if="isAuthenticated" />
+      <div class="content-wrapper">
+        <router-view />
+      </div>
+    </div>
+  </div>
 </template>
 
+<script>
+import { mapGetters } from "vuex";
+import Nav from "./components/NavHelpDesk.vue";
+import Sidebar from "./components/SidebarHelpdesk.vue";
+
+export default {
+  name: "App",
+  components: {
+    Nav,
+    Sidebar,
+  },
+  data() {
+    return {
+      isSidebarOpen: false,
+    };
+  },
+  computed: {
+    ...mapGetters(["isAuthenticated"]),
+  },
+  watch: {
+    isAuthenticated(newValue) {
+      if (newValue) {
+        this.isSidebarOpen = true;
+      } else {
+        this.isSidebarOpen = false;
+      }
+    },
+  },
+  methods: {
+    handleSidebarToggle() {
+      this.isSidebarOpen = !this.isSidebarOpen;
+    },
+  },
+  mounted() {
+    if (this.isAuthenticated) {
+      this.isSidebarOpen = true;
+    }
+  },
+};
+</script>
+
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+// #app {
+//   display: flex;
+// }
+
+.main-content {
+  flex-grow: 1;
+  //transition: margin-left 0.3s ease-in-out;
+  //margin-left: 170px;
+  overflow-y: auto;
 }
 
-nav {
-  padding: 30px;
+.sidebar-open {
+  margin-left: 170px;
+}
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+  }
+  .sidebar-open {
+    margin-left: 0;
   }
 }
 </style>
