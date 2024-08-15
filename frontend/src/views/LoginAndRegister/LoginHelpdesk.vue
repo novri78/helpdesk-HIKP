@@ -1,5 +1,5 @@
 <template>
-  <div class="login-page">
+  <div id="app" class="login-page">
     <div class="background-overlay">
       <div class="ticker">
         <div class="quote-ticker">
@@ -18,9 +18,11 @@
           <input
             type="email"
             v-model="email"
+            @input="validateEmail"
             required
             placeholder="Enter your email"
           />
+          <div v-if="emailError" class="error">{{ emailError }}</div>
         </div>
         <div class="input-group">
           <label>Password</label>
@@ -57,6 +59,7 @@ export default {
     return {
       email: "",
       password: "",
+      emailError: "",
       errorMessage: "",
     };
   },
@@ -66,9 +69,26 @@ export default {
     resetFields() {
       this.email = "";
       this.password = "";
+      this.emailError = ""
     },
-
+    validateEmail() {
+      this.emailError = "";
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!this.email) {
+        this.emailError = "This field is required.";
+      } else if (this.email.length < 8 || this.email.length > 30) {
+        this.emailError = "Email must be between 8 and 30 characters.";
+      } else if (!this.email.includes("@")) {
+        this.emailError = "Email must contain '@'.";
+      } else if (!emailPattern.test(this.email)) {
+        this.emailError = "Please enter a valid email address.";
+      }
+    },
     async handleLogin() {
+      this.validateEmail();
+      if (this.emailError) {
+        return;
+      }
       try {
         console.log("Attempting login with:", {
           email: this.email,

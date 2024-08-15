@@ -18,6 +18,7 @@
         </a>
         <ul v-if="dropdowns.users" class="sidebar-item-dropdown">
           <li>
+            <router-link to="/users" class="dropdown-item">List User</router-link>
             <router-link to="/register" class="dropdown-item">Register New User</router-link>
           </li>
         </ul>
