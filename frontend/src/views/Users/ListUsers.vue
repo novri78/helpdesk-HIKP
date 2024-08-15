@@ -2,7 +2,7 @@
   <div class="users-container">
     <!-- Header Section -->
     <header class="users-list-header">
-      <h1>Users</h1>
+      <h1>User Management</h1>
       <!-- Add User Button -->
       <button class="btn btn-primary mb-3" @click="routeToAddUser">
         +User
@@ -176,41 +176,91 @@ body {
 }
 
 .users-container {
-  width: 100%;
-  transition: width 0.3s ease-in-out;
-  padding: 20px;
-  box-sizing: border-box;
-}
+  padding: 10px;
+  background-color: #f9f9f9;
+
+  .users-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    h2 {
+      font-size: 24px;
+      margin: 0;
+      color: #333;
+    }
+    .btn-primary {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
+  }
 
 .table-responsive {
-  overflow-x: auto;
-}
+    overflow-x: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    background: white;
+    padding: 15px;
+  }
+
 
 .table {
-  width: 100%;
-  margin-bottom: 1rem;
-  background-color: #fff;
-  border-collapse: collapse;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+    width: 100%;
+    border-collapse: collapse;
 
-.table th,
-.table td {
-  padding: 0.75rem;
-  vertical-align: top;
-  border-top: 1px solid #dee2e6;
-  text-align: left;
-}
+    th,
+    td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
 
-.table thead th {
-  background-color: #f8f9fa;
-  text-transform: uppercase;
-}
+    th {
+      background-color: #007bff;
+      color: white;
+      text-transform: uppercase;
+    }
 
-.table tbody tr:nth-of-type(odd) {
-  background-color: #f2f2f2;
-}
+    td {
+      background-color: #fff;
+    }
+
+    td button {
+      margin-right: 5px;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 5px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .btn-approve {
+      background-color: #28a745;
+      color: white;
+    }
+    .btn-edit {
+      background-color: #ffc107;
+      color: black;
+    }
+    .btn-delete {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    td button:hover {
+      transform: translateY(-2px);
+    }
+  }
 
 .error {
   color: red;
@@ -304,78 +354,51 @@ body {
   width: calc(100% - 10px); // Adjust according to sidebar width
 }
 
-/* Responsive Design */
-@media (max-width: 1000px) {
-  body {
-    padding: 15px;
+ /* Responsive Design */
+  @media (max-width: 768px) {
+    .table thead {
+      display: none;
+    }
+
+    .table tr {
+      display: block;
+      margin-bottom: 10px;
+      border-bottom: 2px solid #ddd;
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .table td {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      font-size: 12px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .table td::before {
+      content: attr(data-label);
+      font-weight: bold;
+      width: 50%;
+      text-transform: uppercase;
+    }
+
+    .table td:last-child {
+      border-bottom: none;
+    }
   }
 
-  .users-container {
-    padding: 15px;
-  }
-}
+  @media (max-width: 480px) {
+    .table td {
+      font-size: 10px;
+    }
 
-@media (max-width: 768px) {
-  .main-content.sidebar-open {
-    margin-left: 0;
-  }
-
-  .users-container {
-    width: 100%;
-  }
-
-  .table th,
-  .table td {
-    padding: 0.5rem;
-  }
-
-  .table thead {
-    display: none;
-  }
-
-  .table tbody tr {
-    display: block;
-    margin-bottom: 10px;
-    border-bottom: 2px solid #ddd;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-  }
-
-  .table td {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    font-size: 12px;
-    border-bottom: 1px solid #ddd;
-  }
-
-  .table td::before {
-    content: attr(data-label);
-    font-weight: bold;
-    width: 50%;
-    text-transform: uppercase;
-  }
-
-  .table td:last-child {
-    border-bottom: none;
-  }
-
-  .btn {
-    font-size: 12px;
-    padding: 8px 15px;
-  }
-}
-
-@media (max-width: 480px) {
-  .table td {
-    font-size: 10px;
-  }
-
-  .btn {
-    font-size: 10px;
-    padding: 6px 10px;
+    .table td button {
+      font-size: 10px;
+      padding: 5px 8px;
+    }
   }
 }
 </style>

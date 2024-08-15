@@ -4,8 +4,8 @@
       <i :class="toggleSwitch ? 'mdi mdi-menu' : 'mdi mdi-menu'"></i>
     </div>
     <div class="navbar-brand">
-      <a href="#">
-        <img src="" alt="Logo" class="navbar-logo">
+      <a href="">
+        <img src="@/assets/img/HelpdeskIcon.png" alt="Logo" class="navbar-logo">
       </a>
     </div>
     <ul class="nav flex-column mt-4">
@@ -23,12 +23,15 @@
           </li>
         </ul>
       </li>
+      <router-link to="/categories" class="nav-link">Category</router-link>
       <li class="nav-link" @click="confirmLogout">Logout</li>
     </ul>
   </div>
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 export default {
   props: {
     toggleSwitch: {
@@ -55,6 +58,7 @@ export default {
     toggleDropdown(name) {
       this.dropdowns[name] = !this.dropdowns[name];
     },
+    ...mapActions(["logout"]),
     confirmLogout() {
       if (confirm("Are you sure you want to logout?")) {
         this.handleLogout();

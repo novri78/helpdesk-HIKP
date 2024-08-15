@@ -4,9 +4,9 @@ import Login from '@/views/LoginAndRegister/LoginHelpdesk.vue';
 import ApproveUser from '@/views/LoginAndRegister/ApproveUser.vue';
 //import ActivityLogs from '../views/ActivityLogs.vue';
 import Dashboard from '../views/ListDashboard.vue';
-//import Categories from '../views/Categories/ListCategories.vue';
-//import AddCategory from '../views/Categories/AddCategory.vue';
-//import EditCategory from '../views/Categories/EditCategory.vue';
+import Categories from '../views/Categories/ListCategories.vue';
+import AddCategory from '../views/Categories/AddCategory.vue';
+import EditCategory from '../views/Categories/EditCategory.vue';
 import Tickets from '../views/Tickets/ListTickets.vue';
 //import AddTicket from '../views/Tickets/AddTicket.vue';
 //import EditTicket from '../views/Tickets/EditTicket.vue';
@@ -26,9 +26,9 @@ const routes = [
   { path: '/tickets', name: 'Tickets', component: Tickets, meta: { requiresAuth: true, rolesAllowed: ['USER', 'SUPPORT', 'ADMIN'] } },
   // { path: '/ticket/add', name: 'AddTicket', component: AddTicket, meta: { requiresAuth: true } },
   // { path: '/ticket/edit/:id', name: 'EditTicket', component: EditTicket, meta: { requiresAuth: true } },
-  // { path: '/categories', name: 'Categories', component: Categories, meta: { requiresAuth: true } },
-  // { path: '/category/add', name: 'AddCategory', component: AddCategory, meta: { requiresAuth: true } },
-  // { path: '/category/edit/:id', name: 'EditCategory', component: EditCategory, meta: { requiresAuth: true } },
+  { path: '/categories', name: 'Categories', component: Categories, meta: { requiresAuth: true, rolesAllowed: ['ADMIN']  } },
+  { path: '/category/add', name: 'AddCategory', component: AddCategory, meta: { requiresAuth: true, rolesAllowed: ['ADMIN'] } },
+  { path: '/category/edit/:id', name: 'EditCategory', component: EditCategory, meta: { requiresAuth: true, rolesAllowed: ['ADMIN'] } },
   // { path: '/activity-logs', name: 'ActivityLogs', component: ActivityLogs, meta: { requiresAuth: true } },
 ];
 

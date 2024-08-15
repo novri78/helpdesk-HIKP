@@ -15,24 +15,25 @@
           />
         </div>
         <div class="form-group">
-          <label for="fullName">Full Name:</label>
+          <label for="name">Full Name:</label>
           <input
             type="text"
-            v-model="form.fullName"
-            id="fullName"
+            v-model="form.name"
+            id="name"
             class="form-control"
             required
           />
         </div>
         <div class="form-group">
-          <label for="password">Password:</label>
+          <label>Password</label>
           <input
             type="password"
-            v-model="form.password"
-            id="password"
-            class="form-control"
+            v-model="password"
+            @input="validatePassword"
             required
+            placeholder="Enter your password"
           />
+          <div v-if="passwordError" class="error">{{ passwordError }}</div>
         </div>
         <div class="form-group">
           <label for="phoneNumber">Phone Number:</label>
@@ -91,24 +92,16 @@ export default {
     return {
       form: {
         email: "",
-        fullName: "",
+        name: "",
         password: "",
         role: "USER", // Default role
         department: "",
         phoneNumber: "",
       },
+      passwordError: "",
       errorMessage: "",
       roles: ["USER"], // Restrict registration roles
-      departments: [
-        "OPERATION",
-        "FINANCE",
-        "FUNDING",
-        "ITSUPPORT",
-        "DIRECTOR",
-        "ITDEVELOPER",
-        "GAOPERATION",
-        "SUPERADMIN",
-      ],
+      departments: ["OPERATION", "FINANCE", "FUNDING", "GAOPERATION"],
       submitted: false,
     };
   },
@@ -116,21 +109,45 @@ export default {
     cancelAdd() {
       this.$router.push({ name: "Login" });
     },
+    validatePassword() {
+      this.passwordError = "";
+
+      if (this.password.length < 8) {
+        this.passwordError = "Password must be at least 8 characters long.";
+      } else if (!/\d/.test(this.password)) {
+        this.passwordError = "Password must contain at least one digit.";
+      } else if (!/[A-Za-z]/.test(this.password)) {
+        this.passwordError = "Password must contain at least one letter.";
+      }
+    },
     registerUser() {
       this.submitted = true;
+      this.validatePassword();
+      if (this.emailError || this.passwordError) {
+        return;
+      }
       if (this.form) {
         this.$axios
-          .post("/api/auth/register", {
+          .post("/auth/register", {
             ...this.form,
-            isApproved: false // New users are not approved by default
+            isApproved: false, // New users are not approved by default
           })
           .then(() => {
             alert("Registration successful! Please wait for admin approval.");
             this.resetForm();
+            this.$router.push({ name: "Login" });
           })
           .catch((error) => {
-            console.error("Registration failed:", error);
-            alert("Registration failed. Please try again.");
+            if (error.response && error.response.data) {
+              // Cek jika error berasal dari server dan ada data yang bisa diambil
+              this.errorMessage =
+                error.response.data.message ||
+                "Registration failed. Please try again.";
+            } else {
+              // Error dari sisi lain (misalnya network issue)
+              this.errorMessage =
+                "An unexpected error occurred. Please try again.";
+            }
           });
       } else {
         alert("Please fill in all required fields.");
@@ -139,7 +156,7 @@ export default {
     resetForm() {
       this.form.email = "";
       this.form.password = "";
-      this.form.fullName = "";
+      this.form.name = "";
       this.form.phoneNumber = "";
       this.form.role = "USER";
       this.form.department = "";
@@ -147,7 +164,6 @@ export default {
     },
   },
 };
-
 </script>
 
 <style scoped>
@@ -195,7 +211,8 @@ label {
   color: #333;
 }
 
-input, select {
+input,
+select {
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;

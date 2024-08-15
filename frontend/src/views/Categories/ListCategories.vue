@@ -3,7 +3,9 @@
     <header class="categories-list">
       <h2>Categories</h2>
     </header>
-    <button class="btn btn-primary mb-3" @click="routeToAddCategory">Add Category</button>
+    <button class="btn btn-primary mb-3" @click="routeToAddCategory">
+      +Category
+    </button>
     <div class="table-responsive">
       <table class="table">
         <thead>
@@ -17,13 +19,40 @@
         </thead>
         <tbody>
           <tr v-for="(cat, index) in categories" :key="cat.id">
-            <td>{{index + 1}}</td>
-            <td>{{ cat.iD }}</td>
-            <td>{{ cat.names }}</td>
-            <td>{{ cat.desc }}</td>
+            <td>{{ index + 1 }}</td>
+            <td>{{ cat.id }}</td>
+            <td>{{ cat.name }}</td>
+            <td>{{ cat.description }}</td>
             <td>
-              <button class="btn btn-primary" @click="routeToEditCategory(cat.iD)">Edit</button>
-              <button class="btn btn-danger" @click="confirmDeleteCategory(cat.iD)">Delete</button>
+              <div class="dropdown">
+                <button
+                  class="btn btn-secondary btn-sm dropdown-toggle"
+                  type="button"
+                  id="dropdownMenuButton{{ cat.id }}"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Actions
+                </button>
+                <ul class="dropdown-menu"
+                  :aria-labelledby="'dropdownMenuButton' + cat.id"
+                >
+                  <li>
+                    <a 
+                      class="dropdown-item"
+                      href="#"
+                      @click.prevent="routeToEditCategory(cat.id)"
+                      >Edit</a>
+                  </li>
+                  <li>
+                    <a 
+                      class="dropdown-item"
+                      href="#"
+                      @click.prevent="confirmDeleteCategory(cat.id)"
+                      >Delete</a>
+                  </li>
+                </ul>
+              </div>              
             </td>
           </tr>
         </tbody>
@@ -35,10 +64,11 @@
 
 <script>
 export default {
+  name: "Categories",
   data() {
     return {
       categories: [],
-      errorMessage: ''
+      errorMessage: "",
     };
   },
   mounted() {
@@ -46,61 +76,63 @@ export default {
   },
   methods: {
     routeToAddCategory() {
-      this.$router.push({ name: "AddCategory" });  
+      this.$router.push({ name: "AddCategory" });
     },
     fetchCategory() {
       this.$axios
-      .get('/category')
-      .then(res => {
-        console.log("API Response", res.data); // Log the entire response
-        this.categories = res.data.map(cat => ({
-            iD: cat.id,
-            names: cat.name,
-            desc: cat.description
-        }));
-        console.log("Mapped Categories", this.categories); // Log the mapped users
-      })  
-      .catch(error => {
+        .get("/category")
+        .then((res) => {
+          console.log("API Response", res.data); // Log the entire response
+          this.categories = res.data.map((cat) => ({
+            id: cat.id,
+            name: cat.name,
+            description: cat.description,
+          }));
+          console.log("Mapped Categories", this.categories); // Log the mapped users
+        })
+        .catch((error) => {
           this.errorMessage = "Failed to fetch category: " + error.message;
         });
     },
     routeToEditCategory(id) {
-      this.$router.push({ name: "EditCategory",  params: { id }  });
+      this.$router.push({ name: "EditCategory", params: { id } });
       console.log("no id", id);
     },
     confirmDeleteCategory(id) {
-      if (confirm("Are you sure you want to delete this category with ID: " + id)) {
+      if (
+        confirm("Are you sure you want to delete this category with ID: " + id)
+      ) {
         this.$axios
           .delete(`/category/${id}`)
           .then(() => {
             this.fetchCategories(); // Refresh the list after deletion
           })
-          .catch(error => {
+          .catch((error) => {
             this.errorMessage = "Failed to delete category: " + error.message;
           });
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
 * {
-  margin: 0;
+  margin: 20px;
   padding: 0;
   box-sizing: border-box;
 }
 
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   background-color: #f4f4f4;
   color: #333;
 }
 
 .categories-container {
-  padding: 20px;
+  padding: 10px;
 }
 
 header.categories-list {
@@ -109,7 +141,7 @@ header.categories-list {
 }
 
 button {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .table-responsive {
@@ -125,7 +157,8 @@ button {
   margin: 0;
 }
 
-.table th, .table td {
+.table th,
+.table td {
   padding: 12px 15px;
   border-bottom: 1px solid #ddd;
   text-align: left;
@@ -142,7 +175,7 @@ button {
 }
 
 .table td button {
-  margin-right: 5px;
+  margin-right: 3px;
 }
 
 .error {
@@ -189,15 +222,20 @@ button {
 }
 
 /* 3D Effects */
-.table, .btn {
+.table,
+.btn {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.table th, .table td, .btn {
+.table th,
+.table td,
+.btn {
   transition: transform 0.2s;
 }
 
-.table th:hover, .table td:hover, .btn:hover {
+.table th:hover,
+.table td:hover,
+.btn:hover {
   transform: translateY(-2px);
 }
 
@@ -206,7 +244,7 @@ button {
   .table thead {
     display: none;
   }
-  
+
   .table tr {
     display: block;
     margin-bottom: 10px;
@@ -215,7 +253,7 @@ button {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 10px;
   }
-  
+
   .table td {
     display: flex;
     justify-content: space-between;

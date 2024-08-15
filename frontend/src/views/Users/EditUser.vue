@@ -10,8 +10,8 @@
           <input type="email" v-model="form.email" id="email" class="form-control" required />
         </div>
         <div class="form-group">
-          <label for="fullName">Full Name:</label>
-          <input type="text" v-model="form.fullName" id="fullName" class="form-control" required />
+          <label for="name">Full Name:</label>
+          <input type="text" v-model="form.name" id="name" class="form-control" required />
         </div>
         <div class="form-group">
           <label for="password">Password:</label>
@@ -98,7 +98,7 @@ export default {
           const user = response.data;
           this.form.id = user.id;
           this.form.email = user.email;
-          this.form.fullName = user.name;
+          this.form.name = user.name;
           this.form.password = user.password;
           this.form.phoneNumber = user.phoneNumber;
           this.form.department = user.department;

@@ -52,14 +52,9 @@ export default {
 </script>
 
 <style lang="scss">
-// #app {
-//   display: flex;
-// }
 
 .main-content {
   flex-grow: 1;
-  //transition: margin-left 0.3s ease-in-out;
-  //margin-left: 170px;
   overflow-y: auto;
 }
 

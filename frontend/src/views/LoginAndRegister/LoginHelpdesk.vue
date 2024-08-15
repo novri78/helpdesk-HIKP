@@ -29,9 +29,11 @@
           <input
             type="password"
             v-model="password"
+            @input="validatePassword"
             required
             placeholder="Enter your password"
           />
+          <div v-if="passwordError" class="error">{{ passwordError }}</div>
         </div>
         <div class="button-group">
           <button type="button" @click="resetFields" class="btn secondary">
@@ -60,6 +62,7 @@ export default {
       email: "",
       password: "",
       emailError: "",
+      passwordError: "",
       errorMessage: "",
     };
   },
@@ -69,7 +72,7 @@ export default {
     resetFields() {
       this.email = "";
       this.password = "";
-      this.emailError = ""
+      this.emailError = "";
     },
     validateEmail() {
       this.emailError = "";
@@ -84,9 +87,21 @@ export default {
         this.emailError = "Please enter a valid email address.";
       }
     },
+    validatePassword() {
+      this.passwordError = "";
+
+      if (this.password.length < 8) {
+        this.passwordError = "Password must be at least 8 characters long.";
+      } else if (!/\d/.test(this.password)) {
+        this.passwordError = "Password must contain at least one digit.";
+      } else if (!/[A-Za-z]/.test(this.password)) {
+        this.passwordError = "Password must contain at least one letter.";
+      }
+    },
     async handleLogin() {
       this.validateEmail();
-      if (this.emailError) {
+      this.validatePassword();
+      if (this.emailError || this.passwordError) {
         return;
       }
       try {
