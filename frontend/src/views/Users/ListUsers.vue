@@ -1,14 +1,13 @@
 <template>
   <div class="users-container">
     <!-- Header Section -->
-    <header class="users-list">
+    <header class="users-list-header">
       <h1>Users</h1>
+      <!-- Add User Button -->
+      <button class="btn btn-primary mb-3" @click="routeToAddUser">
+        +User
+      </button>
     </header>
-
-    <!-- Add User Button -->
-    <button class="btn btn-primary mb-3" @click="routeToAddUser">
-      Add User
-    </button>
 
     <!-- Responsive Table -->
     <main class="table-responsive">
@@ -220,7 +219,7 @@ body {
 }
 
 .btn {
-  margin-right: 8px;
+  margin-right: 0px;
   border: none;
   padding: 10px 20px;
   font-size: 14px;
@@ -228,7 +227,7 @@ body {
   cursor: pointer;
   transition: background-color 0.3s;
   &-primary {
-    margin-left: 38px;
+    margin-left: 15px;
     background-color: #007bff;
     color: white;
     &:hover {

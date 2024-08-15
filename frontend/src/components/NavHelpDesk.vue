@@ -56,19 +56,10 @@ export default {
     },
     getUserData() {
       const cookieData = Cookies.get("userdata"); // Ambil data dari Cookies
-      console.log("value cookieData", cookieData);
 
       if (cookieData) {
         const parsedData = JSON.parse(cookieData); // Parse data JSON
         this.user.name = parsedData.user.name;
-        console.log("this.user.name", this.user.name);
-        // if (parsedData && parsedData.name) {
-        //   this.user.name = parsedData.name; // Ambil nama user
-        //   console.log('this.user.name', this.user.name);
-        // } else if (parsedData && parsedData.userdata) {
-        //   this.user.name = parsedData.userdata.name; // Ambil nama dari userdata
-        //   console.log('this.user.name', this.user.name);
-        // }
       }
     },
   },

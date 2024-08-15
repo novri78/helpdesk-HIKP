@@ -23,6 +23,7 @@
           </li>
         </ul>
       </li>
+      <li class="nav-link" @click="confirmLogout">Logout</li>
     </ul>
   </div>
 </template>
@@ -53,6 +54,19 @@ export default {
     },
     toggleDropdown(name) {
       this.dropdowns[name] = !this.dropdowns[name];
+    },
+    confirmLogout() {
+      if (confirm("Are you sure you want to logout?")) {
+        this.handleLogout();
+      }
+    },
+    handleLogout() {
+      this.logout();
+      this.$router.push("/").then(() => {
+        setTimeout(() => {
+          return alert("You have been logged out.");
+        }, 300); // Delay of 100ms
+      });
     },
   },
 };
