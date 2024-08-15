@@ -1,5 +1,7 @@
 package com.example.helpdesk.backend.dto;
 
+import com.example.helpdesk.backend.constant.PriorityStatus;
+import com.example.helpdesk.backend.constant.TicketStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,8 +16,8 @@ public class TicketDTO {
     private String ticketNo;
     private String title;
     private String description;
-    private int priorityStatus;
-    private int ticketStatus;
+    private PriorityStatus priorityStatus;
+    private TicketStatus ticketStatus;
     private String createdBy;
     private Date creationDate;
     private Date closureDate;

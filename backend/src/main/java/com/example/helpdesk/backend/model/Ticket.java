@@ -1,5 +1,7 @@
 package com.example.helpdesk.backend.model;
 
+import com.example.helpdesk.backend.constant.PriorityStatus;
+import com.example.helpdesk.backend.constant.TicketStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,10 +36,10 @@ public class Ticket {
     private String description;
 
     @JsonProperty("priority")
-    private int priorityStatus;
+    private PriorityStatus priorityStatus;
 
     @JsonProperty("status")
-    private int ticketStatus;
+    private TicketStatus ticketStatus;
 
     @JsonProperty("createdBy")
     private String createdBy;
