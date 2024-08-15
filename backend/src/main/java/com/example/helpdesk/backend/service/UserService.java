@@ -190,6 +190,14 @@ public class UserService implements UserDetailsService {
         logger.info("Updating user with id: {}", id);
         User user = userRepository.findById (id)
                 .orElseThrow(() -> new RuntimeException("User not found for id :: " + id));
+
+        // Cek apakah password diinput baru
+        if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
+            userDetails.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+        } else {
+            // Jika password tidak diubah, gunakan password lama
+            userDetails.setPassword(user.getPassword());
+        }
         userMapper.updateEntity (userDetails, user);
         userRepository.save (user);
         return userMapper.toDTO (user);
