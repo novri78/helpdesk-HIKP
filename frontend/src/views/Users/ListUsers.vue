@@ -362,7 +362,8 @@ body {
 
     .table tr {
       display: block;
-      margin-bottom: 10px;
+      // margin-top: 180px;
+      margin-bottom: 5px;
       border-bottom: 2px solid #ddd;
       border-radius: 10px;
       padding: 10px;
@@ -374,7 +375,7 @@ body {
       justify-content: space-between;
       align-items: center;
       padding: 10px 0;
-      font-size: 12px;
+      font-size: 15px;
       border-bottom: 1px solid #ddd;
     }
 
@@ -392,6 +393,7 @@ body {
 
   @media (max-width: 480px) {
     .table td {
+      
       font-size: 10px;
     }
 

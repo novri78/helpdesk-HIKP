@@ -1,9 +1,10 @@
 <template>
   <header>
-    <h1 class="text-center white">Form Add User</h1>
+    
   </header>
   <main>
     <div class="form-container">
+      <h1 class="text-center white">Form Add User</h1>
       <form @submit.prevent="addUser">
         <div class="form-group">
           <label for="email">Email:</label>
@@ -109,7 +110,7 @@ export default {
 
 <style scoped>
 * {
-  margin: 25px;
+  margin: 20px;
   padding: 0;
   box-sizing: border-box;
 }
@@ -120,8 +121,7 @@ body {
 }
 
 header {
-  width: 100%;
-  padding: 15px;
+  padding: 20px;
   text-align: center;
   background-color: #343a40;
   color: #fff;

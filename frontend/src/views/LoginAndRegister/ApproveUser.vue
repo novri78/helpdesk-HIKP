@@ -191,7 +191,7 @@ export default {
 
 <style scoped>
 * {
-  margin: 0;
+  margin: 50px;
   padding: 0;
   box-sizing: border-box;
 }
@@ -202,7 +202,8 @@ body {
 }
 
 header {
-  padding: 20px;
+  width: 100%;
+  padding: 15px;
   text-align: center;
   background-color: #343a40;
   color: #fff;

@@ -168,7 +168,7 @@ export default {
 
 <style scoped>
 * {
-  margin: 0;
+  margin: 20px;
   padding: 0;
   box-sizing: border-box;
 }

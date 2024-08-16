@@ -1,9 +1,10 @@
 <template>
   <header>
-    <h1 class="text-center white">Form Edit User</h1>
+    
   </header>
   <main>
     <div class="form-container">
+      <h1 class="text-center white">Form Edit User</h1>
       <form @submit.prevent="editUser">
         <div class="form-group">
           <label for="email">Email:</label>
@@ -126,7 +127,7 @@ export default {
 
 <style scoped>
 * {
-  margin: 0;
+  margin: 20px;
   padding: 0;
   box-sizing: border-box;
 }
