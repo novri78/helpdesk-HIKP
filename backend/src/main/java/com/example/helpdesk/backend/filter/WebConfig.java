@@ -1,4 +1,4 @@
-package com.example.helpdesk.backend.constant;
+package com.example.helpdesk.backend.filter;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
