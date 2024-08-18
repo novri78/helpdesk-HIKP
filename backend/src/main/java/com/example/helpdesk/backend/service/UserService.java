@@ -74,6 +74,7 @@ public class UserService implements UserDetailsService {
         return userMapper.toDTO(user);
     }
 
+    @Transactional
     public void approveUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));

@@ -1,5 +1,6 @@
 package com.example.helpdesk.backend.repository;
 
+import com.example.helpdesk.backend.constant.Role;
 import com.example.helpdesk.backend.dto.UserDTO;
 import com.example.helpdesk.backend.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,4 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // Optional: jika Anda ingin mencari user by id tanpa yang sudah dihapus
     Optional<User> findByIdAndIsDeletedFalse(Long id);
+
+    //Optional find username by the ROLE
+    Optional<User> findByNameAndRole(String name, Role role);
 }

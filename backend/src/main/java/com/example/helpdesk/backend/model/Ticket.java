@@ -8,10 +8,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.List;
+import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 
 @SuperBuilder
 @AllArgsConstructor
@@ -26,40 +27,45 @@ public class Ticket {
     @JsonProperty("id")
     private Long id;
 
+    @Column(unique = true, nullable = false)
     @JsonProperty("ticketNo")
     private String ticketNo;
 
+    @Column(nullable = false)
+    @Size(min = 1, max = 255)
     @JsonProperty("title")
     private String title;
 
+    @Column(columnDefinition = "TEXT")
     @JsonProperty("description")
     private String description;
 
+    @Enumerated(EnumType.STRING)
     @JsonProperty("priority")
     private PriorityStatus priorityStatus;
 
+    @Enumerated(EnumType.STRING)
     @JsonProperty("status")
     private TicketStatus ticketStatus;
 
-    @JsonProperty("createdBy")
-    private String createdBy;
+    @JsonProperty("assignTo")
+    private String assignTo;
 
-    @JsonProperty("creationDate")
-    private Date creationDate;
+    @CreationTimestamp
+    @JsonProperty("createDate")
+    private LocalDateTime createDate;
 
-    @JsonProperty("closureDate")
-    private Date closureDate;
+    @CreationTimestamp
+    @JsonProperty("closeDate")
+    private LocalDateTime closeDate;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private User userId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
-
-    @OneToMany(mappedBy = "ticketId")
-    private List<ActivityLog> activityLogs;
 
 
 }

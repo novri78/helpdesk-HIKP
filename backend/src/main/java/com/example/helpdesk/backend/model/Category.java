@@ -27,6 +27,6 @@ public class Category {
     @JsonProperty("description")
     private String description;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Ticket> tickets;
+//    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private Set<Ticket> tickets;
 }

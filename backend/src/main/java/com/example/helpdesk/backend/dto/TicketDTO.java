@@ -2,11 +2,13 @@ package com.example.helpdesk.backend.dto;
 
 import com.example.helpdesk.backend.constant.PriorityStatus;
 import com.example.helpdesk.backend.constant.TicketStatus;
+import com.example.helpdesk.backend.model.Category;
+import com.example.helpdesk.backend.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -18,17 +20,9 @@ public class TicketDTO {
     private String description;
     private PriorityStatus priorityStatus;
     private TicketStatus ticketStatus;
-    private String createdBy;
-    private Date creationDate;
-    private Date closureDate;
-    private Long userId;
-    private Long categoryId;
-    //private List<ActivityDTO> activityLogs;
-//    public TicketStatus getTicketStatus() {
-//        return ticketStatus;
-//    }
-//
-//    public void setTicketStatus(TicketStatus ticketStatus) {
-//        this.ticketStatus = ticketStatus;
-//    }
+    private String assignTo;
+    private LocalDateTime createDate;
+    private LocalDateTime closeDate;
+    private User userId;
+    private Category categoryId;
 }

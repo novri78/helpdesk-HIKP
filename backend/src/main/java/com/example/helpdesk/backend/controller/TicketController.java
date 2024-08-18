@@ -17,38 +17,38 @@ import java.util.List;
 public class TicketController {
 
     private final TicketService ticketService;
-//
-//    @PostMapping
-//    public ResponseEntity<TicketDTO> createTicket(@RequestBody TicketDTO ticketDto) {
-//        TicketDTO createdTicket = ticketService.createTicket(ticketDto);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(createdTicket);
-//    }
-//
-//    @GetMapping("/{id}")
-//    public ResponseEntity<TicketDTO> getTicketById(@PathVariable Long id) {
-//        try {
-//            TicketDTO ticketDTO = ticketService.getTicketById(id);
-//            return ResponseEntity.ok(ticketDTO);
-//        } catch (RuntimeException e) {
-//            log.error("Ticket not found for id: " + id, e);
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-//        }
-//    }
-//
-//    @PutMapping("/{id}")
-//    public ResponseEntity<TicketDTO> updateTicket(@PathVariable Long id, @RequestBody TicketDTO ticketDTO) {
-//        try {
-//            TicketDTO updatedTicket = ticketService.updateTicket(id, ticketDTO);
-//            return ResponseEntity.ok(updatedTicket);
-//        } catch (Exception e) {
-//            log.error("Error updating ticket: ", e);
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-//        }
-//    }
-//
-//    @GetMapping
-//    public ResponseEntity<List<TicketDTO>> getAllTickets() {
-//        List<TicketDTO> ticketDTOs = ticketService.getAllTickets ();
-//        return ResponseEntity.ok(ticketDTOs);
-//    }
+
+    @PostMapping
+    public ResponseEntity<TicketDTO> createTicket(@RequestBody TicketDTO ticketDto) {
+        TicketDTO createdTicket = ticketService.createNewTicket (ticketDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdTicket);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getTicketById(@PathVariable Long id) {
+        try {
+            TicketDTO ticketDTO = ticketService.getTicketById(id);
+            return ResponseEntity.ok(ticketDTO);
+        } catch (RuntimeException e) {
+            log.error("Ticket not found for id: " + id, e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ticket not found with id: " + id);
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TicketDTO> updateTicket(@PathVariable Long id, @RequestBody TicketDTO ticketDTO) {
+        try {
+            TicketDTO updatedTicket = ticketService.updateTicketById (id, ticketDTO);
+            return ResponseEntity.ok(updatedTicket);
+        } catch (Exception e) {
+            log.error("Error updating ticket: ", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<List<TicketDTO>> getAllTickets() {
+        List<TicketDTO> ticketDTOs = ticketService.getAllTickets ();
+        return ResponseEntity.ok(ticketDTOs);
+    }
 }
