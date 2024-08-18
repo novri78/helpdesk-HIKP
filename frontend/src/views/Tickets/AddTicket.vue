@@ -1,10 +1,11 @@
 <template>
   <div>
     <header>
-      <h2>Add New Ticket</h2>
+      
     </header>
-    <main>
+    <main>      
       <div class="form-container">
+        <h2 class="text-center white">Add New Ticket</h2>
         <form @submit.prevent="addTicket">
           <div class="form-group" v-for="(field, key) in formFields" :key="key">
             <label :for="key">{{ field.label }}:</label>
@@ -50,8 +51,8 @@ export default {
       form: {
         title: '',
         description: '',
-        priority: '',
-        status: '1',
+        priority: 2,
+        status: 1,
         createdBy: '',
         creationDate:'',
         closureDate:'',
@@ -64,7 +65,16 @@ export default {
       formFields: {
         title: { label: 'Title', type: 'input', required: true, placeholder: 'Enter title' },
         description: { label: 'Description', type: 'textarea', required: true, placeholder: 'Enter description' },
-        priority: { label: 'Priority', type: 'input', required: true, placeholder: 'Enter priority' },
+        priority: { 
+          label: 'Priority', 
+          type: 'select', 
+          required: true, 
+          options: [
+            { value: '1', text: 'HIGH' },
+            { value: '2', text: 'MEDIUM' },
+            { value: '3', text: 'LOW' },
+          ],
+        },
         status: {
           label: 'Status',
           type: 'select',
@@ -95,7 +105,7 @@ export default {
           console.log("API Response", res.data); // Log the entire response
           this.users = res.data.map(user => ({
             value: user.id,
-            text: user.fullName,
+            text: user.name,
           }));
           this.formFields.userId.options = this.users;
         })

@@ -1,46 +1,53 @@
 <template>
   <div class="users-container">
     <header class="users-list">
-      <h2>Tickets</h2>
+      
     </header>
-    <button class="btn btn-primary mb-3" @click="routeToAddTicket">Add Ticket</button>
+    <h2>Tickets</h2>
+    <button class="btn btn-primary mb-3" @click="routeToAddTicket">
+      Add Ticket
+    </button>
     <div class="table-responsive">
       <table class="table">
         <thead>
           <tr>
-            <th>ID</th>
+            <th>Id</th>
+            <th>Ticket No.</th>
             <th>Title</th>
             <th>Description</th>
             <th>Priority</th>
             <th>Status</th>
-            <th>Create By</th>
-            <th>Open Date</th>
+            <th>Assign</th>
+            <th>Create Date</th>
             <th>Close Date</th>
-            <th>User ID</th>
-            <th>Category ID</th>
+            <th>User Id</th>
+            <th>Category Id</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="ticket in tickets" :key="ticket.id">
-            <td>{{ ticket.iD }}</td>
+            <td>{{ ticket.id }}</td>
+            <td>{{ ticket.ticketNo }}</td>
             <td>{{ ticket.title }}</td>
-            <td>{{ ticket.desc }}</td>
-            <td>{{ ticket.prior }}</td>
-            <td>{{ ticket.stat }}</td>
-            <td>{{ ticket.by }}</td>
-            <td>{{ ticket.openDate }}</td>
+            <td>{{ ticket.description }}</td>
+            <td>{{ ticket.priority }}</td>
+            <td>{{ ticket.status }}</td>
+            <td>{{ ticket.assign }}</td>
+            <td>{{ ticket.createDate }}</td>
             <td>{{ ticket.closeDate }}</td>
-
+            <td>{{ ticket.userId }}</td>
+            <td>{{ ticket.categoryId }}</td>
             <td>
-              {{ ticket.userId }}
-            </td>
-
-            <td>
-              {{ ticket.categoryId  }}</td>
-            <td>
-              <button class="btn btn-primary" @click="editTicket(ticket.iD)">Edit</button>
-              <button class="btn btn-danger" @click="confirmDeleteTicket(ticket.iD)">Delete</button>
+              <button class="btn btn-primary" @click="editTicket(ticket.id)">
+                Edit
+              </button>
+              <button
+                class="btn btn-danger"
+                @click="confirmDeleteTicket(ticket.id)"
+              >
+                Delete
+              </button>
             </td>
           </tr>
         </tbody>
@@ -57,7 +64,7 @@ export default {
       tickets: [],
       users: [],
       categories: [],
-      errorMessage: ''
+      errorMessage: "",
     };
   },
   mounted() {
@@ -65,62 +72,64 @@ export default {
   },
   methods: {
     routeToAddTicket() {
-      this.$router.push({ name: "AddTicket" });  
+      this.$router.push({ name: "AddTicket" });
     },
     fetchTickets() {
       this.$axios
-      .get("/tickets")
-      .then(res => {
-        console.log("API Response", res.data); // Log the entire response
-        this.tickets = res.data.map(ticket => ({
-            iD: ticket.id,
+        .get("/tickets")
+        .then((res) => {
+          console.log("API Response", res.data); // Log the entire response
+          this.tickets = res.data.map((ticket) => ({
+            id: ticket.id,
             title: ticket.title,
-            desc: ticket.description,
-            prior: ticket.priority,
-            stat: ticket.ticketStatus,
-            by: ticket.createdBy,
-            openDate: ticket.creationDate,
-            closeDate: ticket.closureDate,
-            userId: ticket.userId,
-            categoryId: ticket.categoryId
-        }));
-        console.log("Mapped Tickets", this.tickets); // Log the mapped tickets
-      })  
-      .catch(error => {
+            description: ticket.description,
+            priority: ticket.priorityStatus,
+            status: ticket.ticketStatus,
+            assign: ticket.assignTo,
+            createDate: ticket.createDate,
+            closeDate: ticket.closeDate,
+            userId: ticket.userId.id,
+            categoryId: ticket.categoryId.id,
+          }));
+          console.log("Mapped Tickets", this.tickets); // Log the mapped tickets
+        })
+        .catch((error) => {
           this.errorMessage = "Failed to fetch tickets: " + error.message;
         });
     },
     editTicket(id) {
-      this.$router.push({ name: "EditTicket",  params: { id }  });
+      this.$router.push({ name: "EditTicket", params: { id } });
       console.log("no id", id);
     },
     confirmDeleteTicket(id) {
-      if (confirm("Are you sure you want to delete this ticket with ID: " + id)) {
+      if (
+        confirm("Are you sure you want to delete this ticket with ID: " + id)
+      ) {
         this.$axios
           .delete(`/tickets/${id}`)
           .then(() => {
             this.fetchTickets(); // Refresh the list after deletion
           })
-          .catch(error => {
+          .catch((error) => {
             this.errorMessage = "Failed to delete user: " + error.message;
           });
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
 * {
-  margin: 0;
+  margin: 20px;
   padding: 0;
   box-sizing: border-box;
 }
 
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   background-color: #f4f4f4;
   color: #333;
 }
@@ -135,7 +144,7 @@ header.users-list {
 }
 
 button {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .table-responsive {
@@ -151,7 +160,8 @@ button {
   margin: 0;
 }
 
-.table th, .table td {
+.table th,
+.table td {
   padding: 12px 15px;
   border-bottom: 1px solid #ddd;
   text-align: left;
@@ -215,15 +225,20 @@ button {
 }
 
 /* 3D Effects */
-.table, .btn {
+.table,
+.btn {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.table th, .table td, .btn {
+.table th,
+.table td,
+.btn {
   transition: transform 0.2s;
 }
 
-.table th:hover, .table td:hover, .btn:hover {
+.table th:hover,
+.table td:hover,
+.btn:hover {
   transform: translateY(-2px);
 }
 
@@ -232,7 +247,7 @@ button {
   .table thead {
     display: none;
   }
-  
+
   .table tr {
     display: block;
     margin-bottom: 10px;
@@ -241,7 +256,7 @@ button {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 10px;
   }
-  
+
   .table td {
     display: flex;
     justify-content: space-between;

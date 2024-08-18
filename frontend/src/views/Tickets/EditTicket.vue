@@ -6,20 +6,35 @@
     <main>
       <div class="form-container">
         <form @submit.prevent="editTicket">
-          <div class="form-group" v-for="(value, key) in form" :key="key">
-          <label :for="key">{{ key.replace('_', ' ').toUpperCase() }}:</label>
-          <input
-            :type="key === 'email' ? 'email' : 'text'"
-            v-model="form[key]"
-            :id="key"
-            class="form-control"
-            required
-          />
-        </div>
-        <div class="button-group">
-          <button type="button" class="btn btn-secondary" @click="goBack">Cancel</button>
-          <button type="submit" class="btn btn-primary" @click="editCategory">Save</button>
-        </div>
+          <div class="form-group" v-for="(field, key) in formFields" :key="key">
+            <label :for="key">{{ field.label }}:</label>
+            <component
+              :is="field.type"
+              v-model="form[key]"
+              :id="key"
+              :class="['form-control', field.class]"
+              :required="field.required"
+              :placeholder="field.placeholder"
+              :type="field.inputType"
+              v-if="field.type === 'input' || field.type === 'textarea'"
+            ></component>
+            <select
+              v-model="form[key]"
+              :id="key"
+              class="form-control"
+              :required="field.required"
+              v-if="field.type === 'select'"
+            >
+              <option v-for="option in field.options" :key="option.value" :value="option.value">
+                {{ option.text }}
+              </option>
+            </select>
+          </div>
+
+          <div class="button-group">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-secondary" @click="goBack">Cancel</button>
+          </div>
           <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
         </form>
       </div>
@@ -121,7 +136,7 @@ export default {
         console.log("API Users Res", res.data);
         this.users = response.data.map((user) => ({
           value: user.id,
-          text: user.fullName,
+          text: user.name,
         }));
         this.formFields.userId.options = this.users;
       })
