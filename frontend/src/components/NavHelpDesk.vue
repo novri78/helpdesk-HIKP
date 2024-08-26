@@ -21,6 +21,7 @@
 <script>
 import { mapActions } from "vuex";
 import Cookies from "js-cookie";
+import Swal from "sweetalert2";
 
 export default {
   name: "Nav",
@@ -50,7 +51,14 @@ export default {
       this.logout();
       this.$router.push("/").then(() => {
         setTimeout(() => {
-          return alert("You have been logged out.");
+          Swal.fire({
+            title: "Logged Out",
+            text: "You have been logged out successfully.",
+            icon: "info",
+            confirmButtonText: "OK",
+            timer: 3000, // Auto-close after 3 seconds
+            timerProgressBar: true,
+          });
         }, 300); // Delay of 100ms
       });
     },

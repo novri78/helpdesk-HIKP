@@ -13,6 +13,7 @@ import EditTicket from '../views/Tickets/EditTicket.vue';
 import Users from '../views/Users/ListUsers.vue';
 import AddUser from '../views/Users/AddUser.vue';
 import EditUser from '../views/Users/EditUser.vue';
+import AskPage from "../views/AskPage_Wikipedia.vue";
 import store from '@/store';
 
 const routes = [
@@ -30,6 +31,7 @@ const routes = [
   { path: '/category/add', name: 'AddCategory', component: AddCategory, meta: { requiresAuth: true, rolesAllowed: ['ADMIN'] } },
   { path: '/category/edit/:id', name: 'EditCategory', component: EditCategory, meta: { requiresAuth: true, rolesAllowed: ['ADMIN'] } },
   // { path: '/activity-logs', name: 'ActivityLogs', component: ActivityLogs, meta: { requiresAuth: true } },
+  { path: '/ask_wikipadia', name: 'AskPage', component: AskPage, meta: { requiresAuth: true, rolesAllowed: ['USER', 'SUPPORT', 'ADMIN']}},
 ];
 
 const router = createRouter({

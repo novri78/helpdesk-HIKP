@@ -1,29 +1,46 @@
 <template>
-  <div :class="['sidebar', { 'sidebar_on': toggleSwitch }]" id="toggle_sidebar">
+  <div :class="['sidebar', { sidebar_on: toggleSwitch }]" id="toggle_sidebar">
     <div class="toggle" @click="setToggle">
       <i :class="toggleSwitch ? 'mdi mdi-menu' : 'mdi mdi-menu'"></i>
     </div>
     <div class="navbar-brand">
       <a href="">
-        <img src="@/assets/img/HelpdeskIcon.png" alt="Logo" class="navbar-logo">
+        <img
+          src="@/assets/img/HelpdeskIcon.png"
+          alt="Logo"
+          class="navbar-logo"
+        />
       </a>
     </div>
     <ul class="nav flex-column mt-4">
-      <router-link to="/dashboard" class="nav-link" exact>Dashboard</router-link>
+      <router-link to="/dashboard" class="nav-link" exact
+        >Dashboard</router-link
+      >
       <router-link to="/tickets" class="nav-link">Ticket</router-link>
       <li class="nav-item">
         <a class="nav-link" @click="toggleDropdown('users')">
-          List Users 
-          <i :class="dropdowns.users ? 'mdi mdi-chevron-up' : 'mdi mdi-chevron-down'"></i>
+          List Users
+          <i
+            :class="
+              dropdowns.users ? 'mdi mdi-chevron-up' : 'mdi mdi-chevron-down'
+            "
+          ></i>
         </a>
         <ul v-if="dropdowns.users" class="sidebar-item-dropdown">
           <li>
-            <router-link to="/users" class="dropdown-item">List User</router-link>
-            <router-link to="/register" class="dropdown-item">Register New User</router-link>
+            <router-link to="/users" class="dropdown-item"
+              >List User</router-link
+            >
+            <router-link to="/register" class="dropdown-item"
+              >Register New User</router-link
+            >
           </li>
         </ul>
       </li>
       <router-link to="/categories" class="nav-link">Category</router-link>
+      <router-link to="/ask_wikipadia" class="nav-link"
+        >Ask Wikipedia</router-link
+      >
       <li class="nav-link" @click="confirmLogout">Logout</li>
     </ul>
   </div>
@@ -31,13 +48,14 @@
 
 <script>
 import { mapActions } from "vuex";
+import Swal from "sweetalert2";
 
 export default {
   props: {
     toggleSwitch: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
@@ -49,11 +67,11 @@ export default {
   computed: {
     isAuthenticated() {
       return this.$store.getters.isAuthenticated;
-    }
+    },
   },
   methods: {
     setToggle() {
-      this.$emit('toggle-sidebar');
+      this.$emit("toggle-sidebar");
     },
     toggleDropdown(name) {
       this.dropdowns[name] = !this.dropdowns[name];
@@ -68,7 +86,14 @@ export default {
       this.logout();
       this.$router.push("/").then(() => {
         setTimeout(() => {
-          return alert("You have been logged out.");
+          Swal.fire({
+            title: "Logged Out",
+            text: "You have been logged out successfully.",
+            icon: "info",
+            confirmButtonText: "OK",
+            timer: 3000, // Auto-close after 3 seconds
+            timerProgressBar: true,
+          });
         }, 300); // Delay of 100ms
       });
     },
@@ -77,8 +102,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import url('https://cdn.materialdesignicons.com/5.4.55/css/materialdesignicons.min.css');
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+@import url("https://cdn.materialdesignicons.com/5.4.55/css/materialdesignicons.min.css");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
 .sidebar {
   position: fixed;

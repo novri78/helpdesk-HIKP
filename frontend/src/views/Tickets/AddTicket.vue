@@ -1,40 +1,38 @@
 <template>
   <div>
     <header>
-      
+      <!-- Optional header content -->
     </header>
-    <main>      
+    <main>
       <div class="form-container">
-        <h2 class="text-center white">Add New Ticket</h2>
+        <h1 class="text-center white">Form Add Ticket</h1>
         <form @submit.prevent="addTicket">
-          <div class="form-group" v-for="(field, key) in formFields" :key="key">
-            <label :for="key">{{ field.label }}:</label>
+          <div v-for="(field, key) in formFields" :key="key" class="form-group">
+            <label :for="key">{{ field.label }}</label>
             <component
-              :is="field.type"
+              :is="field.type === 'select' ? 'select' : 'input'"
               v-model="form[key]"
               :id="key"
+              :type="field.inputType || 'text'"
+              :placeholder="field.placeholder"
               :class="['form-control', field.class]"
               :required="field.required"
-              :placeholder="field.placeholder"
-              :type="field.inputType"
-              v-if="field.type === 'input' || field.type === 'textarea'"
-            ></component>
-            <select
-              v-model="form[key]"
-              :id="key"
-              class="form-control"
-              :required="field.required"
-              v-if="field.type === 'select'"
             >
+              <!-- Render options if the field is a select -->
+              <option value="" disabled>Select {{ field.label }}</option>
               <option v-for="option in field.options" :key="option.value" :value="option.value">
                 {{ option.text }}
               </option>
-            </select>
+            </component>
           </div>
 
           <div class="button-group">
-            <button type="submit" class="btn btn-primary">Save</button>
-            <button type="button" class="btn btn-secondary" @click="goBack">Cancel</button>
+            <button type="submit" class="btn btn-primary" :disabled="loading">
+              {{ loading ? "Saving..." : "Save" }}
+            </button>
+            <button type="button" class="btn btn-secondary" @click="goBack">
+              Cancel
+            </button>
           </div>
 
           <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
@@ -49,99 +47,163 @@ export default {
   data() {
     return {
       form: {
-        title: '',
-        description: '',
-        priority: 2,
-        status: 1,
-        createdBy: '',
-        creationDate:'',
-        closureDate:'',
-        userId: '',
-        categoryId: '',
+        title: "",
+        description: "",
+        priority: "",
+        status: "",
+        assignTo: "",
+        creationDate: "",
+        closureDate: "",
+        userId: "",
+        categoryId: "",
       },
       users: [],
       categories: [],
-      errorMessage: '',
+      assignTo: [],
+      loading: false,
+      errorMessage: "",
       formFields: {
-        title: { label: 'Title', type: 'input', required: true, placeholder: 'Enter title' },
-        description: { label: 'Description', type: 'textarea', required: true, placeholder: 'Enter description' },
-        priority: { 
-          label: 'Priority', 
-          type: 'select', 
-          required: true, 
+        title: {
+          label: "Title",
+          type: "input",
+          //required: true,
+          placeholder: "Enter title (1-255 characters)",
+          class: "['form-control', isFieldInvalid(key) ? 'invalid' : '']",
+          required: "field.required"
+        },
+        description: {
+          label: "Description",
+          type: "textarea",
+          required: true,
+          placeholder: "Enter description",
+        },
+        priority: {
+          label: "Priority",
+          type: "select",
+          required: true,
           options: [
-            { value: '1', text: 'HIGH' },
-            { value: '2', text: 'MEDIUM' },
-            { value: '3', text: 'LOW' },
+            { value: "1", text: "HIGH" },
+            { value: "2", text: "MEDIUM" },
+            { value: "3", text: "LOW" },
           ],
         },
         status: {
-          label: 'Status',
-          type: 'select',
+          label: "Status",
+          type: "select",
           required: true,
           options: [
-            { value: '1', text: 'Open' },
-            { value: '2', text: 'In Progress' },
-            { value: '3', text: 'Closed' },
+            { value: "1", text: "OPEN" },
+            { value: "2", text: "IN_PROGRESS" },
+            { value: "3", text: "CLOSED" },
           ],
         },
-        createdBy: { label: 'Created By', type: 'input', required: true, placeholder: 'Enter your name' },
-        creationDate: { label: 'Creation Date', type: 'input', inputType: 'datetime-local', required: true },
-        closureDate: { label: 'Closure Date', type: 'input', inputType: 'datetime-local' },
-        userId: { label: 'User', type: 'select', required: true, options: [] },
-        categoryId: { label: 'Category', type: 'select', required: true, options: [] },
+        assignTo: {
+          label: "Assign To",
+          type: "select",
+          options: [],
+          required: true,
+          placeholder: "Select support personnel",
+        },
+        creationDate: {
+          label: "Creation Date",
+          type: "input",
+          inputType: "datetime-local",
+          required: true,
+        },
+        closureDate: {
+          label: "Closure Date",
+          type: "input",
+          inputType: "datetime-local",
+        },
+        userId: {
+          label: "User",
+          type: "select",
+          required: true,
+          options: [],
+        },
+        categoryId: {
+          label: "Category",
+          type: "select",
+          required: true,
+          options: [],
+        },
       },
     };
   },
   mounted() {
+    this.fetchAssignTo();
     this.fetchUsers();
     this.fetchCategories();
   },
   methods: {
+    fetchAssignTo() {
+      this.$axios
+        .get("/users")
+        .then((res) => {
+          this.assignTo = res.data
+            .filter((user) => user.role === "SUPPORT")
+            .map((user) => ({ value: user.id, text: user.name }));
+          this.formFields.assignTo.options = this.assignTo;
+        })
+        .catch((error) => {
+          this.errorMessage = "Failed to fetch support personnel: " + error.message;
+        });
+    },
     fetchUsers() {
       this.$axios
-        .get('/users')
-        .then(res => {
-          console.log("API Response", res.data); // Log the entire response
-          this.users = res.data.map(user => ({
+        .get("/users")
+        .then((res) => {
+          this.users = res.data.map((user) => ({
             value: user.id,
             text: user.name,
           }));
           this.formFields.userId.options = this.users;
         })
-        .catch(error => {
+        .catch((error) => {
           this.errorMessage = "Failed to fetch users: " + error.message;
         });
     },
     fetchCategories() {
       this.$axios
-        .get('/category')
-        .then(res => {
-          console.log("API Response", res.data); // Log the entire response
-          this.categories = res.data.map(cat => ({
+        .get("/category")
+        .then((res) => {
+          this.categories = res.data.map((cat) => ({
             value: cat.id,
             text: cat.name,
           }));
           this.formFields.categoryId.options = this.categories;
         })
-        .catch(error => {
+        .catch((error) => {
           this.errorMessage = "Failed to fetch categories: " + error.message;
         });
     },
+    isValidLength(value) {
+      return value.length >= 1 && value.length <= 255;
+    },
     goBack() {
-      this.$router.push('/tickets');
+      this.$router.push("/tickets");
     },
     addTicket() {
+      this.loading = true;
+      this.errorMessage = ""; // Clear error message before submission
+      if (!this.isValidLength(this.form.title)) {
+        this.errorMessage = "Title must be between 1 and 255 characters.";
+        this.loading = false;
+        return;
+      }
       this.$axios
         .post("/tickets", this.form)
         .then(() => {
-          this.$router.push({ name: "Tickets" })
-            .then(() => {
-              alert("You have successfully added the ticket.");
-            });
+          this.$router.push({ name: "Tickets" });
+          alert("Ticket successfully added!");
         })
         .catch((error) => {
-          this.errorMessage = "Error adding ticket: " + error.message;
+          this.errorMessage =
+            "Error adding ticket: " +
+            (error.response.data.message || error.message);
+        })
+        .finally(() => {
+          this.loading = false;
         });
     },
   },

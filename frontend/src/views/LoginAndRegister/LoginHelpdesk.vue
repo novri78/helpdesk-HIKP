@@ -53,6 +53,7 @@
 
 <script>
 import { mapActions } from "vuex";
+import Swal from "sweetalert2";
 import cookie from "js-cookie";
 
 export default {
@@ -115,7 +116,13 @@ export default {
           password: this.password,
         });
 
-        alert("Login successful");
+        Swal.fire({
+          title: "Login Successful",
+          text: "You have successfully logged in.",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
+
         console.log("Login response:", loginResponse.data);
 
         const { token } = loginResponse.data;
@@ -125,8 +132,13 @@ export default {
           "Login failed:",
           error.response ? error.response.data : error.message
         );
-        this.errorMessage =
-          error.response?.data?.message || "Login failed. Please try again.";
+        Swal.fire({
+          title: "Login Failed",
+          text:
+            error.response?.data?.message || "Login failed. Please try again.",
+          icon: "error",
+          confirmButtonText: "Retry",
+        });
       }
     },
 
@@ -155,7 +167,12 @@ export default {
         }
       } catch (error) {
         console.error("Failed to fetch user data:", error);
-        this.errorMessage = "Failed to retrieve user data. Please try again.";
+        Swal.fire({
+          title: "Error",
+          text: "Failed to retrieve user data. Please try again.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
         if (error.response && error.response.status === 401) {
           this.logout();
         }
