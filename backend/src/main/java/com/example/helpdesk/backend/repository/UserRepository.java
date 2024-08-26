@@ -23,5 +23,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByIdAndIsDeletedFalse(Long id);
 
     //Optional find username by the ROLE
-    Optional<User> findByNameAndRole(String name, Role role);
+    Optional<User> findByIdAndRole(Long id, Role role);
+
 }

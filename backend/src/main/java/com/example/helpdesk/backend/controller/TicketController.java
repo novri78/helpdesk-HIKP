@@ -4,11 +4,15 @@ import com.example.helpdesk.backend.dto.TicketDTO;
 import com.example.helpdesk.backend.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/tickets")
@@ -19,9 +23,17 @@ public class TicketController {
     private final TicketService ticketService;
 
     @PostMapping
-    public ResponseEntity<TicketDTO> createTicket(@RequestBody TicketDTO ticketDto) {
-        TicketDTO createdTicket = ticketService.createNewTicket (ticketDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdTicket);
+    public ResponseEntity<?> createTicket(@Valid @RequestBody TicketDTO ticketDTO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            List<String> errorMessages = bindingResult.getAllErrors()
+                    .stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .collect(Collectors.toList ());
+            return ResponseEntity.badRequest().body(errorMessages);
+        }
+        // Proceed with creating the ticket
+        TicketDTO createdTicket = ticketService.createNewTicket (ticketDTO);
+        return ResponseEntity.ok (createdTicket);
     }
 
     @GetMapping("/{id}")

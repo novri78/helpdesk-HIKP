@@ -20,9 +20,9 @@ public class TicketDTO {
     private String description;
     private PriorityStatus priorityStatus;
     private TicketStatus ticketStatus;
-    private String assignTo;
+    private Long assignTo;
     private LocalDateTime createDate;
     private LocalDateTime closeDate;
-    private User userId;
-    private Category categoryId;
+    private Long userId;
+    private Long categoryId;
 }

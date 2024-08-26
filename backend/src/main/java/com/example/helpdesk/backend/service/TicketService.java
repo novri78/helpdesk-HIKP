@@ -44,8 +44,8 @@ public class TicketService {
     }
 
     // Method to validate if the assigned user has the SUPPORT role
-    private void validateSupportUser(String assignTo) {
-        Optional<User> supportUser = userRepository.findByNameAndRole(assignTo, Role.SUPPORT);
+    private void validateSupportUser(Long assignTo) {
+        Optional<User> supportUser = userRepository.findByIdAndRole (assignTo, Role.SUPPORT);
 
         if (supportUser.isEmpty()) {
             throw new IllegalArgumentException("The user assigned does not have the SUPPORT role.");
@@ -55,8 +55,9 @@ public class TicketService {
     @Transactional
     public TicketDTO createNewTicket(@Valid TicketDTO ticketDTO) {
         logger.info("Creating new ticket with userId: {}", ticketDTO.getUserId ());
-        validateSupportUser(ticketDTO.getAssignTo());
+        validateSupportUser(ticketDTO.getAssignTo ());
         ticketDTO.setId (ticketDTO.getId ( ));
+        ticketDTO.setTicketNo(generateUniqueTicketNo());
         ticketDTO.setTicketStatus (ticketDTO.getTicketStatus ());
         ticketDTO.setPriorityStatus (ticketDTO.getPriorityStatus ());
         ticketDTO.setTitle (ticketDTO.getTitle ());
@@ -66,9 +67,9 @@ public class TicketService {
         ticketDTO.setUserId (ticketDTO.getUserId ( ));
         ticketDTO.setCategoryId (ticketDTO.getCategoryId ());
 
-        Ticket ticket = ticketMapper.toEntity (ticketDTO);
-        ticket.setTicketNo (generateUniqueTicketNo ());
-        ticketRepository.save (ticket);
+        Ticket ticket = ticketMapper.toEntity(ticketDTO);
+
+        ticketRepository.save(ticket);
         return ticketMapper.toDTO(ticket);
     }
 
