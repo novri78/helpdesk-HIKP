@@ -1,5 +1,6 @@
 package com.example.helpdesk.backend.mapper;
 
+import com.example.helpdesk.backend.constant.PriorityStatus;
 import com.example.helpdesk.backend.constant.Role;
 import com.example.helpdesk.backend.constant.TicketStatus;
 import com.example.helpdesk.backend.dto.TicketDTO;
@@ -35,8 +36,8 @@ public class TicketMapper {
         ticketDTO.setTicketNo (ticket.getTicketNo ());
         ticketDTO.setTitle (ticket.getTitle ());
         ticketDTO.setDescription (ticket.getDescription ( ));
-        ticketDTO.setPriorityStatus(ticket.getPriorityStatus());
-        ticketDTO.setTicketStatus (TicketStatus.valueOf (ticket.getTicketStatus ().name ()));
+        ticketDTO.setPriorityStatus(ticket.getPriorityStatus ());
+        ticketDTO.setTicketStatus (ticket.getTicketStatus ());
         ticketDTO.setAssignTo (ticket.getAssignTo ().getId ());
         ticketDTO.setCreateDate (ticket.getCreateDate ());
         ticketDTO.setCloseDate (ticket.getCloseDate ());
@@ -56,8 +57,19 @@ public class TicketMapper {
         ticket.setTicketNo(ticketDTO.getTicketNo());
         ticket.setTitle(ticketDTO.getTitle());
         ticket.setDescription(ticketDTO.getDescription());
-        ticket.setPriorityStatus(ticketDTO.getPriorityStatus());
-        ticket.setTicketStatus(ticketDTO.getTicketStatus());
+        // Validate and set priority status
+        try {
+            ticket.setPriorityStatus(PriorityStatus.valueOf(ticketDTO.getPriorityStatus().name ().toUpperCase ()));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid priority status: " + ticketDTO.getPriorityStatus());
+        }
+
+        // Validate and set ticket status
+        try {
+            ticket.setTicketStatus(TicketStatus.valueOf(ticketDTO.getTicketStatus ().name ().toUpperCase ()));
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid ticket status: " + ticketDTO.getTicketStatus());
+        }
 
         User supportUser = userRepository.findByIdAndRole(ticketDTO.getAssignTo(), Role.SUPPORT)
                 .orElseThrow(() -> new RuntimeException("User with SUPPORT role not found"));

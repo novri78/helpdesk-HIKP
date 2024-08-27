@@ -4,5 +4,4 @@ public enum PriorityStatus {
     HIGH,
     MEDIUM,
     LOW
-
 }
