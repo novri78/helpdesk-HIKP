@@ -4,7 +4,7 @@
     <main>
       <div class="form-container">
         <h2 class="text-center white">Edit Ticket</h2>
-        <form @submit.prevent="editTicket">
+        <form @submit.prevent="submit">
           <div class="form-group">
             <label for="ticketNo">Ticket No</label>
             <input
@@ -34,7 +34,7 @@
               required
             ></textarea>
           </div>
-          <div class="form-group">
+          <!-- <div class="form-group">
             <label for="createDate">Create Date</label>
             <input
               type="datetime-local"
@@ -43,7 +43,7 @@
               class="form-control"
               required
             />
-          </div>
+          </div> -->
           <div class="form-group">
             <label for="closeDate">Close Date</label>
             <input
@@ -57,26 +57,26 @@
             <label for="priority">Priority</label>
             <select
               id="priority"
-              v-model="ticket.priority"
+              v-model="ticket.priorityStatus"
               class="form-control"
               required
             >
-              <option value="Low">Low</option>
-              <option value="Medium">Medium</option>
-              <option value="High">High</option>
+              <option value="LOW">Low</option>
+              <option value="MEDIUM">Medium</option>
+              <option value="HIGH">High</option>
             </select>
           </div>
           <div class="form-group">
             <label for="status">Status</label>
             <select
               id="status"
-              v-model="ticket.status"
+              v-model="ticket.ticketStatus"
               class="form-control"
               required
             >
-              <option value="Open">Open</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Closed">Closed</option>
+              <option value="OPEN">Open</option>
+              <option value="IN_PROGRESS">In Progress</option>
+              <option value="CLOSED">Closed</option>
             </select>
           </div>
           <div class="form-group">
@@ -220,7 +220,7 @@ export default {
       const formattedDate = date.toISOString().slice(0, 16); // Format to 'YYYY-MM-DDTHH:MM'
       return formattedDate;
     },
-    updateTicket() {
+    submit() {
       const id = this.$route.params.id;
       this.$axios
         .put(`/tickets/${id}`, this.ticket)
