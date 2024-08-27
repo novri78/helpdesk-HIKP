@@ -1,8 +1,6 @@
 <template>
   <div class="users-container">
-    <header class="users-list">
-      
-    </header>
+    <header class="users-list"></header>
     <h2>Tickets</h2>
     <button class="btn btn-primary mb-3" @click="routeToAddTicket">
       Add Ticket
@@ -17,11 +15,11 @@
             <th>Description</th>
             <th>Priority</th>
             <th>Status</th>
-            <th>Assign</th>
+            <th>Assign To</th>
             <th>Create Date</th>
             <th>Close Date</th>
-            <th>User Id</th>
-            <th>Category Id</th>
+            <th>User</th>
+            <th>Category</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -33,11 +31,11 @@
             <td>{{ ticket.description }}</td>
             <td>{{ ticket.priority }}</td>
             <td>{{ ticket.status }}</td>
-            <td>{{ ticket.assign }}</td>
+            <td>{{ getUserName(ticket.assign) }}</td>
             <td>{{ ticket.createDate }}</td>
             <td>{{ ticket.closeDate }}</td>
-            <td>{{ ticket.userId }}</td>
-            <td>{{ ticket.categoryId }}</td>
+            <td>{{ getUserName(ticket.userId) }}</td>
+            <td>{{ getCategoryName(ticket.categoryId) }}</td>
             <td>
               <button class="btn btn-primary" @click="editTicket(ticket.id)">
                 Edit
@@ -68,19 +66,28 @@ export default {
     };
   },
   mounted() {
-    this.fetchTickets();
+    this.fetchData();
   },
   methods: {
     routeToAddTicket() {
       this.$router.push({ name: "AddTicket" });
     },
+    fetchData() {
+      Promise.all([this.fetchTickets(), this.fetchUsers(), this.fetchCategories()])
+        .then(() => {
+          console.log("Data fetched successfully");
+        })
+        .catch((error) => {
+          this.errorMessage = "Failed to fetch data: " + error.message;
+        });
+    },
     fetchTickets() {
-      this.$axios
+      return this.$axios
         .get("/tickets")
         .then((res) => {
-          console.log("API Response", res.data); // Log the entire response
           this.tickets = res.data.map((ticket) => ({
             id: ticket.id,
+            ticketNo: ticket.ticketNo,
             title: ticket.title,
             description: ticket.description,
             priority: ticket.priorityStatus,
@@ -88,30 +95,45 @@ export default {
             assign: ticket.assignTo,
             createDate: ticket.createDate,
             closeDate: ticket.closeDate,
-            userId: ticket.userId.id,
-            categoryId: ticket.categoryId.id,
+            userId: ticket.userId,
+            categoryId: ticket.categoryId,
           }));
-          console.log("Mapped Tickets", this.tickets); // Log the mapped tickets
-        })
-        .catch((error) => {
-          this.errorMessage = "Failed to fetch tickets: " + error.message;
         });
+    },
+    fetchUsers() {
+      return this.$axios
+        .get("/users")
+        .then((res) => {
+          this.users = res.data;
+        });
+    },
+    fetchCategories() {
+      return this.$axios
+        .get("/category")
+        .then((res) => {
+          this.categories = res.data;
+        });
+    },
+    getUserName(userId) {
+      const user = this.users.find((user) => user.id === userId);
+      return user ? user.name : "Unknown User";
+    },
+    getCategoryName(categoryId) {
+      const category = this.categories.find((category) => category.id === categoryId);
+      return category ? category.name : "Unknown Category";
     },
     editTicket(id) {
       this.$router.push({ name: "EditTicket", params: { id } });
-      console.log("no id", id);
     },
     confirmDeleteTicket(id) {
-      if (
-        confirm("Are you sure you want to delete this ticket with ID: " + id)
-      ) {
+      if (confirm("Are you sure you want to delete this ticket with ID: " + id)) {
         this.$axios
           .delete(`/tickets/${id}`)
           .then(() => {
             this.fetchTickets(); // Refresh the list after deletion
           })
           .catch((error) => {
-            this.errorMessage = "Failed to delete user: " + error.message;
+            this.errorMessage = "Failed to delete ticket: " + error.message;
           });
       }
     },

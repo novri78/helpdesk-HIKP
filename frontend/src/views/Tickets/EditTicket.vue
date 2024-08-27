@@ -1,39 +1,137 @@
 <template>
   <div>
-    <header>
-      <h2>Edit Ticket</h2>
-    </header>
+    <header></header>
     <main>
       <div class="form-container">
+        <h2 class="text-center white">Edit Ticket</h2>
         <form @submit.prevent="editTicket">
-          <div class="form-group" v-for="(field, key) in formFields" :key="key">
-            <label :for="key">{{ field.label }}:</label>
-            <component
-              :is="field.type"
-              v-model="form[key]"
-              :id="key"
-              :class="['form-control', field.class]"
-              :required="field.required"
-              :placeholder="field.placeholder"
-              :type="field.inputType"
-              v-if="field.type === 'input' || field.type === 'textarea'"
-            ></component>
-            <select
-              v-model="form[key]"
-              :id="key"
+          <div class="form-group">
+            <label for="ticketNo">Ticket No</label>
+            <input
+              type="text"
+              id="ticketNo"
+              v-model="ticket.ticketNo"
               class="form-control"
-              :required="field.required"
-              v-if="field.type === 'select'"
+              disabled
+            />
+          </div>
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input
+              type="text"
+              id="title"
+              v-model="ticket.title"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea
+              id="description"
+              v-model="ticket.description"
+              class="form-control"
+              required
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="createDate">Create Date</label>
+            <input
+              type="datetime-local"
+              id="createDate"
+              v-model="ticket.createDate"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="closeDate">Close Date</label>
+            <input
+              type="datetime-local"
+              id="closeDate"
+              v-model="ticket.closeDate"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label for="priority">Priority</label>
+            <select
+              id="priority"
+              v-model="ticket.priority"
+              class="form-control"
+              required
             >
-              <option v-for="option in field.options" :key="option.value" :value="option.value">
-                {{ option.text }}
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="status">Status</label>
+            <select
+              id="status"
+              v-model="ticket.status"
+              class="form-control"
+              required
+            >
+              <option value="Open">Open</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Closed">Closed</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="assign">Assign To</label>
+            <select
+              id="assignTo"
+              v-model="ticket.assignTo"
+              class="form-control"
+              required
+            >
+              <option
+                v-for="support in assignToOptions"
+                :key="support.value"
+                :value="support.value"
+              >
+                {{ support.text }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="userId">User</label>
+            <select
+              id="userId"
+              v-model="ticket.userId"
+              class="form-control"
+              required
+            >
+              <option v-for="user in users" :key="user.id" :value="user.id">
+                {{ user.name }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="categoryId">Category</label>
+            <select
+              id="categoryId"
+              v-model="ticket.categoryId"
+              class="form-control"
+              required
+            >
+              <option
+                v-for="category in categories"
+                :key="category.id"
+                :value="category.id"
+              >
+                {{ category.name }}
               </option>
             </select>
           </div>
 
           <div class="button-group">
             <button type="submit" class="btn btn-primary">Save</button>
-            <button type="button" class="btn btn-secondary" @click="goBack">Cancel</button>
+            <button type="button" class="btn btn-secondary" @click="goBack">
+              Cancel
+            </button>
           </div>
           <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
         </form>
@@ -48,144 +146,93 @@ import axios from "axios";
 export default {
   data() {
     return {
-      form: {
-        id: "", // Assuming id is used to identify the ticket being edited
+      ticket: {
+        id: "",
+        ticketNo: "",
         title: "",
         description: "",
         priority: "",
         status: "",
-        createdBy: "",
-        creationDate: "",
-        closureDate: "",
+        assign: "",
         userId: "",
         categoryId: "",
       },
       users: [],
       categories: [],
+      assignToOptions: [],
       errorMessage: "",
-      formFields: {
-        title: {
-          label: "Title",
-          type: "input",
-          required: true,
-          placeholder: "Enter title",
-        },
-        description: {
-          label: "Description",
-          type: "textarea",
-          required: true,
-          placeholder: "Enter description",
-        },
-        priority: {
-          label: "Priority",
-          type: "input",
-          required: true,
-          placeholder: "Enter priority",
-        },
-        status: {
-          label: "Status",
-          type: "select",
-          required: true,
-          options: [
-            { value: "1", text: "Open" },
-            { value: "2", text: "In Progress" },
-            { value: "3", text: "Closed" },
-          ],
-        },
-        createdBy: {
-          label: "Created By",
-          type: "input",
-          required: true,
-          placeholder: "Enter your name",
-        },
-        creationDate: {
-          label: "Creation Date",
-          type: "input",
-          inputType: "datetime-local",
-          required: true,
-        },
-        closureDate: {
-          label: "Closure Date",
-          type: "input",
-          inputType: "datetime-local",
-        },
-        userId: { 
-          label: "User", 
-          type: "select", 
-          required: true, 
-          options: [] },
-        categoryId: {
-          label: "Category",
-          type: "select",
-          required: true,
-          options: [],
-        },
-      },
     };
   },
   mounted() {
+    this.fetchTicket();
     this.fetchUsers();
     this.fetchCategories();
-    this.fetchTicket();
+    this.fetchAssignTo();
   },
   methods: {
-    fetchUsers() {
-      this.$axios
-      .get("/users")
-      .then(res => {
-        console.log("API Users Res", res.data);
-        this.users = response.data.map((user) => ({
-          value: user.id,
-          text: user.name,
-        }));
-        this.formFields.userId.options = this.users;
-      })
-      .catch(error => {
-        this.errorMessage = "Failed to fetch users: " + error.message;
-      });
-    },
-    fetchCategories() {
-      this.$axios
-      .get('/category')
-        .then(res => {
-          console.log("API Category Res", res.data); // Log the entire response
-          this.categories = res.data.map(cat => ({
-            value: cat.id,
-            text: cat.name,
-          }));
-          this.formFields.categoryId.options = this.categories;
-        })
-        .catch(error => {
-          this.errorMessage = "Failed to fetch categories: " + error.message;
-        });
-    },
     fetchTicket() {
-      const id = this.$route.params.id; // Assuming ticket ID is passed as a route parameter
+      const id = this.$route.params.id;
       this.$axios
         .get(`/tickets/${id}`)
         .then((res) => {
-          this.form = res.data;
-          console.log("Data Ticket by id", this.form);
+          this.ticket = res.data;
         })
         .catch((error) => {
           this.errorMessage = "Failed to fetch ticket: " + error.message;
         });
     },
-    editTicket() {
-      const ticketData = this.form;
+    fetchUsers() {
       this.$axios
-        .put(`/tickets/${this.form.id}`, ticketData)
-        .then(() => {
-          this.$router.push({ name: "Tickets" }).then(() => {
-            alert("You have successfully edited the ticket.");
-          });
+        .get("/users")
+        .then((res) => {
+          this.users = res.data;
         })
         .catch((error) => {
-          this.errorMessage = "Error editing ticket: " + error.message;
+          this.errorMessage = "Failed to fetch users: " + error.message;
+        });
+    },
+    fetchAssignTo() {
+      this.$axios
+        .get("/users")
+        .then((res) => {
+          this.assignToOptions = res.data
+            .filter((user) => user.role === "SUPPORT")
+            .map((user) => ({ value: user.id, text: user.name }));
+        })
+        .catch((error) => {
+          this.errorMessage =
+            "Failed to fetch support personnel: " + error.message;
+        });
+    },
+    fetchCategories() {
+      this.$axios
+        .get("/category")
+        .then((res) => {
+          this.categories = res.data;
+        })
+        .catch((error) => {
+          this.errorMessage = "Failed to fetch categories: " + error.message;
+        });
+    },
+    formatDateForInput(dateStr) {
+      if (!dateStr) return "";
+      const date = new Date(dateStr);
+      const formattedDate = date.toISOString().slice(0, 16); // Format to 'YYYY-MM-DDTHH:MM'
+      return formattedDate;
+    },
+    updateTicket() {
+      const id = this.$route.params.id;
+      this.$axios
+        .put(`/tickets/${id}`, this.ticket)
+        .then(() => {
+          this.$router.push({ name: "Tickets" });
+        })
+        .catch((error) => {
+          this.errorMessage = "Failed to update ticket: " + error.message;
         });
     },
     goBack() {
-      this.$router.push("/tickets");
+      this.$router.push({ name: "Tickets" });
     },
   },
 };
@@ -193,7 +240,7 @@ export default {
 
 <style scoped>
 * {
-  margin: 0;
+  margin: 20px;
   padding: 0;
   box-sizing: border-box;
 }

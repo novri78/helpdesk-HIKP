@@ -13,14 +13,22 @@
               :is="field.type === 'select' ? 'select' : 'input'"
               v-model="form[key]"
               :id="key"
-              :type="field.inputType || 'text'"
+              v-bind:type="
+                field.type === 'select' ? null : field.inputType || 'text'
+              "
               :placeholder="field.placeholder"
               :class="['form-control', field.class]"
               :required="field.required"
             >
+              :placeholder="field.placeholder" :class="['form-control',
+              field.class]" :required="field.required" >
               <!-- Render options if the field is a select -->
               <option value="" disabled>Select {{ field.label }}</option>
-              <option v-for="option in field.options" :key="option.value" :value="option.value">
+              <option
+                v-for="option in field.options"
+                :key="option.value"
+                :value="option.value"
+              >
                 {{ option.text }}
               </option>
             </component>
@@ -69,7 +77,7 @@ export default {
           //required: true,
           placeholder: "Enter title (1-255 characters)",
           class: "['form-control', isFieldInvalid(key) ? 'invalid' : '']",
-          required: "field.required"
+          required: "field.required",
         },
         description: {
           label: "Description",
@@ -146,7 +154,8 @@ export default {
           this.formFields.assignTo.options = this.assignTo;
         })
         .catch((error) => {
-          this.errorMessage = "Failed to fetch support personnel: " + error.message;
+          this.errorMessage =
+            "Failed to fetch support personnel: " + error.message;
         });
     },
     fetchUsers() {
