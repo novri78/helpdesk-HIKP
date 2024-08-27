@@ -59,7 +59,9 @@ export default {
             timer: 3000, // Auto-close after 3 seconds
             timerProgressBar: true,
           });
-        }, 300); // Delay of 100ms
+        }
+        // , 300
+        ); // Delay of 100ms
       });
     },
     getUserData() {
