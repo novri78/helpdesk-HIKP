@@ -7,31 +7,99 @@
       <div class="form-container">
         <h1 class="text-center white">Form Add Ticket</h1>
         <form @submit.prevent="addTicket">
-          <div v-for="(field, key) in formFields" :key="key" class="form-group">
-            <label :for="key">{{ field.label }}</label>
-            <component
-              :is="field.type === 'select' ? 'select' : 'input'"
-              v-model="form[key]"
-              :id="key"
-              v-bind:type="
-                field.type === 'select' ? null : field.inputType || 'text'
-              "
-              :placeholder="field.placeholder"
-              :class="['form-control', field.class]"
-              :required="field.required"
-            >
-              :placeholder="field.placeholder" :class="['form-control',
-              field.class]" :required="field.required" >
-              <!-- Render options if the field is a select -->
-              <option value="" disabled>Select {{ field.label }}</option>
-              <option
-                v-for="option in field.options"
-                :key="option.value"
-                :value="option.value"
-              >
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input
+              v-model="form.title"
+              id="title"
+              type="text"
+              placeholder="Enter title (1-255 characters)"
+              class="form-control"
+              :class="{ 'is-invalid': !isValidLength(form.title) && form.title !== '' }"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea
+              v-model="form.description"
+              id="description"
+              placeholder="Enter description"
+              class="form-control"
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="priorityStatus">Priority</label>
+            <select v-model="form.priorityStatus" id="priority" class="form-control" required>
+              <option value="" disabled>Select Priority</option>
+              <option v-for="option in formFields.priority.options" :key="option.value" :value="option.value">
                 {{ option.text }}
               </option>
-            </component>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="ticketStatus">Status</label>
+            <select v-model="form.ticketStatus" id="status" class="form-control" required>
+              <option value="" disabled>Select Status</option>
+              <option v-for="option in formFields.status.options" :key="option.value" :value="option.value">
+                {{ option.text }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="assignTo">Assign To</label>
+            <select v-model="form.assignTo" id="assignTo" class="form-control" required>
+              <option value="" disabled>Select Support Personnel</option>
+              <option v-for="option in formFields.assignTo.options" :key="option.value" :value="option.value">
+                {{ option.text }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="creationDate">Creation Date</label>
+            <input
+              v-model="form.creationDate"
+              id="creationDate"
+              type="datetime-local"
+              class="form-control"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="closureDate">Closure Date</label>
+            <input
+              v-model="form.closureDate"
+              id="closureDate"
+              type="datetime-local"
+              class="form-control"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="userId">User</label>
+            <select v-model="form.userId" id="userId" class="form-control" required>
+              <option value="" disabled>Select User</option>
+              <option v-for="option in formFields.userId.options" :key="option.value" :value="option.value">
+                {{ option.text }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="categoryId">Category</label>
+            <select v-model="form.categoryId" id="categoryId" class="form-control" required>
+              <option value="" disabled>Select Category</option>
+              <option v-for="option in formFields.categoryId.options" :key="option.value" :value="option.value">
+                {{ option.text }}
+              </option>
+            </select>
           </div>
 
           <div class="button-group">
@@ -51,14 +119,16 @@
 </template>
 
 <script>
+import Swal from "sweetalert2";
+
 export default {
   data() {
     return {
       form: {
         title: "",
         description: "",
-        priority: "",
-        status: "",
+        priorityStatus: "",
+        ticketStatus: "",
         assignTo: "",
         creationDate: "",
         closureDate: "",
@@ -71,68 +141,27 @@ export default {
       loading: false,
       errorMessage: "",
       formFields: {
-        title: {
-          label: "Title",
-          type: "input",
-          //required: true,
-          placeholder: "Enter title (1-255 characters)",
-          class: "['form-control', isFieldInvalid(key) ? 'invalid' : '']",
-          required: "field.required",
-        },
-        description: {
-          label: "Description",
-          type: "textarea",
-          required: true,
-          placeholder: "Enter description",
-        },
         priority: {
-          label: "Priority",
-          type: "select",
-          required: true,
           options: [
-            { value: "1", text: "HIGH" },
-            { value: "2", text: "MEDIUM" },
-            { value: "3", text: "LOW" },
+            { value: "HIGH", text: "HIGH" },
+            { value: "MEDIUM", text: "MEDIUM" },
+            { value: "LOW", text: "LOW" },
           ],
         },
         status: {
-          label: "Status",
-          type: "select",
-          required: true,
           options: [
-            { value: "1", text: "OPEN" },
-            { value: "2", text: "IN_PROGRESS" },
-            { value: "3", text: "CLOSED" },
+            { value: "OPEN", text: "OPEN" },
+            { value: "IN_PROGRESS", text: "IN PROGRESS" },
+            { value: "CLOSED", text: "CLOSED" },
           ],
         },
         assignTo: {
-          label: "Assign To",
-          type: "select",
           options: [],
-          required: true,
-          placeholder: "Select support personnel",
-        },
-        creationDate: {
-          label: "Creation Date",
-          type: "input",
-          inputType: "datetime-local",
-          required: true,
-        },
-        closureDate: {
-          label: "Closure Date",
-          type: "input",
-          inputType: "datetime-local",
         },
         userId: {
-          label: "User",
-          type: "select",
-          required: true,
           options: [],
         },
         categoryId: {
-          label: "Category",
-          type: "select",
-          required: true,
           options: [],
         },
       },
@@ -148,25 +177,22 @@ export default {
       this.$axios
         .get("/users")
         .then((res) => {
-          this.assignTo = res.data
+          this.formFields.assignTo.options = res.data
             .filter((user) => user.role === "SUPPORT")
             .map((user) => ({ value: user.id, text: user.name }));
-          this.formFields.assignTo.options = this.assignTo;
         })
         .catch((error) => {
-          this.errorMessage =
-            "Failed to fetch support personnel: " + error.message;
+          this.errorMessage = "Failed to fetch support personnel: " + error.message;
         });
     },
     fetchUsers() {
       this.$axios
         .get("/users")
         .then((res) => {
-          this.users = res.data.map((user) => ({
+          this.formFields.userId.options = res.data.map((user) => ({
             value: user.id,
             text: user.name,
           }));
-          this.formFields.userId.options = this.users;
         })
         .catch((error) => {
           this.errorMessage = "Failed to fetch users: " + error.message;
@@ -176,11 +202,10 @@ export default {
       this.$axios
         .get("/category")
         .then((res) => {
-          this.categories = res.data.map((cat) => ({
+          this.formFields.categoryId.options = res.data.map((cat) => ({
             value: cat.id,
             text: cat.name,
           }));
-          this.formFields.categoryId.options = this.categories;
         })
         .catch((error) => {
           this.errorMessage = "Failed to fetch categories: " + error.message;
@@ -195,21 +220,26 @@ export default {
     addTicket() {
       this.loading = true;
       this.errorMessage = ""; // Clear error message before submission
+
       if (!this.isValidLength(this.form.title)) {
         this.errorMessage = "Title must be between 1 and 255 characters.";
         this.loading = false;
         return;
       }
+
       this.$axios
         .post("/tickets", this.form)
         .then(() => {
           this.$router.push({ name: "Tickets" });
-          alert("Ticket successfully added!");
+          Swal.fire({
+            title: "Add Ticket Successful",
+            text: "You have successfully created Ticket.",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
         })
         .catch((error) => {
-          this.errorMessage =
-            "Error adding ticket: " +
-            (error.response.data.message || error.message);
+          this.errorMessage = "Error adding ticket: " + (error.response.data.message || error.message);
         })
         .finally(() => {
           this.loading = false;
