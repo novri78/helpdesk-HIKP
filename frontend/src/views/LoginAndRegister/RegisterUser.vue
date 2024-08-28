@@ -86,6 +86,8 @@
 </template>
 
 <script>
+import Swal from "sweetalert2";
+
 export default {
   name: "RegisterUser",
   data() {
@@ -93,7 +95,7 @@ export default {
       form: {
         email: "",
         name: "",
-        password: "",
+        password: "", // Make sure password is inside form
         role: "USER", // Default role
         department: "",
         phoneNumber: "",
@@ -112,11 +114,14 @@ export default {
     validatePassword() {
       this.passwordError = "";
 
-      if (this.password.length < 8) {
+      if (this.form.password.length < 8) {
+        // Access password via form
         this.passwordError = "Password must be at least 8 characters long.";
-      } else if (!/\d/.test(this.password)) {
+      } else if (!/\d/.test(this.form.password)) {
+        // Access password via form
         this.passwordError = "Password must contain at least one digit.";
-      } else if (!/[A-Za-z]/.test(this.password)) {
+      } else if (!/[A-Za-z]/.test(this.form.password)) {
+        // Access password via form
         this.passwordError = "Password must contain at least one letter.";
       }
     },
@@ -133,24 +138,32 @@ export default {
             isApproved: false, // New users are not approved by default
           })
           .then(() => {
-            alert("Registration successful! Please wait for admin approval.");
+            Swal.fire({
+              title: "Register Successful",
+              text: "Registration successful! Please wait for admin approval.",
+              icon: "success",
+              confirmButtonText: "OK",
+            });
             this.resetForm();
             this.$router.push({ name: "Login" });
           })
           .catch((error) => {
             if (error.response && error.response.data) {
-              // Cek jika error berasal dari server dan ada data yang bisa diambil
               this.errorMessage =
                 error.response.data.message ||
                 "Registration failed. Please try again.";
             } else {
-              // Error dari sisi lain (misalnya network issue)
               this.errorMessage =
                 "An unexpected error occurred. Please try again.";
             }
           });
       } else {
-        alert("Please fill in all required fields.");
+        Swal.fire({
+          title: "Error Message",
+          text: "Please fill in all required fields.",
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
       }
     },
     resetForm() {
