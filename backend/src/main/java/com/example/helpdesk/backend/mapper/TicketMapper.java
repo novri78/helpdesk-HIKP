@@ -43,6 +43,9 @@ public class TicketMapper {
         ticketDTO.setCloseDate (ticket.getCloseDate ());
         ticketDTO.setUserId (ticket.getUser ().getId ());
         ticketDTO.setCategoryId (ticket.getCategory ( ).getId ( ));
+
+        logger.info("TicketDTO details: {}", ticketDTO);
+
         return ticketDTO;
     }
 
@@ -55,14 +58,15 @@ public class TicketMapper {
         Ticket ticket = new Ticket();
         ticket.setId(ticketDTO.getId());
         ticket.setTicketNo(ticketDTO.getTicketNo());
-        ticket.setTitle(ticketDTO.getTitle());
+        ticket.setTitle (ticketDTO.getTitle ( ));
         ticket.setDescription(ticketDTO.getDescription());
+        ticket.setPriorityStatus (ticketDTO.getPriorityStatus ());
         // Validate and set priority status
-        try {
-            ticket.setPriorityStatus(PriorityStatus.valueOf(ticketDTO.getPriorityStatus().name ().toUpperCase ()));
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Invalid priority status: " + ticketDTO.getPriorityStatus());
-        }
+//        try {
+//            ticket.setPriorityStatus(PriorityStatus.valueOf (ticketDTO.getPriorityStatus ().name ().toUpperCase ()));
+//        } catch (IllegalArgumentException e) {
+//            throw new RuntimeException("Invalid priority status: " + ticketDTO.getPriorityStatus());
+//        }
 
         // Validate and set ticket status
         try {
@@ -103,6 +107,9 @@ public class TicketMapper {
             ticket.setCloseDate (ticketDTO.getCloseDate ());
             ticket.setUser (userRepository.getById (ticketDTO.getUserId ()));
             ticket.setCategory (categoryRepository.getById (ticketDTO.getCategoryId ()));
+
+            logger.info("TicketDTO details: {}", ticketDTO);
+
         }
     }
 
