@@ -28,7 +28,7 @@
           <label>Password</label>
           <input
             type="password"
-            v-model="password"
+            v-model="form.password"
             @input="validatePassword"
             required
             placeholder="Enter your password"
