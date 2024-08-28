@@ -63,7 +63,7 @@ public class TicketService {
         ticketDTO.setTitle (ticketDTO.getTitle ());
         ticketDTO.setDescription (ticketDTO.getDescription ());
         ticketDTO.setCreateDate (ticketDTO.getCreateDate ());
-        ticketDTO.setCloseDate (ticketDTO.getCloseDate ());
+        //ticketDTO.setCloseDate (ticketDTO.getCloseDate ());
         ticketDTO.setUserId (ticketDTO.getUserId ( ));
         ticketDTO.setCategoryId (ticketDTO.getCategoryId ());
 
