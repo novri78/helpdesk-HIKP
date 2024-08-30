@@ -1,8 +1,6 @@
 <template>
   <div class="dashboard">
-    <header class="header">
-      
-    </header>
+    <header class="header"></header>
     <main class="main-content">
       <h1 class="text-center white">Helpdesk Dashboard</h1>
       <div class="cards-container">
@@ -36,9 +34,16 @@
           subtitle="closed support tickets"
           backgroundColor="#42a5f5"
         />
-      </div>
-      <div class="top-categories-card">
-        <TopCategoriesMetricCard :topCategories="topCategories" :categoriesData="categoriesData" />
+        <div class="pie-chart-3d-container">
+          <h3 class="text-center white">Ticket Graph</h3>
+          <PieChart3DTicket v-if="isChartVisible" :chartData="pieChart3DData" />
+        </div>
+        <div class="top-categories-card">
+          <TopCategoriesMetricCard
+            :topCategories="topCategories"
+            :categoriesData="categoriesData"
+          />
+        </div>
       </div>
     </main>
     <footer class="footer">
@@ -49,15 +54,18 @@
 
 <script>
 import MetricCard from "@/components/TicketAnalyst/MetricCard.vue";
+import PieChart3DTicket from "@/components/TicketAnalyst/PieChart3DTicket.vue";
 import TopCategoriesMetricCard from "@/components/TicketAnalyst/TopCategoriesMetricCard.vue";
 
 export default {
   data() {
     return {
+      isChartVisible: false,
       tickets: [],
       categories: [],
       topCategories: [],
       categoriesData: [],
+      pieChart3DData: [],
     };
   },
   computed: {
@@ -68,16 +76,26 @@ export default {
       return this.tickets.filter((ticket) => !ticket.assignTo).length;
     },
     openTickets() {
-      return this.tickets.filter((ticket) => ticket.ticketStatus === "OPEN").length;
+      return this.tickets.filter((ticket) => ticket.ticketStatus === "OPEN")
+        .length;
     },
     inProgressTickets() {
-      return this.tickets.filter((ticket) => ticket.ticketStatus === "IN_PROGRESS").length;
+      return this.tickets.filter(
+        (ticket) => ticket.ticketStatus === "IN_PROGRESS"
+      ).length;
     },
     solvedTickets() {
-      return this.tickets.filter((ticket) => ticket.ticketStatus === "CLOSED").length;
+      return this.tickets.filter((ticket) => ticket.ticketStatus === "CLOSED")
+        .length;
     },
   },
   mounted() {
+    // Delay the rendering of the PieChart3D component by 1 second (1000ms)
+    setTimeout(() => {
+      this.isChartVisible = true;
+      this.pieChart3DData = this.getPieChartData();
+      console.log(this.pieChart3DData);
+    }, 1000);
     this.fetchData();
   },
   methods: {
@@ -85,11 +103,13 @@ export default {
       Promise.all([this.fetchTickets(), this.fetchCategories()])
         .then(() => {
           this.topCategories = this.calculateTopCategories();
-          this.categoriesData = this.topCategories.map(category => ({
+          this.categoriesData = this.topCategories.map((category) => ({
             name: category.name,
             percentage: parseFloat(category.percentage),
             color: this.getRandomColor(),
           }));
+          this.pieChart3DData = this.getPieChartData(); // Assign the pie chart data here
+          console.log("Pie Chart Data:", this.pieChart3DData); // Check the pie chart data
           console.log("Data fetched successfully", this.topCategories);
         })
         .catch((error) => {
@@ -126,7 +146,9 @@ export default {
 
       const topCategories = Object.entries(categoryCount)
         .map(([categoryId, count]) => {
-          const category = this.categories.find((cat) => cat.id === parseInt(categoryId));
+          const category = this.categories.find(
+            (cat) => cat.id === parseInt(categoryId)
+          );
           return {
             name: category ? category.name : "Unknown Category",
             percentage: ((count / totalTickets) * 100).toFixed(2),
@@ -138,17 +160,49 @@ export default {
       return topCategories;
     },
     getRandomColor() {
-      const letters = '0123456789ABCDEF';
-      let color = '#';
+      const letters = "0123456789ABCDEF";
+      let color = "#";
       for (let i = 0; i < 6; i++) {
         color += letters[Math.floor(Math.random() * 16)];
       }
       return color;
     },
+    getPieChartData() {
+      const statusCount = this.tickets.reduce(
+        (acc, ticket) => {
+          if (ticket.ticketStatus === "OPEN") acc.open++;
+          else if (ticket.ticketStatus === "IN_PROGRESS") acc.inProgress++;
+          else if (ticket.ticketStatus === "CLOSED") acc.closed++;
+          return acc;
+        },
+        { open: 0, inProgress: 0, closed: 0 }
+      );
+
+      const total = this.totalTickets;
+
+      return [
+        {
+          label: "Open",
+          value: ((statusCount.open / total) * 100).toFixed(2),
+          color: "#66bb6a",
+        },
+        {
+          label: "In Progress",
+          value: ((statusCount.inProgress / total) * 100).toFixed(2),
+          color: "#ab47bc",
+        },
+        {
+          label: "Closed",
+          value: ((statusCount.closed / total) * 100).toFixed(2),
+          color: "#42a5f5",
+        },
+      ];
+    },
   },
   components: {
     MetricCard,
     TopCategoriesMetricCard,
+    PieChart3DTicket,
   },
 };
 </script>
@@ -180,6 +234,13 @@ export default {
   gap: 20px;
   justify-content: center;
   margin-bottom: 20px;
+}
+
+.pie-chart-3d-container {
+  margin-top: 20px;
+  margin-left: 20px;
+  display: flex;
+  justify-content: center;
 }
 
 .top-categories-card {
