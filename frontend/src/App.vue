@@ -56,14 +56,17 @@ export default {
 .main-content {
   flex-grow: 1;
   overflow-y: auto;
+  padding: 20px; /* Menambahkan padding */
 }
 
 .sidebar-open {
-  margin-left: 170px;
+  margin-left: 200px; /* Menyesuaikan lebar sidebar */
+  transition: margin-left 0.3s ease-in-out;
 }
 
 @media (max-width: 768px) {
   .main-content {
+    padding: 15px; /* Menyesuaikan padding untuk layar kecil */
     margin-left: 0;
   }
   .sidebar-open {

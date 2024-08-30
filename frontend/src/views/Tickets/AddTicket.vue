@@ -53,7 +53,7 @@
 
           <div class="form-group">
             <label for="assignTo">Assign To</label>
-            <select v-model="form.assignTo" id="assignTo" class="form-control" required>
+            <select v-model="form.assignTo" id="assignTo" class="form-control">
               <option value="" disabled>Select Support Personnel</option>
               <option v-for="option in formFields.assignTo.options" :key="option.value" :value="option.value">
                 {{ option.text }}

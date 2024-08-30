@@ -108,13 +108,13 @@ export default {
 .sidebar {
   position: fixed;
   z-index: 1001;
-  left: -200px;
+  left: -250px;
   top: 0;
-  width: 200px;
+  width: 250px;
   height: 100vh;
   background-color: #007bff;
   transition: left 0.3s ease-in-out;
-  padding-top: 60px;
+  padding-top: 70px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
   &.sidebar_on {
     left: 0;
@@ -127,7 +127,9 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
+    padding: 15px 20px;
+    transition: background 0.2s ease;
+
     &:hover {
       color: #495057;
       background-color: rgba(255, 255, 255, 0.1);
@@ -139,7 +141,7 @@ export default {
     position: absolute;
     right: -30px;
     top: 10px;
-    width: 30px;
+    width: 40px;
     height: 50px;
     cursor: pointer;
     display: flex;
@@ -157,11 +159,14 @@ export default {
     background-color: #007bff;
     list-style: none;
     padding-left: 0;
+    margin-left: 10px; /* Menambahkan margin untuk nested dropdown */
     .dropdown-item {
-      padding: 10px 15px;
+      padding: 10px 20px;
       color: #fff;
       text-decoration: none;
       display: block;
+      transition: background 0.2s ease;
+      
       &:hover {
         color: #495057;
         background-color: rgba(255, 255, 255, 0.1);

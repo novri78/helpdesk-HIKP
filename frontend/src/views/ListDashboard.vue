@@ -1,21 +1,39 @@
 <template>
-  <div class="dashboard">
-    <header class="header"></header>
+  <div :class="['dashboard', { dark: isDarkMode }]">
+    <header class="header">
+      <div class="header-content">
+        <h1 class="text-center">Helpdesk Dashboard</h1>
+        <button @click="toggleDarkMode" class="dark-mode-toggle">
+          {{ isDarkMode ? "Light Mode" : "Dark Mode" }}
+        </button>
+      </div>
+    </header>
     <main class="main-content">
-      <h1 class="text-center white">Helpdesk Dashboard</h1>
+      <!-- Dropdown for selecting month -->
+      <div class="month-selector">
+        <label for="month-select" class="white">Select Month:</label>
+        <input
+          type="month"
+          id="month-select"
+          v-model="selectedMonth"
+          class="month-input"
+          @change="fetchData"
+        />
+      </div>
+
       <div class="cards-container">
         <MetricCard
           title="Grand Total Tickets"
           :count="totalTickets"
           subtitle="total tickets"
-          backgroundColor="#42a5f5"
+          backgroundColor="#f57c00"
         />
-        <MetricCard
+        <!-- <MetricCard
           title="Unassigned tickets"
           :count="unassignedTickets"
           subtitle="without assignee"
           backgroundColor="#f57c00"
-        />
+        /> -->
         <MetricCard
           title="Open status tickets"
           :count="openTickets"
@@ -34,10 +52,17 @@
           subtitle="closed support tickets"
           backgroundColor="#42a5f5"
         />
-        <div class="pie-chart-3d-container">
-          <h3 class="text-center white">Ticket Graph</h3>
-          <PieChart3DTicket v-if="isChartVisible" :chartData="pieChart3DData" />
+
+        <div class="pie-card-container">
+          <div class="pie-chart-3d-container">
+            <h3 class="text-center">Ticket Graph</h3>
+            <PieChart3DTicket
+              v-if="isChartVisible"
+              :chartData="pieChart3DData"
+            />
+          </div>
         </div>
+
         <div class="top-categories-card">
           <TopCategoriesMetricCard
             :topCategories="topCategories"
@@ -53,6 +78,7 @@
 </template>
 
 <script>
+import moment from "moment";
 import MetricCard from "@/components/TicketAnalyst/MetricCard.vue";
 import PieChart3DTicket from "@/components/TicketAnalyst/PieChart3DTicket.vue";
 import TopCategoriesMetricCard from "@/components/TicketAnalyst/TopCategoriesMetricCard.vue";
@@ -66,40 +92,53 @@ export default {
       topCategories: [],
       categoriesData: [],
       pieChart3DData: [],
+      selectedMonth: moment().format("YYYY-MM"), // Default to the current month
+      isDarkMode: false, // For dark mode toggle
     };
   },
   computed: {
+    filteredTickets() {
+      return this.tickets.filter(
+        (ticket) =>
+          moment(ticket.createDate).format("YYYY-MM") === this.selectedMonth
+      );
+    },
     totalTickets() {
-      return this.tickets.length;
+      return this.filteredTickets.length; // Update to use filteredTickets
     },
-    unassignedTickets() {
-      return this.tickets.filter((ticket) => !ticket.assignTo).length;
-    },
+    // unassignedTickets() {
+    //   return this.filteredTickets.filter((ticket) => !ticket.assignTo).length; // Update to use filteredTickets
+    // },
     openTickets() {
-      return this.tickets.filter((ticket) => ticket.ticketStatus === "OPEN")
-        .length;
+      return this.filteredTickets.filter(
+        (ticket) => ticket.ticketStatus === "OPEN"
+      ).length; // Update to use filteredTickets
     },
     inProgressTickets() {
-      return this.tickets.filter(
+      return this.filteredTickets.filter(
         (ticket) => ticket.ticketStatus === "IN_PROGRESS"
-      ).length;
+      ).length; // Update to use filteredTickets
     },
     solvedTickets() {
-      return this.tickets.filter((ticket) => ticket.ticketStatus === "CLOSED")
-        .length;
+      return this.filteredTickets.filter(
+        (ticket) => ticket.ticketStatus === "CLOSED"
+      ).length; // Update to use filteredTickets
+    },
+  },
+  watch: {
+    selectedMonth() {
+      // Call fetchData every time selectedMonth changes
+      this.fetchData();
     },
   },
   mounted() {
-    // Delay the rendering of the PieChart3D component by 1 second (1000ms)
-    setTimeout(() => {
-      this.isChartVisible = true;
-      this.pieChart3DData = this.getPieChartData();
-      console.log(this.pieChart3DData);
-    }, 1000);
     this.fetchData();
   },
   methods: {
     fetchData() {
+      // Reset isChartVisible before updating data
+      this.isChartVisible = false;
+
       Promise.all([this.fetchTickets(), this.fetchCategories()])
         .then(() => {
           this.topCategories = this.calculateTopCategories();
@@ -108,9 +147,11 @@ export default {
             percentage: parseFloat(category.percentage),
             color: this.getRandomColor(),
           }));
-          this.pieChart3DData = this.getPieChartData(); // Assign the pie chart data here
-          console.log("Pie Chart Data:", this.pieChart3DData); // Check the pie chart data
-          console.log("Data fetched successfully", this.topCategories);
+          this.updatePieChartData(); // Update pieChart3DData here
+          this.$nextTick(() => {
+            // Show the chart after data has been updated
+            this.isChartVisible = true;
+          });
         })
         .catch((error) => {
           console.error("Failed to fetch data:", error.message);
@@ -137,12 +178,12 @@ export default {
         });
     },
     calculateTopCategories() {
-      const categoryCount = this.tickets.reduce((acc, ticket) => {
+      const categoryCount = this.filteredTickets.reduce((acc, ticket) => {
         acc[ticket.categoryId] = (acc[ticket.categoryId] || 0) + 1;
         return acc;
       }, {});
 
-      const totalTickets = this.tickets.length;
+      const totalTickets = this.filteredTickets.length;
 
       const topCategories = Object.entries(categoryCount)
         .map(([categoryId, count]) => {
@@ -167,8 +208,29 @@ export default {
       }
       return color;
     },
+    updatePieChartData() {
+      this.pieChart3DData = this.getPieChartData(); // Update pieChart3DData with the correct month data
+
+      // Trigger a manual update
+      this.$nextTick(() => {
+        this.isChartVisible = false; // Hide it to trigger rerender
+        this.$nextTick(() => {
+          this.isChartVisible = true; // Show it again to ensure rerender
+        });
+      });
+    },
     getPieChartData() {
-      const statusCount = this.tickets.reduce(
+      if (this.filteredTickets.length === 0) {
+        return [
+          {
+            label: "No Data",
+            value: 100,
+            color: "#cccccc", // Gray color for "No Data"
+          },
+        ];
+      }
+
+      const statusCount = this.filteredTickets.reduce(
         (acc, ticket) => {
           if (ticket.ticketStatus === "OPEN") acc.open++;
           else if (ticket.ticketStatus === "IN_PROGRESS") acc.inProgress++;
@@ -178,7 +240,7 @@ export default {
         { open: 0, inProgress: 0, closed: 0 }
       );
 
-      const total = this.totalTickets;
+      const total = this.filteredTickets.length;
 
       return [
         {
@@ -198,6 +260,9 @@ export default {
         },
       ];
     },
+    toggleDarkMode() {
+      this.isDarkMode = !this.isDarkMode;
+    },
   },
   components: {
     MetricCard,
@@ -209,26 +274,76 @@ export default {
 
 <style scoped>
 .dashboard {
+  background-color: #f0f2f5;
+  margin: 55px;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  font-family: Arial, sans-serif;
+  font-family: "Inter", sans-serif;
+  transition: background-color 0.3s ease;
 }
 
 .header {
-  background-color: #42a5f5;
+  background: linear-gradient(90deg, #4e73df, #1cc88a);
   color: white;
   padding: 20px;
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.month-selector {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.month-selector .white {
+  color: #fff;
+  margin-right: 10px;
+}
+
+.month-selector .month-input {
+  padding: 8px 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.dark .dashboard {
+  background-color: #2c3e50;
+  color: #ecf0f1;
+}
+
+.dark-mode-toggle {
+  background: none;
+  border: 1px solid white;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.dark-mode-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
 .main-content {
+  margin: 0 auto;
   flex: 1;
   padding: 20px;
+  background-color: #f8f9fc;
+  transition: background-color 0.3s;
 }
 
 .cards-container {
+  margin-top: 20px;
+  margin-left: 20px;
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
@@ -236,18 +351,19 @@ export default {
   margin-bottom: 20px;
 }
 
-.pie-chart-3d-container {
-  margin-top: 20px;
-  margin-left: 20px;
-  display: flex;
-  justify-content: center;
+.pie-card-container,
+.top-categories-card {
+  width: 100%;
+  max-width: 950px;
+  margin: 5px auto;
 }
 
-.top-categories-card {
+.pie-chart-3d-container {
   margin-top: 20px;
-  max-width: 1000px;
-  margin-left: auto;
-  margin-right: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .footer {
@@ -256,5 +372,30 @@ export default {
   padding: 10px;
   margin-top: 20px;
   box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dark .main-content {
+  background-color: #2c2f33;
+}
+
+.dark .header {
+  background: linear-gradient(90deg, #7289da, #2c2f33);
+}
+
+.dark .footer {
+  background-color: #23272a;
+  color: #f1f1f1;
+}
+
+.dark .cards-container label {
+  color: white;
+}
+
+.dark .month-selector label {
+  color: white;
+}
+
+.dark .top-categories-card {
+  color: #23272a;
 }
 </style>

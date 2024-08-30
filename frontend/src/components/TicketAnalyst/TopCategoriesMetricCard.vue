@@ -11,7 +11,11 @@
     </div>
     <div class="pie-chart">
       <!-- Conditionally render the PieChart3D component based on isChartVisible -->
-      <PieChart3D v-if="isChartVisible" :topCategories="topCategories" :categoriesData="categoriesData"/>
+      <PieChart3D
+        v-if="isChartVisible"
+        :topCategories="topCategories"
+        :categoriesData="categoriesData"
+      />
     </div>
   </div>
 </template>
@@ -38,17 +42,40 @@ export default {
       isChartVisible: false, // Initially set to false to control the chart rendering
     };
   },
+  watch: {
+    categoriesData: {
+      immediate: true,
+      handler() {
+        this.updatePieChart(); // Update the pie chart data when categoriesData changes
+      },
+    },
+  },
   mounted() {
     // Delay the rendering of the PieChart3D component by 1 second (1000ms)
     setTimeout(() => {
       this.isChartVisible = true;
     }, 1000);
+    this.updatePieChart(); // Ensure the chart is updated on mount
+  },
+  methods: {
+    updatePieChart() {
+      // Hide chart before updating
+      this.isChartVisible = false;
+
+      // Delay rendering to ensure the chart updates with the new data
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.isChartVisible = true;
+        }, 1000); // Adjust the delay as needed
+      });
+    },
   },
 };
 </script>
 
 <style scoped>
 .metric-card-container {
+  margin-left: 5px;
   display: flex;
   justify-content: center;
   align-items: center;

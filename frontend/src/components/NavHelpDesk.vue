@@ -90,15 +90,17 @@ export default {
   justify-content: space-between;
   align-items: center;
   background-color: #007bff;
-  padding: 10px 5px;
+  padding: 15px 10px;
   height: 60px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Menambahkan shadow */
+  border-radius: 0 0 10px 10px; /* Menambahkan border-radius */
   box-sizing: border-box;
 }
 
 .navbar-toggler {
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   color: #fff;
   cursor: pointer;
   display: none;
@@ -141,8 +143,14 @@ export default {
 .nav-link {
   color: #fff;
   text-decoration: none;
-  padding: 10px;
+  padding: 10px 20px;
   cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -172,7 +180,8 @@ export default {
     display: block;
     width: 100%;
     text-align: center;
-    padding: 10px;
+    padding: 15px;
+    font-size: 1.2rem; /* Menyesuaikan ukuran font */
   }
 }
 
