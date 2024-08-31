@@ -38,6 +38,7 @@
         </ul>
       </li>
       <router-link to="/categories" class="nav-link">Category</router-link>
+      <router-link to="/chat" class="nav-link">Chat</router-link>
       <router-link to="/ask_wikipadia" class="nav-link"
         >Ask Wikipedia</router-link
       >
