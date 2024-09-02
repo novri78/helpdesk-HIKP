@@ -74,6 +74,7 @@ export default {
         'ITSUPPORT',
         'DIRECTOR',
         'ITDEVELOPER',
+        'MANRISK',
         'GAOPERATION',
         'SUPERADMIN'
       ],

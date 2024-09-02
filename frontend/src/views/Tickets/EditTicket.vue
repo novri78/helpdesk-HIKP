@@ -45,10 +45,10 @@
             />
           </div> -->
           <div class="form-group">
-            <label for="closeDate">Close Date</label>
+            <label for="closureDate">Close Date</label>
             <input
               type="datetime-local"
-              id="closeDate"
+              id="closureDate"
               v-model="ticket.closeDate"
               class="form-control"
             />
@@ -153,7 +153,8 @@ export default {
         description: "",
         priority: "",
         status: "",
-        assign: "",
+        closeDate: "",
+        assignTo: "",
         userId: "",
         categoryId: "",
       },

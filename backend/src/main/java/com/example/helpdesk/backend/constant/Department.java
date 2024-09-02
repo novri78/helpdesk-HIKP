@@ -7,6 +7,7 @@ public enum Department {
     ITSUPPORT,
     DIRECTOR,
     ITDEVELOPER,
+    MANRISK,
     GAOPERATION,
     SUPERADMIN
 

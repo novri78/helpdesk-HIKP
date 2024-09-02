@@ -31,9 +31,9 @@
             <router-link to="/users" class="dropdown-item"
               >List User</router-link
             >
-            <router-link to="/register" class="dropdown-item"
+            <!-- <router-link to="/register" class="dropdown-item"
               >Register New User</router-link
-            >
+            > -->
           </li>
         </ul>
       </li>

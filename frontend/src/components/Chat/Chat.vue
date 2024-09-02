@@ -139,10 +139,10 @@ export default {
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: 98vh;
+  height: 100vh;
   background-color: #f7f7f7;
   padding: 20px;
-  margin: 10px 20px;
+  margin: 25px 20px;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }

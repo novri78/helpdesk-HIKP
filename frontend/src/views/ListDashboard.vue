@@ -12,62 +12,37 @@
       <!-- Dropdown for selecting month -->
       <div class="month-selector">
         <label for="month-select" class="white">Select Month:</label>
-        <input
-          type="month"
-          id="month-select"
-          v-model="selectedMonth"
-          class="month-input"
-          @change="fetchData"
-        />
+        <input type="month" id="month-select" v-model="selectedMonth" class="month-input" @change="fetchData" />
       </div>
 
       <div class="cards-container">
-        <MetricCard
-          title="Grand Total Tickets"
-          :count="totalTickets"
-          subtitle="total tickets"
-          backgroundColor="#f57c00"
-        />
+        <MetricCard title="Grand Total Tickets" :count="totalTickets" subtitle="total tickets"
+          backgroundColor="#f57c00" />
         <!-- <MetricCard
           title="Unassigned tickets"
           :count="unassignedTickets"
           subtitle="without assignee"
           backgroundColor="#f57c00"
         /> -->
-        <MetricCard
-          title="Open status tickets"
-          :count="openTickets"
-          subtitle="with assignee"
-          backgroundColor="#66bb6a"
-        />
-        <MetricCard
-          title="In Progress tickets"
-          :count="inProgressTickets"
-          subtitle="in progress support tickets"
-          backgroundColor="#ab47bc"
-        />
-        <MetricCard
-          title="Solved status tickets"
-          :count="solvedTickets"
-          subtitle="closed support tickets"
-          backgroundColor="#42a5f5"
-        />
+        <MetricCard title="Open status tickets" :count="openTickets" subtitle="with assignee"
+          backgroundColor="#66bb6a" />
+        <MetricCard title="In Progress tickets" :count="inProgressTickets" subtitle="in progress support tickets"
+          backgroundColor="#ab47bc" />
+        <MetricCard title="Solved status tickets" :count="solvedTickets" subtitle="closed support tickets"
+          backgroundColor="#42a5f5" />
+        <!-- SLA dalam Menit -->
+        <MetricCard title="Average SLA (Minutes)" :count="averageSLAMinutes"
+          subtitle="Average time to resolve tickets in minutes" backgroundColor="#f44336" />
 
         <div class="pie-card-container">
           <div class="pie-chart-3d-container">
             <h3 class="text-center">Ticket Graph</h3>
-            <PieChart3DTicket
-              v-if="isChartVisible"
-              :chartData="pieChart3DData"
-            />
+            <PieChart3DTicket v-if="isChartVisible" :chartData="pieChart3DData" />
           </div>
         </div>
 
         <div class="top-categories-card">
-          <TopCategoriesMetricCard
-            :topCategories="topCategories"
-            :categoriesData="categoriesData"
-          />
+          <TopCategoriesMetricCard :topCategories="topCategories" :categoriesData="categoriesData" />
         </div>
       </div>
     </main>
@@ -94,6 +69,7 @@ export default {
       pieChart3DData: [],
       selectedMonth: moment().format("YYYY-MM"), // Default to the current month
       isDarkMode: false, // For dark mode toggle
+      averageSLAMinutes: 0,
     };
   },
   computed: {
@@ -148,6 +124,10 @@ export default {
             color: this.getRandomColor(),
           }));
           this.updatePieChartData(); // Update pieChart3DData here
+
+          // Calculate average SLA
+          this.calculateAverageSLA();     
+
           this.$nextTick(() => {
             // Show the chart after data has been updated
             this.isChartVisible = true;
@@ -199,6 +179,28 @@ export default {
         .slice(0, 5);
 
       return topCategories;
+    },
+    calculateAverageSLA() {
+      const closedTickets = this.filteredTickets.filter(
+        (ticket) => ticket.ticketStatus === "CLOSED"
+      );
+
+      if (closedTickets.length === 0) {
+        this.averageSLAMinutes = 0;
+        return;
+      };
+
+      const totalMinutes = closedTickets.reduce((total, ticket) => {
+        const createDate = moment(ticket.createDate);
+        const closeDate = moment(ticket.closeDate);
+        const duration = moment.duration(closeDate.diff(createDate));
+        
+        return total + duration.asMinutes();
+      }, 0);
+
+      this.averageSLAMinutes = (totalMinutes / closedTickets.length).toFixed(2);
+      this.averageSLAMinutes = parseFloat(this.averageSLAMinutes);
+      console.log("average", this.averageSLAMinutes);
     },
     getRandomColor() {
       const letters = "0123456789ABCDEF";

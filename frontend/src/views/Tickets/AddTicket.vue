@@ -64,7 +64,7 @@
           <div class="form-group">
             <label for="creationDate">Creation Date</label>
             <input
-              v-model="form.creationDate"
+              v-model="form.createDate"
               id="creationDate"
               type="datetime-local"
               class="form-control"
@@ -75,7 +75,7 @@
           <div class="form-group">
             <label for="closureDate">Closure Date</label>
             <input
-              v-model="form.closureDate"
+              v-model="form.closeDate"
               id="closureDate"
               type="datetime-local"
               class="form-control"
@@ -130,8 +130,8 @@ export default {
         priorityStatus: "",
         ticketStatus: "",
         assignTo: "",
-        creationDate: "",
-        closureDate: "",
+        createDate: "",
+        closeDate: "",
         userId: "",
         categoryId: "",
       },
