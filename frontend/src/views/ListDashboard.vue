@@ -10,9 +10,14 @@
     </header>
     <main class="main-content">
       <!-- Dropdown for selecting month -->
-      <div class="month-selector">
-        <label for="month-select" class="white">Select Month:</label>
-        <input type="month" id="month-select" v-model="selectedMonth" class="month-input" @change="fetchData" />
+      <div class="header-container">
+        <div class="month-selector">
+          <label for="month-select" class="white">Select Month:</label>
+          <input type="month" id="month-select" v-model="selectedMonth" class="month-input" @change="fetchData" />
+        </div>
+        <div class="download-btn-container">
+          <button class="download-csv-btn" @click="downloadCSV">Download CSV</button>
+        </div>
       </div>
 
       <div class="cards-container">
@@ -115,7 +120,7 @@ export default {
       // Reset isChartVisible before updating data
       this.isChartVisible = false;
 
-      Promise.all([this.fetchTickets(), this.fetchCategories()])
+      Promise.all([this.fetchTickets(), this.fetchCategories(), this.fetchUsers()])
         .then(() => {
           this.topCategories = this.calculateTopCategories();
           this.categoriesData = this.topCategories.map((category) => ({
@@ -126,7 +131,7 @@ export default {
           this.updatePieChartData(); // Update pieChart3DData here
 
           // Calculate average SLA
-          this.calculateAverageSLA();     
+          this.calculateAverageSLA();
 
           this.$nextTick(() => {
             // Show the chart after data has been updated
@@ -135,6 +140,43 @@ export default {
         })
         .catch((error) => {
           console.error("Failed to fetch data:", error.message);
+        });
+    },
+    downloadCSV() {
+      const csvContent = this.generateCSV(this.filteredTickets);
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `tickets_${this.selectedMonth}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    },
+    generateCSV(tickets) {
+      const headers = ['Ticket ID', 'Title', 'Status', 'Created Date', 'Closed Date', 'Category', 'Assign To', 'User'];
+      const rows = tickets.map(ticket => [
+        ticket.id,
+        ticket.title,
+        ticket.ticketStatus,
+        moment(ticket.createDate).format('YYYY-MM-DD HH:mm'),
+        ticket.closeDate ? moment(ticket.closeDate).format('YYYY-MM-DD HH:mm') : '',
+        this.categories ? this.categories.find(category => category.id === ticket.categoryId)?.name || 'Unknown' : 'Unknown',
+        this.users ? this.users.find(user => user.id === ticket.assignTo)?.name || 'Unknown' : 'Unknown',
+        this.users ? this.users.find(user => user.id === ticket.userId)?.name || 'Unknown' : 'Unknown',
+      ]);
+      const csvContent = [
+        headers.join(','),
+        ...rows.map(row => row.join(','))
+      ].join('\n');
+      return csvContent;
+    },
+    fetchUsers() {
+      return this.$axios
+        .get("/users")
+        .then((res) => {
+          this.users = res.data;
         });
     },
     fetchTickets() {
@@ -194,7 +236,7 @@ export default {
         const createDate = moment(ticket.createDate);
         const closeDate = moment(ticket.closeDate);
         const duration = moment.duration(closeDate.diff(createDate));
-        
+
         return total + duration.asMinutes();
       }, 0);
 
@@ -298,8 +340,15 @@ export default {
   align-items: center;
 }
 
-.month-selector {
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
+}
+
+.month-selector {
+  margin-left: -125px;
   display: flex;
   align-items: center;
 }
@@ -315,6 +364,26 @@ export default {
   border: 1px solid #ccc;
 }
 
+.download-btn-container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.download-csv-btn {
+  background-color: #f57c00;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.download-csv-btn:hover {
+  background-color: #e65100;
+}
+
 .dark .dashboard {
   background-color: #2c3e50;
   color: #ecf0f1;
@@ -327,7 +396,8 @@ export default {
   padding: 10px 15px;
   border-radius: 5px;
   cursor: pointer;
-  transition: background 0.3s;
+  font-size: 14px;
+  transition: background 0.3s ease;
 }
 
 .dark-mode-toggle:hover {
