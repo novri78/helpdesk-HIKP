@@ -200,7 +200,7 @@ export default {
 .message-content {
   max-width: 70%;
   padding: 10px 15px;
-  background-color: #007bff;
+  background-color: #19b16f;
   color: white;
   border-radius: 10px;
   position: relative;

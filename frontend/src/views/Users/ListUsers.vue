@@ -192,14 +192,14 @@ body {
     .btn-primary {
       padding: 10px 20px;
       font-size: 16px;
-      background-color: #007bff;
+      background-color: #19b16f;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
       transition: background-color 0.3s;
       &:hover {
-        background-color: #0056b3;
+        background-color: #19b16f;
       }
     }
   }
@@ -225,7 +225,7 @@ body {
     }
 
     th {
-      background-color: #007bff;
+      background-color: #19b16f;
       color: white;
       text-transform: uppercase;
     }
@@ -278,10 +278,10 @@ body {
   transition: background-color 0.3s;
   &-primary {
     margin-left: 15px;
-    background-color: #007bff;
+    background-color: #19b16f;
     color: white;
     &:hover {
-      background-color: #0056b3;
+      background-color: #19b16f;
     }
   }
   &-secondary {
@@ -342,7 +342,7 @@ body {
 
   &:hover {
     color: #fff;
-    background-color: #007bff;
+    background-color: #19b16f;
   }
 
   &.text-danger {

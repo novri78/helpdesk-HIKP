@@ -190,7 +190,7 @@ button {
 }
 
 .table th {
-  background-color: #007bff;
+  background-color: #19b16f;
   color: white;
   text-transform: uppercase;
 }
@@ -220,7 +220,7 @@ button {
 }
 
 .btn-primary {
-  background-color: #007bff;
+  background-color: #19b16f;
   color: white;
 }
 

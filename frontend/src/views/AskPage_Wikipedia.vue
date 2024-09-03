@@ -186,7 +186,7 @@ const searchWikipedia = async () => {
 
 .content button {
   padding: 12px;
-  background: linear-gradient(135deg, #007bff, #0056b3);
+  background: linear-gradient(135deg, #679a83, #19b16f);
   color: white;
   border: none;
   border-radius: 8px;

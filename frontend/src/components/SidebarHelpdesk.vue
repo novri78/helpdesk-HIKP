@@ -5,43 +5,33 @@
     </div>
     <div class="navbar-brand">
       <a href="">
-        <img
-          src="@/assets/img/HelpdeskIcon.png"
-          alt="Logo"
-          class="navbar-logo"
-        />
+        <img src="@/assets/img/LOGO HIKP.png" alt="Logo" class="navbar-logo" />
       </a>
     </div>
     <ul class="nav flex-column mt-4">
-      <router-link to="/dashboard" class="nav-link" exact
-        >Dashboard</router-link
-      >
+      <router-link to="/dashboard" class="nav-link" exact>
+        Dashboard
+      </router-link>
       <router-link to="/tickets" class="nav-link">Ticket</router-link>
-      <li class="nav-item">
+      <!-- <li class="nav-item">
         <a class="nav-link" @click="toggleDropdown('users')">
           List Users
-          <i
-            :class="
-              dropdowns.users ? 'mdi mdi-chevron-up' : 'mdi mdi-chevron-down'
-            "
-          ></i>
+          <i :class="dropdowns.users ? 'mdi mdi-chevron-up' : 'mdi mdi-chevron-down'
+            "></i>
         </a>
         <ul v-if="dropdowns.users" class="sidebar-item-dropdown">
           <li>
-            <router-link to="/users" class="dropdown-item"
-              >List User</router-link
-            >
-            <!-- <router-link to="/register" class="dropdown-item"
+            <router-link to="/users" class="dropdown-item">List User</router-link>
+            <router-link to="/register" class="dropdown-item"
               >Register New User</router-link
-            > -->
+            >
           </li>
         </ul>
-      </li>
+      </li> -->
+      <router-link to="/users" class="nav-link">List User</router-link>
       <router-link to="/categories" class="nav-link">Category</router-link>
       <router-link to="/chat" class="nav-link">Chat</router-link>
-      <router-link to="/ask_wikipadia" class="nav-link"
-        >Ask Wikipedia</router-link
-      >
+      <router-link to="/ask_wikipadia" class="nav-link">Ask Wikipedia</router-link>
       <li class="nav-link" @click="confirmLogout">Logout</li>
     </ul>
   </div>
@@ -113,10 +103,11 @@ export default {
   top: 0;
   width: 250px;
   height: 100vh;
-  background-color: #007bff;
+  background-color: #19b16f;
   transition: left 0.3s ease-in-out;
   padding-top: 70px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+
   &.sidebar_on {
     left: 0;
   }
@@ -148,26 +139,29 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #007bff;
+    background-color: #19b16f;
     border-radius: 0 5px 5px 0;
     color: #fff;
+
     i {
       font-size: 24px;
     }
   }
 
   .sidebar-item-dropdown {
-    background-color: #007bff;
+    background-color: #19b16f;
     list-style: none;
     padding-left: 0;
-    margin-left: 10px; /* Menambahkan margin untuk nested dropdown */
+    margin-left: 10px;
+
+    /* Menambahkan margin untuk nested dropdown */
     .dropdown-item {
       padding: 10px 20px;
       color: #fff;
       text-decoration: none;
       display: block;
       transition: background 0.2s ease;
-      
+
       &:hover {
         color: #495057;
         background-color: rgba(255, 255, 255, 0.1);
@@ -183,7 +177,8 @@ export default {
   }
 
   .navbar-logo {
-    width: 50px;
+    margin: -25px 0;
+    width: 150px;
     height: auto;
   }
 }
@@ -193,10 +188,12 @@ export default {
     width: 100%;
     height: auto;
     left: -100%;
+
     &.sidebar_on {
       left: 0;
     }
   }
+
   .toggle {
     right: 0;
   }

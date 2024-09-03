@@ -200,7 +200,6 @@ export default {
 
       this.averageSLAMinutes = (totalMinutes / closedTickets.length).toFixed(2);
       this.averageSLAMinutes = parseFloat(this.averageSLAMinutes);
-      console.log("average", this.averageSLAMinutes);
     },
     getRandomColor() {
       const letters = "0123456789ABCDEF";
@@ -286,7 +285,7 @@ export default {
 }
 
 .header {
-  background: linear-gradient(90deg, #4e73df, #1cc88a);
+  background: linear-gradient(90deg, #19b16f, #1cc88a);
   color: white;
   padding: 20px;
   text-align: center;
@@ -381,7 +380,7 @@ export default {
 }
 
 .dark .header {
-  background: linear-gradient(90deg, #7289da, #2c2f33);
+  background: linear-gradient(90deg, #19b16f, #2c2f33);
 }
 
 .dark .footer {

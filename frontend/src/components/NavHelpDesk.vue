@@ -89,7 +89,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #007bff;
+  background-color: #19b16f;
   padding: 15px 10px;
   height: 60px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Menambahkan shadow */
@@ -123,7 +123,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  background-color: #007bff;
+  background-color: #19b16f;
   width: 100%;
   padding: 10px 0;
 }
@@ -162,7 +162,7 @@ export default {
     display: none;
     flex-direction: column;
     align-items: flex-start;
-    background-color: #007bff;
+    background-color: #19b16f;
     width: 100%;
     padding: 10px 0;
   }
@@ -194,7 +194,7 @@ export default {
   padding: 0;
   margin: 0;
   width: 150px;
-  border: 1px solid #007bff;
+  border: 1px solid #19b16f;
   border-radius: 5px;
   display: none;
 }
@@ -205,11 +205,11 @@ export default {
 
 .dropdown-item {
   padding: 10px;
-  color: #007bff;
+  color: #19b16f;
   cursor: pointer;
   &:hover {
-    background-color: #007bff;
-    color: #fff;
+    background-color: #eaf1ee;
+    color: #111111;
   }
 }
 </style>
