@@ -223,6 +223,7 @@ export default {
     },
     submit() {
       const id = this.$route.params.id;
+      console.log('Ticket Data Sent:', this.ticket); // Debugging line
       this.$axios
         .put(`/tickets/${id}`, this.ticket)
         .then(() => {
