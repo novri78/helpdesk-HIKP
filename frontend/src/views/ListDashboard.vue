@@ -12,7 +12,7 @@
       <!-- Dropdown for selecting month -->
       <div class="header-container">
         <div class="month-selector">
-          <label for="month-select" class="white">Select Month:</label>
+          <label for="month-select" class="white">Month:</label>
           <input type="month" id="month-select" v-model="selectedMonth" class="month-input" @change="fetchData" />
         </div>
         <div class="download-btn-container">
@@ -348,7 +348,7 @@ export default {
 }
 
 .month-selector {
-  margin-left: -125px;
+  justify-content: flex-start;
   display: flex;
   align-items: center;
 }
