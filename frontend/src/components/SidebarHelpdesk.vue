@@ -28,8 +28,8 @@
           </li>
         </ul>
       </li> -->
-      <router-link to="/users" class="nav-link">List User</router-link>
-      <router-link to="/categories" class="nav-link">Category</router-link>
+      <router-link v-if="userRole === 'ADMIN'" to="/users" class="nav-link">List User</router-link>
+      <router-link v-if="userRole === 'ADMIN'" to="/categories" class="nav-link">Category</router-link>
       <router-link to="/chat" class="nav-link">Chat</router-link>
       <router-link to="/ask_wikipadia" class="nav-link">Ask Wikipedia</router-link>
       <li class="nav-link" @click="confirmLogout">Logout</li>
@@ -40,6 +40,7 @@
 <script>
 import { mapActions } from "vuex";
 import Swal from "sweetalert2";
+import store from "@/store";
 
 export default {
   props: {
@@ -59,6 +60,10 @@ export default {
     isAuthenticated() {
       return this.$store.getters.isAuthenticated;
     },
+    userRole() {
+      const userRole = store.getters.userRole
+      return userRole
+    }
   },
   methods: {
     setToggle() {
