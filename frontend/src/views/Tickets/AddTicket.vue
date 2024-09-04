@@ -62,7 +62,7 @@
           </div>
 
           <div class="form-group">
-            <label for="creationDate">Creation Date</label>
+            <label for="createDate">Creation Date</label>
             <input
               v-model="form.createDate"
               id="creationDate"
@@ -73,7 +73,7 @@
           </div>
 
           <div class="form-group">
-            <label for="closureDate">Closure Date</label>
+            <label for="closeDate">Closure Date</label>
             <input
               v-model="form.closeDate"
               id="closureDate"

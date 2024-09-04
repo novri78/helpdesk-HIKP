@@ -34,7 +34,7 @@
               required
             ></textarea>
           </div>
-          <!-- <div class="form-group">
+          <div class="form-group">
             <label for="createDate">Create Date</label>
             <input
               type="datetime-local"
@@ -43,9 +43,9 @@
               class="form-control"
               required
             />
-          </div> -->
+          </div>
           <div class="form-group">
-            <label for="closureDate">Close Date</label>
+            <label for="closeDate">Close Date</label>
             <input
               type="datetime-local"
               id="closureDate"
