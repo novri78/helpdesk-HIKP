@@ -25,10 +25,17 @@
         </div>
         <div class="input-group">
           <label>Password</label>
-          <input type="password" v-model="password" @input="validatePassword" required
-            placeholder="Enter your password" />
+          <div class="control has-icons-right">
+            <input :type="showPassword ? 'text' : 'password'" v-model="password" @input="validatePassword" required
+              placeholder="Enter your password" class="input" />
+            <span class="icon is-right has-text-primary is-clickable" @click="togglePasswordVisibility">
+              <i :class="showPassword ? 'mdi mdi-eye-off mdi-24px' : 'mdi mdi-eye mdi-24px'"></i>
+            </span>
+          </div>
+          <!-- Password error message -->
           <div v-if="passwordError" class="error">{{ passwordError }}</div>
         </div>
+
         <div class="button-group">
           <button type="button" @click="resetFields" class="btn secondary">
             Reset
@@ -59,6 +66,7 @@ export default {
       emailError: "",
       passwordError: "",
       errorMessage: "",
+      showPassword: false // Toggles between password visibility
     };
   },
   methods: {
@@ -68,6 +76,9 @@ export default {
       this.email = "";
       this.password = "";
       this.emailError = "";
+    },
+    togglePasswordVisibility() {
+      this.showPassword = !this.showPassword; // Toggle between text and password type
     },
     validateEmail() {
       this.emailError = "";
@@ -86,11 +97,17 @@ export default {
       this.passwordError = "";
 
       if (this.password.length < 8) {
-        this.passwordError = "Password must be at least 8 characters long.";
-      } else if (!/\d/.test(this.password)) {
-        this.passwordError = "Password must contain at least one digit.";
-      } else if (!/[A-Za-z]/.test(this.password)) {
-        this.passwordError = "Password must contain at least one letter.";
+        this.passwordError = 'Password must be at least 8 characters long';
+      } else if (!/[A-Z]/.test(this.password)) {
+        this.passwordError = 'Password must contain at least one uppercase letter';
+      } else if (!/[a-z]/.test(this.password)) {
+        this.passwordError = 'Password must contain at least one lowercase letter';
+      } else if (!/[0-9]/.test(this.password)) {
+        this.passwordError = 'Password must contain at least one number';
+      } else if (!/[!@#$_%^&*]/.test(this.password)) {
+        this.passwordError = 'Password must contain at least one special character (!@#$%^&*)';
+      } else {
+        this.passwordError = ''; // Clear the error if the password is valid
       }
     },
     async handleLogin() {
@@ -209,8 +226,9 @@ $box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
     padding: 20px;
     animation: backgroundMove 20s ease-in-out infinite;
 
-    
+
   }
+
   .login-container {
     flex: 5; // 40% of the screen
     display: flex;
@@ -265,118 +283,132 @@ $box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
             display: block;
           }
         }
-      }
 
-      .button-group {
-        display: flex;
-        justify-content: space-between;
-
-        .btn {
-          padding: 12px 20px;
-          border: none;
-          border-radius: $border-radius;
-          font-size: 1rem;
+        /* Positioning the eye icon */
+        .mdi {
+          position: relative;
+          right: -190px;
+          top: -50%;
+          transform: translateY(-50%);
           cursor: pointer;
-          transition: background 0.3s, transform 0.3s;
+          color: $text-color;
 
-          &.primary {
-            background: $primary-color;
-            color: #fff;
-
-            &:hover {
-              background: darken($primary-color, 10%);
-              transform: translateY(-2px);
-            }
-          }
-
-          &.secondary {
-            background: $accent-color;
-            color: #fff;
-
-            &:hover {
-              background: darken($accent-color, 10%);
-              transform: translateY(-2px);
-            }
+          i {
+            font-size: 24px;
           }
         }
-      }
+    }
 
-      .error {
-        margin-top: 15px;
-        color: $error-color;
-        text-align: center;
-        font-weight: 600;
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+
+      .btn {
+        padding: 12px 20px;
+        border: none;
+        border-radius: $border-radius;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.3s, transform 0.3s;
+
+        &.primary {
+          background: $primary-color;
+          color: #fff;
+
+          &:hover {
+            background: darken($primary-color, 10%);
+            transform: translateY(-2px);
+          }
+        }
+
+        &.secondary {
+          background: $accent-color;
+          color: #fff;
+
+          &:hover {
+            background: darken($accent-color, 10%);
+            transform: translateY(-2px);
+          }
+        }
       }
     }
 
-    .register-link {
-      margin-top: 20px;
+    .error {
+      margin-top: 15px;
+      color: $error-color;
       text-align: center;
-      color: $text-color;
-
-      a {
-        color: $primary-color;
-        font-weight: 600;
-        text-decoration: none;
-        transition: color 0.3s;
-
-        &:hover {
-          color: darken($primary-color, 10%);
-        }
-      }
+      font-weight: 150;
     }
   }
 
-  .ticker {
-      position: absolute;
-      width: 100%;
-      white-space: nowrap;
-      overflow: hidden;
-      animation: positionChange 25s linear infinite;
-      transform: translateY(-10px);
+  .register-link {
+    margin-top: 20px;
+    text-align: center;
+    color: $text-color;
 
-      .quote-ticker {
-        display: inline-block;
-        padding: 10px 20px;
-        background: rgba(0, 0, 0, 0.4);
-        color: white;
-        font-size: 16px;
-        border-radius: 12px;
-        animation: mottoScroll 20s linear infinite;
+    a {
+      color: $primary-color;
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.3s;
+
+      &:hover {
+        color: darken($primary-color, 10%);
       }
     }
+  }
+}
 
-  .navbar-brand {
+.ticker {
+  position: absolute;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  animation: positionChange 25s linear infinite;
+  transform: translateY(-10px);
+
+  .quote-ticker {
+    display: inline-block;
+    padding: 10px 20px;
+    background: rgba(0, 0, 0, 0.4);
+    color: white;
+    font-size: 16px;
+    border-radius: 12px;
+    animation: mottoScroll 20s linear infinite;
+  }
+}
+
+.navbar-brand {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  transition: background-color 0.3s ease;
+
+  a {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 10px;
-    border-radius: $border-radius;
-    box-shadow: $box-shadow;
-    transition: background-color 0.3s ease;
 
-    a {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    .navbar-logo {
+      max-width: 100px; // Adjust this value as necessary
+      max-height: 50px; // Adjust this value as necessary
+      width: auto;
+      height: auto;
+      object-fit: contain; // Ensures the image scales proportionally
+      transition: transform 0.3s ease, opacity 0.3s ease;
 
-      .navbar-logo {
-        max-width: 100px; // Adjust this value as necessary
-        max-height: 50px; // Adjust this value as necessary
-        width: auto;
-        height: auto;
-        object-fit: contain; // Ensures the image scales proportionally
-        transition: transform 0.3s ease, opacity 0.3s ease;
-
-        &:hover {
-          transform: scale(1.1); // Slight zoom on hover
-          opacity: 0.8; // Slight transparency on hover
-        }
+      &:hover {
+        transform: scale(1.1); // Slight zoom on hover
+        opacity: 0.8; // Slight transparency on hover
       }
     }
   }
+}
 
-  
+
 }
 
 /* Animations */
@@ -401,6 +433,7 @@ $box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
 @keyframes positionChange {
+
   0%,
   100% {
     top: 80%;
@@ -501,7 +534,7 @@ $box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
   .login-container {
     margin: auto;
     padding: 3px;
-    
+
     h2 {
       font-size: 1.25rem;
     }
