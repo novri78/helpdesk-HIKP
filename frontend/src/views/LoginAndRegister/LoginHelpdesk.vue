@@ -11,28 +11,22 @@
       </div>
     </div>
     <div class="login-container">
+      <div class="navbar-brand">
+        <a href="">
+          <img src="@/assets/img/LOGO HIKP.png" alt="Logo" class="navbar-logo" />
+        </a>
+      </div>
       <h2>Welcome to Helpdesk</h2>
       <form @submit.prevent="handleLogin">
         <div class="input-group">
           <label>Email</label>
-          <input
-            type="email"
-            v-model="email"
-            @input="validateEmail"
-            required
-            placeholder="Enter your email"
-          />
+          <input type="email" v-model="email" @input="validateEmail" required placeholder="Enter your email" />
           <div v-if="emailError" class="error">{{ emailError }}</div>
         </div>
         <div class="input-group">
           <label>Password</label>
-          <input
-            type="password"
-            v-model="password"
-            @input="validatePassword"
-            required
-            placeholder="Enter your password"
-          />
+          <input type="password" v-model="password" @input="validatePassword" required
+            placeholder="Enter your password" />
           <div v-if="passwordError" class="error">{{ passwordError }}</div>
         </div>
         <div class="button-group">
@@ -190,64 +184,46 @@ $secondary-color: #f7cac9; // Pale Peach
 $accent-color: #c0e8e0; // Mint Green
 $error-color: #ffb3b3; // Soft Red
 $background-color: #fefefe; // Off-White
-$text-color: #333; // Charcoal Gray
+$text-color: #19b16f; // Charcoal Gray
 $input-background: #f0f0f0; // Light Gray
 $border-radius: 15px; // More rounded corners
 $box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 
 .login-page {
-  position: relative;
-  min-height: 100vh;
-  background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
   display: flex;
-  align-items: center;
-  justify-content: center;
+  height: 95vh;
   font-family: "Poppins", sans-serif;
-  overflow: hidden;
 
   .background-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80")
-      no-repeat center center/cover;
-    opacity: 0.2;
+    flex: 5; // 60% of the screen
+    // top: 0;
+    // left: 0;
+    // right: 0;
+    // bottom: 0;
+    background: url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80") no-repeat center center/cover;
+    opacity: 0.6;
     z-index: 1;
-    animation: backgroundMove 20s ease-in-out infinite;
-  }
-
-  .ticker {
-    position: absolute;
-    left: 0;
-    width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    animation: positionChange 25s linear infinite;
-    transform: translateY(-10px);
-
-    .quote-ticker {
-      display: inline-block;
-      padding: 10px 20px;
-      background: rgba(0, 0, 0, 0.4);
-      color: white;
-      font-size: 16px;
-      font-family: "Poppins", sans-serif;
-      border-radius: 12px;
-      animation: mottoScroll 20s linear infinite;
-    }
-  }
-
-  .login-container {
     position: relative;
-    z-index: 2;
+    display: flex;
+    align-items: flex-end;
+    padding: 20px;
+    animation: backgroundMove 20s ease-in-out infinite;
+
+    
+  }
+  .login-container {
+    flex: 5; // 40% of the screen
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     background: $background-color;
     padding: 40px;
     border-radius: $border-radius;
     box-shadow: $box-shadow;
-    width: 360px;
-    max-width: 90%;
+    max-width: 300px;
+    width: 100%;
+    margin: 0 15px 0 15px;
 
     h2 {
       text-align: center;
@@ -257,19 +233,21 @@ $box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
     }
 
     form {
+      width: 100%;
       display: flex;
       flex-direction: column;
 
       .input-group {
-        margin-bottom: 20px;
         display: flex;
         flex-direction: column;
+        margin-bottom: 20px;
 
         label {
           margin-bottom: 5px;
           color: $text-color;
           font-weight: 600;
           font-size: 1rem;
+          display: block;
         }
 
         input {
@@ -284,6 +262,7 @@ $box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
             background: lighten($input-background, 5%);
             outline: none;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: block;
           }
         }
       }
@@ -347,13 +326,65 @@ $box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
       }
     }
   }
+
+  .ticker {
+      position: absolute;
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      animation: positionChange 25s linear infinite;
+      transform: translateY(-10px);
+
+      .quote-ticker {
+        display: inline-block;
+        padding: 10px 20px;
+        background: rgba(0, 0, 0, 0.4);
+        color: white;
+        font-size: 16px;
+        border-radius: 12px;
+        animation: mottoScroll 20s linear infinite;
+      }
+    }
+
+  .navbar-brand {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-radius: $border-radius;
+    box-shadow: $box-shadow;
+    transition: background-color 0.3s ease;
+
+    a {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .navbar-logo {
+        max-width: 100px; // Adjust this value as necessary
+        max-height: 50px; // Adjust this value as necessary
+        width: auto;
+        height: auto;
+        object-fit: contain; // Ensures the image scales proportionally
+        transition: transform 0.3s ease, opacity 0.3s ease;
+
+        &:hover {
+          transform: scale(1.1); // Slight zoom on hover
+          opacity: 0.8; // Slight transparency on hover
+        }
+      }
+    }
+  }
+
+  
 }
 
-/* Responsive Design */
+/* Animations */
 @keyframes backgroundMove {
   0% {
     background-position: 100% 100%;
   }
+
   100% {
     background-position: 0% 0%;
   }
@@ -363,6 +394,7 @@ $box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
   0% {
     transform: translateX(100%);
   }
+
   100% {
     transform: translateX(-100%);
   }
@@ -373,9 +405,11 @@ $box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
   100% {
     top: 80%;
   }
+
   33% {
     top: 10%;
   }
+
   66% {
     top: 45%;
   }
@@ -384,7 +418,7 @@ $box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 @media (max-width: 1024px) {
   .login-container {
     padding: 30px;
-    width: 90%;
+    max-width: 90%;
   }
 
   .ticker .quote-ticker {
@@ -393,36 +427,83 @@ $box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 768px) {
+  .login-page {
+    flex-direction: column;
+    position: relative;
+  }
+
+  .background-overlay {
+    height: 100%;
+    flex: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1; // Ensure the background is behind the form
+  }
+
   .login-container {
-    padding: 25px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    height: auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9); // Slightly transparent background
+    z-index: 2; // Ensure the form is above the background
 
     h2 {
       font-size: 1.5rem;
     }
 
     .input-group {
+      margin-bottom: 20px;
+
+      label {
+        margin-bottom: 5px;
+        color: $text-color;
+        font-weight: 600;
+        font-size: 1rem;
+        display: block;
+      }
+
       input {
         font-size: 0.9rem;
         padding: 10px;
+        border-radius: $border-radius;
+        background: $input-background;
+        transition: background 0.3s, box-shadow 0.3s;
+
+        &:focus {
+          background: lighten($input-background, 5%);
+          outline: none;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
       }
     }
 
-    .button-group .btn {
-      padding: 10px 18px;
-    }
-  }
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
 
-  .ticker .quote-ticker {
-    font-size: 14px;
+      .btn {
+        padding: 10px 18px;
+        width: 100%;
+        font-size: 1rem;
+      }
+    }
   }
 }
 
 @media (max-width: 480px) {
   .login-container {
-    padding: 20px;
-
+    margin: auto;
+    padding: 3px;
+    
     h2 {
-      font-size: 1.3rem;
+      font-size: 1.25rem;
     }
 
     .input-group {
@@ -447,6 +528,3 @@ $box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
   }
 }
 </style>
-
-
-

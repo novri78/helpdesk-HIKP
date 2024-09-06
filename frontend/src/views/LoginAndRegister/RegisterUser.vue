@@ -1,8 +1,8 @@
 <template>
-  <header></header>
+  <!-- <header></header> -->
   <main>
     <div class="form-container">
-      <h2>Register</h2>
+      <h2 class="text-center white">Register</h2>
       <form @submit.prevent="registerUser">
         <div class="form-group">
           <label for="email">Email:</label>
@@ -191,12 +191,12 @@ body {
   background-color: #f4f4f4;
 }
 
-header {
+/* header {
   padding: 20px;
   text-align: center;
   background-color: #343a40;
   color: #fff;
-}
+} */
 
 main {
   display: flex;

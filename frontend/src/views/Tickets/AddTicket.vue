@@ -1,34 +1,23 @@
 <template>
   <div>
-    <header>
-      <!-- Optional header content -->
-    </header>
+    <!-- <header>
+      
+    </header> -->
     <main>
       <div class="form-container">
         <h1 class="text-center white">Form Add Ticket</h1>
         <form @submit.prevent="addTicket">
           <div class="form-group">
             <label for="title">Title</label>
-            <input
-              v-model="form.title"
-              id="title"
-              type="text"
-              placeholder="Enter title (1-255 characters)"
-              class="form-control"
-              :class="{ 'is-invalid': !isValidLength(form.title) && form.title !== '' }"
-              required
-            />
+            <input v-model="form.title" id="title" type="text" placeholder="Enter title (1-255 characters)"
+              class="form-control" :class="{ 'is-invalid': !isValidLength(form.title) && form.title !== '' }"
+              required />
           </div>
 
           <div class="form-group">
             <label for="description">Description</label>
-            <textarea
-              v-model="form.description"
-              id="description"
-              placeholder="Enter description"
-              class="form-control"
-              required
-            ></textarea>
+            <textarea v-model="form.description" id="description" placeholder="Enter description" class="form-control"
+              required></textarea>
           </div>
 
           <div class="form-group">
@@ -62,24 +51,12 @@
           </div>
 
           <div class="form-group">
-            <label for="createDate">Creation Date</label>
-            <input
-              v-model="form.createDate"
-              id="creationDate"
-              type="datetime-local"
-              class="form-control"
-              required
-            />
+            <label for="createDate">Create Date</label>
+            <input type="datetime-local" id="createDate" v-model="form.createDate" class="form-control" required />
           </div>
-
           <div class="form-group">
-            <label for="closeDate">Closure Date</label>
-            <input
-              v-model="form.closeDate"
-              id="closureDate"
-              type="datetime-local"
-              class="form-control"
-            />
+            <label for="closeDate">Close Date</label>
+            <input type="datetime-local" id="closeDate" v-model="form.closeDate" class="form-control" />
           </div>
 
           <div class="form-group">
@@ -137,7 +114,6 @@ export default {
       },
       users: [],
       categories: [],
-      assignTo: [],
       loading: false,
       errorMessage: "",
       formFields: {
@@ -174,48 +150,36 @@ export default {
   },
   methods: {
     fetchAssignTo() {
-      this.$axios
-        .get("/users")
-        .then((res) => {
-          this.formFields.assignTo.options = res.data
-            .filter((user) => user.role === "SUPPORT")
-            .map((user) => ({ value: user.id, text: user.name }));
-        })
-        .catch((error) => {
-          this.errorMessage = "Failed to fetch support personnel: " + error.message;
-        });
+      this.$axios.get("/users").then((res) => {
+        this.formFields.assignTo.options = res.data
+          .filter((user) => user.role === "SUPPORT")
+          .map((user) => ({ value: user.id, text: user.name }));
+      });
     },
     fetchUsers() {
-      this.$axios
-        .get("/users")
-        .then((res) => {
-          this.formFields.userId.options = res.data.map((user) => ({
-            value: user.id,
-            text: user.name,
-          }));
-        })
-        .catch((error) => {
-          this.errorMessage = "Failed to fetch users: " + error.message;
-        });
+      this.$axios.get("/users").then((res) => {
+        this.formFields.userId.options = res.data.map((user) => ({
+          value: user.id,
+          text: user.name,
+        }));
+      });
     },
     fetchCategories() {
-      this.$axios
-        .get("/category")
-        .then((res) => {
-          this.formFields.categoryId.options = res.data.map((cat) => ({
-            value: cat.id,
-            text: cat.name,
-          }));
-        })
-        .catch((error) => {
-          this.errorMessage = "Failed to fetch categories: " + error.message;
-        });
+      this.$axios.get("/category").then((res) => {
+        this.formFields.categoryId.options = res.data.map((cat) => ({
+          value: cat.id,
+          text: cat.name,
+        }));
+      });
     },
     isValidLength(value) {
       return value.length >= 1 && value.length <= 255;
     },
-    goBack() {
-      this.$router.push("/tickets");
+    formatDateForInput(dateStr) {
+      if (!dateStr) return "";
+      const date = new Date(dateStr);
+      const formattedDate = date.toISOString().slice(0, 16);
+      return formattedDate;
     },
     addTicket() {
       this.loading = true;
@@ -226,6 +190,13 @@ export default {
         this.loading = false;
         return;
       }
+      // // Ensure the dates are formatted with seconds before submission
+      // if (this.form.createDate) {
+      //   this.form.createDate = new Date(this.form.createDate).toISOString().slice(0,19);
+      // }
+      // if (this.form.closeDate) {
+      //   this.form.closeDate = new Date(this.form.closeDate).toISOString().slice(0,19);
+      // }
 
       this.$axios
         .post("/tickets", this.form)
@@ -233,17 +204,20 @@ export default {
           this.$router.push({ name: "Tickets" });
           Swal.fire({
             title: "Add Ticket Successful",
-            text: "You have successfully created Ticket.",
+            text: "You have successfully created a ticket.",
             icon: "success",
             confirmButtonText: "OK",
           });
         })
         .catch((error) => {
-          this.errorMessage = "Error adding ticket: " + (error.response.data.message || error.message);
+          this.errorMessage = "Error adding ticket: " + error.message;
         })
         .finally(() => {
           this.loading = false;
         });
+    },
+    goBack() {
+      this.$router.push("/tickets");
     },
   },
 };
@@ -261,12 +235,12 @@ body {
   background-color: #f4f4f4;
 }
 
-header {
+/* header {
   padding: 20px;
   text-align: center;
   background-color: #343a40;
   color: #fff;
-}
+} */
 
 main {
   display: flex;

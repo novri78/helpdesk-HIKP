@@ -1,66 +1,33 @@
 <template>
   <div>
-    <header></header>
+    <!-- <header></header> -->
     <main>
       <div class="form-container">
         <h2 class="text-center white">Edit Ticket</h2>
         <form @submit.prevent="submit">
           <div class="form-group">
             <label for="ticketNo">Ticket No</label>
-            <input
-              type="text"
-              id="ticketNo"
-              v-model="ticket.ticketNo"
-              class="form-control"
-              disabled
-            />
+            <input type="text" id="ticketNo" v-model="ticket.ticketNo" class="form-control" disabled />
           </div>
           <div class="form-group">
             <label for="title">Title</label>
-            <input
-              type="text"
-              id="title"
-              v-model="ticket.title"
-              class="form-control"
-              required
-            />
+            <input type="text" id="title" v-model="ticket.title" class="form-control" required />
           </div>
           <div class="form-group">
             <label for="description">Description</label>
-            <textarea
-              id="description"
-              v-model="ticket.description"
-              class="form-control"
-              required
-            ></textarea>
+            <textarea id="description" v-model="ticket.description" class="form-control" required></textarea>
           </div>
           <div class="form-group">
             <label for="createDate">Create Date</label>
-            <input
-              type="datetime-local"
-              id="createDate"
-              v-model="ticket.createDate"
-              class="form-control"
-              required
-            />
+            <input type="datetime-local" id="createDate" v-model="ticket.createDate" class="form-control" required />
           </div>
           <div class="form-group">
             <label for="closeDate">Close Date</label>
-            <input
-              type="datetime-local"
-              id="closureDate"
-              v-model="ticket.closeDate"
-              class="form-control"
-            />
+            <input type="datetime-local" id="closeDate" v-model="ticket.closeDate" class="form-control" />
           </div>
           <div class="form-group">
             <label for="priority">Priority</label>
-            <select
-              id="priority"
-              v-model="ticket.priorityStatus"
-              class="form-control"
-              required
-            >
+            <select id="priority" v-model="ticket.priorityStatus" class="form-control" required>
               <option value="LOW">Low</option>
               <option value="MEDIUM">Medium</option>
               <option value="HIGH">High</option>
@@ -68,12 +35,7 @@
           </div>
           <div class="form-group">
             <label for="status">Status</label>
-            <select
-              id="status"
-              v-model="ticket.ticketStatus"
-              class="form-control"
-              required
-            >
+            <select id="status" v-model="ticket.ticketStatus" class="form-control" required>
               <option value="OPEN">Open</option>
               <option value="IN_PROGRESS">In Progress</option>
               <option value="CLOSED">Closed</option>
@@ -81,29 +43,15 @@
           </div>
           <div class="form-group">
             <label for="assign">Assign To</label>
-            <select
-              id="assignTo"
-              v-model="ticket.assignTo"
-              class="form-control"
-              required
-            >
-              <option
-                v-for="support in assignToOptions"
-                :key="support.value"
-                :value="support.value"
-              >
+            <select id="assignTo" v-model="ticket.assignTo" class="form-control" required>
+              <option v-for="support in assignToOptions" :key="support.value" :value="support.value">
                 {{ support.text }}
               </option>
             </select>
           </div>
           <div class="form-group">
             <label for="userId">User</label>
-            <select
-              id="userId"
-              v-model="ticket.userId"
-              class="form-control"
-              required
-            >
+            <select id="userId" v-model="ticket.userId" class="form-control" required>
               <option v-for="user in users" :key="user.id" :value="user.id">
                 {{ user.name }}
               </option>
@@ -111,17 +59,8 @@
           </div>
           <div class="form-group">
             <label for="categoryId">Category</label>
-            <select
-              id="categoryId"
-              v-model="ticket.categoryId"
-              class="form-control"
-              required
-            >
-              <option
-                v-for="category in categories"
-                :key="category.id"
-                :value="category.id"
-              >
+            <select id="categoryId" v-model="ticket.categoryId" class="form-control" required>
+              <option v-for="category in categories" :key="category.id" :value="category.id">
                 {{ category.name }}
               </option>
             </select>
@@ -153,6 +92,7 @@ export default {
         description: "",
         priority: "",
         status: "",
+        createDate: "",
         closeDate: "",
         assignTo: "",
         userId: "",
@@ -218,12 +158,18 @@ export default {
     formatDateForInput(dateStr) {
       if (!dateStr) return "";
       const date = new Date(dateStr);
-      const formattedDate = date.toISOString().slice(0, 16); // Format to 'YYYY-MM-DDTHH:MM'
+      const formattedDate = date.toISOString().slice(0, 16);
       return formattedDate;
     },
     submit() {
       const id = this.$route.params.id;
       console.log('Ticket Data Sent:', this.ticket); // Debugging line
+      // if (this.ticket.createDate) {
+      //   this.ticket.createDate = new Date(this.ticket.createDate).toISOString().slice(0,19);
+      // }
+      // if (this.ticket.closeDate) {
+      //   this.ticket.closeDate = new Date(this.ticket.closeDate).toISOString().slice(0,19);
+      // }
       this.$axios
         .put(`/tickets/${id}`, this.ticket)
         .then(() => {
@@ -252,12 +198,12 @@ body {
   background-color: #f4f4f4;
 }
 
-header {
+/* header {
   padding: 20px;
   text-align: center;
   background-color: #343a40;
   color: #fff;
-}
+} */
 
 main {
   display: flex;
