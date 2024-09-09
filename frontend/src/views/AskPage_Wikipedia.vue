@@ -17,12 +17,7 @@
       <!-- Main Content -->
       <div class="content">
         <form @submit.prevent="searchWikipedia">
-          <input
-            v-model="query"
-            type="text"
-            placeholder="Ketik pertanyaan Anda di sini..."
-            required
-          />
+          <input v-model="query" type="text" placeholder="Ketik pertanyaan Anda di sini..." required />
           <select v-model="language">
             <option value="id">Indonesia</option>
             <option value="en">English</option>
@@ -35,10 +30,22 @@
           <p v-if="loading">Mencari...</p>
           <p v-else-if="error">{{ error }}</p>
           <div v-else-if="result">
-            <p>{{ result.extract }}</p>
+            <h2>{{ result.title }}</h2>
+            <img v-if="result.thumbnail" :src="result.thumbnail" alt="Gambar" />
+            <!-- <img v-if="result.thumbnail" :src="result.thumbnail" alt="Thumbnail" /> -->
+            <p v-else>Gambar tidak tersedia untuk artikel ini.</p>
+
+            <!-- Render the extract inside a div with the class "infobox vcard" -->
+            <div class="infobox vcard" v-html="result.extract"></div>
             <p>
               <a :href="result.link" target="_blank">Baca lebih lanjut di Wikipedia</a>
             </p>
+            <h3>Informasi di Infobox</h3>
+            <ul v-if="result.infobox">
+              <li v-for="(item, index) in result.infobox" :key="index">
+                <strong>{{ item.label }}:</strong> {{ item.value }}
+              </li>
+            </ul>
           </div>
           <p v-else>Masukkan pertanyaan di atas untuk mencari jawaban.</p>
         </div>
@@ -102,22 +109,49 @@ const searchWikipedia = async () => {
 
   try {
     const response = await fetch(
-      `https://${language.value}.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=extracts&exintro&explaintext&generator=search&gsrsearch=${encodeURIComponent(
+      `https://${language.value}.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages|extracts|revisions&exintro&explaintext&generator=search&gsrsearch=${encodeURIComponent(
         query.value
-      )}&gsrlimit=1`
+      )}&gsrlimit=1&piprop=thumbnail&pithumbsize=500&rvprop=content`
     );
     const data = await response.json();
     const pages = data.query?.pages;
     const pageId = pages ? Object.keys(pages)[0] : null;
 
     if (!pageId || pageId === '-1') {
-      error.value = 'Well, kami sepertinya belum memiliki data tersebut.';
+      error.value = 'Kami tidak menemukan data tersebut.';
     } else {
       const page = pages[pageId];
       result.value = {
-        extract: page.extract,
+        title: page.title,
+        extract: page.extract ? `<div class="infobox vcard">${page.extract}</div>` : '',
+        thumbnail: page.thumbnail ? page.thumbnail.source : null,
         link: `https://${language.value}.wikipedia.org/?curid=${pageId}`,
       };
+
+      // Additional request to fetch full page content for infobox
+      const pageContentResponse = await fetch(
+        `https://${language.value}.wikipedia.org/w/api.php?action=parse&pageid=${pageId}&format=json&prop=text&origin=*`
+      );
+      const pageContentData = await pageContentResponse.json();
+      const pageContent = pageContentData.parse?.text['*'];
+
+      // Parse to extract infobox labels and values
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(pageContent, 'text/html');
+      const infobox = doc.querySelector('.infobox');
+
+      if (infobox) {
+        const labels = Array.from(infobox.querySelectorAll('.infobox-label')).map(
+          (label) => label.textContent
+        );
+        const values = Array.from(infobox.querySelectorAll('.infobox-data')).map(
+          (value) => value.textContent
+        );
+        result.value.infobox = labels.map((label, i) => ({
+          label,
+          value: values[i],
+        }));
+      }
     }
   } catch (err) {
     error.value = 'Terjadi kesalahan. Coba lagi nanti.';
@@ -210,6 +244,18 @@ const searchWikipedia = async () => {
   margin: 0;
   font-size: 1rem;
   line-height: 1.5;
+}
+
+.result h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.result img {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 15px;
+  border-radius: 8px;
 }
 
 .result a {
