@@ -213,18 +213,22 @@ $box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 
   .background-overlay {
     flex: 5; // 60% of the screen
-    // top: 0;
-    // left: 0;
-    // right: 0;
-    // bottom: 0;
-    background: url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80") no-repeat center center/cover;
+    width: 100%;
+    min-height: 100%;
+    /* Use background-image with larger size so panning is visible */
+    background-image: url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80");
+    background-repeat: no-repeat;
+    background-position: 0% 50%; /* start from left center */
+    background-size: 200% auto; /* double width so it can pan smoothly */
     opacity: 0.6;
     z-index: 1;
     position: relative;
     display: flex;
     align-items: flex-end;
     padding: 20px;
-    animation: backgroundMove 20s ease-in-out infinite;
+    overflow: hidden;
+    /* linear and symmetric keyframes produce a smooth continuous pan */
+    animation: backgroundMove 20s linear infinite;
 
 
   }
@@ -414,11 +418,15 @@ $box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 /* Animations */
 @keyframes backgroundMove {
   0% {
-    background-position: 100% 100%;
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
   }
 
   100% {
-    background-position: 0% 0%;
+    background-position: 0% 50%;
   }
 }
 

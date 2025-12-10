@@ -3,6 +3,7 @@ import App from './App.vue'
 import './registerServiceWorker'
 import router from './router'
 import store from './store'
+import supabase, { fetchSession } from './supabase'
 import axios from 'axios';
 
 // Import Bootstrap and BootstrapVueNext
@@ -38,8 +39,7 @@ axios.interceptors.request.use(
     }
 );
 
-// Check for authentication
-store.dispatch('checkAuth');
+// Note: we'll check auth after fetching Supabase session during bootstrap.
 
 // Initialize Vue app
 const app = createApp(App);
@@ -63,4 +63,17 @@ app.component('PolarAreaChart', PolarArea);
 app.component('RadarChart', Radar);
 app.component('ScatterChart', Scatter);
 
-app.mount('#app');
+// Async bootstrap: fetch session, run auth checks, then mount.
+(async () => {
+    try {
+        const { data, error } = await fetchSession();
+        if (error) console.warn('Supabase session fetch error', error);
+        // If your store has an action to accept session data, dispatch it here.
+        // For now, run the existing checkAuth to reconcile auth state.
+        await store.dispatch('checkAuth');
+    } catch (err) {
+        console.warn('Error during app bootstrap', err);
+    }
+
+    app.mount('#app');
+})();
