@@ -103,7 +103,7 @@ export default {
       passwordError: "",
       errorMessage: "",
       roles: ["USER"], // Restrict registration roles
-      departments: ["OPERATION", "FINANCE", "FUNDING", "GAOPERATION"],
+      departments: ["OPERATION", "FINANCE", "FUNDING", "GAOPERATION","ITSUPPORT","DIRECTOR","IT DEVELOPER","MANRISK","SUPERADMIN"],
       submitted: false,
     };
   },

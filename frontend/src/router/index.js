@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Register from '@/views/LoginAndRegister/RegisterUser.vue';
 import Login from '@/views/LoginAndRegister/LoginHelpdesk.vue';
 import ApproveUser from '@/views/LoginAndRegister/ApproveUser.vue';
+import PendingApprovals from '@/views/LoginAndRegister/PendingApprovals.vue';
 import Chat from '@/components/Chat/Chat.vue';
 //import ActivityLogs from '../views/ActivityLogs.vue';
 import Dashboard from '../views/ListDashboard.vue';
@@ -20,6 +21,7 @@ import store from '@/store';
 const routes = [
   { path: '/', name: 'Login', component: Login, meta: { requiresAuth: false }, },
   { path: '/register', name: 'Register', component: Register, meta: { requiresAuth: false }, },
+  { path: '/pending-approvals', name: 'PendingApprovals', component: PendingApprovals, meta: { requiresAuth: true, rolesAllowed: ['ADMIN'] } },
   { path: '/approve-users/:id', name: 'ApproveUser', component: ApproveUser, meta: { requiresAuth: true, rolesAllowed: ['ADMIN'] } },
   { path: '/chat', name: 'Chat', component: Chat, meta: { requiresAuth: true, rolesAllowed: ['USER', 'SUPPORT', 'ADMIN'] }, },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard, meta: { requiresAuth: true, rolesAllowed: ['USER', 'SUPPORT', 'ADMIN'] }, },

@@ -5,10 +5,11 @@
     </button>
     <div :class="['navbar-collapse', { show: isMenuOpen }]">
       <ul class="navbar-nav ml-auto">
+        <li v-if="user.role === 'ADMIN'" class="nav-item">
+          <router-link to="/pending-approvals" class="nav-link">Pending Approvals</router-link>
+        </li>
         <li v-if="user.name" class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" @click="toggleDropdown">{{
-            user.name
-          }}</a>
+          <a class="nav-link dropdown-toggle" @click="toggleDropdown">{{ user.name }}</a>
           <ul class="dropdown-menu" :class="{ show: isDropdownOpen }">
             <li class="dropdown-item" @click="confirmLogout">Logout</li>
           </ul>
@@ -29,6 +30,7 @@ export default {
     return {
       user: {
         name: "",
+        role: "",
       },
       isMenuOpen: false,
       isDropdownOpen: false,
@@ -70,6 +72,7 @@ export default {
       if (cookieData) {
         const parsedData = JSON.parse(cookieData); // Parse data JSON
         this.user.name = parsedData.user.name;
+        this.user.role = parsedData.user.role || "";
       }
     },
   },

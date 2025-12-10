@@ -55,7 +55,7 @@
                     <a
                       class="dropdown-item"
                       href="#"
-                      @click.prevent="routeToApproveUser(user.id)"
+                      @click.prevent="approveAndRefresh(user.id)"
                       >Approve</a
                     >
                   </li>
@@ -91,6 +91,8 @@
 </template>
 
 <script>
+import Swal from 'sweetalert2';
+
 export default {
   name: "Users",
   data() {
@@ -139,17 +141,51 @@ export default {
     },
 
     // Confirm and delete a user
+    approveAndRefresh(id) {
+      Swal.fire({
+        title: 'Approve User?',
+        text: 'Are you sure you want to approve this user?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, approve',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.$store
+            .dispatch('approveUser', { id })
+            .then(() => {
+              Swal.fire('Approved', 'User has been approved.', 'success');
+              this.fetchUsers();
+            })
+            .catch((err) => {
+              console.error('Approve error', err);
+              Swal.fire('Error', err.response?.data?.message || 'Failed to approve user', 'error');
+            });
+        }
+      });
+    },
+
+    // Confirm and delete (reject) a user
     confirmDelete(id) {
-      if (confirm("Are you sure you want to delete this user?")) {
-        this.$axios
-          .delete(`/users/${id}`)
-          .then(() => {
-            this.fetchUsers(); // Refresh the list after deletion
-          })
-          .catch((error) => {
-            this.errorMessage = "Failed to delete user: " + error.message;
-          });
-      }
+      Swal.fire({
+        title: 'Reject User?',
+        text: 'Are you sure you want to reject/delete this user? This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, reject',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.$store
+            .dispatch('rejectUser', { id })
+            .then(() => {
+              Swal.fire('Rejected', 'User has been removed.', 'success');
+              this.fetchUsers();
+            })
+            .catch((err) => {
+              console.error('Reject error', err);
+              Swal.fire('Error', err.response?.data?.message || 'Failed to reject user', 'error');
+            });
+        }
+      });
     },
   },
 };

@@ -1,5 +1,6 @@
 import { createStore } from 'vuex';
 import cookie from 'js-cookie';
+import axios from 'axios';
 
 const store = createStore({
     state: {
@@ -44,6 +45,25 @@ const store = createStore({
             commit('SET_LOGOUT');
             cookie.remove('userdata');
             cookie.remove('token');
+        }
+        ,
+        async approveUser({ state }, { id }) {
+            try {
+                const headers = state.token ? { Authorization: `Bearer ${state.token}` } : {};
+                const resp = await axios.put(`/users/${id}/approve`, { isApproved: true }, { headers });
+                return resp.data;
+            } catch (err) {
+                throw err;
+            }
+        },
+        async rejectUser({ state }, { id }) {
+            try {
+                const headers = state.token ? { Authorization: `Bearer ${state.token}` } : {};
+                const resp = await axios.delete(`/users/${id}`, { headers });
+                return resp.data;
+            } catch (err) {
+                throw err;
+            }
         }
     },
     getters: {

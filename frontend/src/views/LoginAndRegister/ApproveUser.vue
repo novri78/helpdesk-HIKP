@@ -133,7 +133,7 @@ export default {
         "GAOPERATION",
         "SUPERADMIN",
       ],
-      roles: ["USER", "SUPPORT"],
+      roles: ["USER", "SUPPORT","ADMIN"],
     };
   },
   methods: {
