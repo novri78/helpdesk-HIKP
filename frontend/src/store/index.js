@@ -31,20 +31,25 @@ const store = createStore({
                     const userdata = JSON.parse(cookieData);
                     if (userdata && userdata.token) {
                         commit('SET_LOGIN', { user: userdata.user, token: userdata.token });
+                        // Set axios default Authorization header for subsequent requests
+                        axios.defaults.headers.common['Authorization'] = `Bearer ${userdata.token}`;
                     }
                 } catch (error) {
-                    console.error("Failed to parse cookie data:", e);
+                    console.error("Failed to parse cookie data:", error);
                 }
             }
         },
         login({ commit }, { user, token }) {
             commit('SET_LOGIN', { user, token });
             cookie.set('userdata', JSON.stringify({ user, token }), { expires: 1 });
+            // Set axios default Authorization header globally
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         },
         logout({ commit }) {
             commit('SET_LOGOUT');
             cookie.remove('userdata');
-            cookie.remove('token');
+            // Remove axios default Authorization header
+            delete axios.defaults.headers.common['Authorization'];
         }
         ,
         async approveUser({ state }, { id }) {
@@ -68,7 +73,7 @@ const store = createStore({
     },
     getters: {
         isAuthenticated: state => !!state.token,
-        userRole: state => state.user ?.role || null,
+        userRole: state => (state.user ? state.user.role : null),
     },
 });
 

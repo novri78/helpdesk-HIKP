@@ -1,5 +1,8 @@
 package com.example.helpdesk.backend.constant;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum Department {
     OPERATION,
     FINANCE,
@@ -9,7 +12,23 @@ public enum Department {
     ITDEVELOPER,
     MANRISK,
     GAOPERATION,
-    SUPERADMIN
+    SUPERADMIN;
+
+    @JsonCreator
+    public static Department fromString(String value) {
+        if (value == null) return null;
+        String normalized = value.replaceAll("[\\s_\\-]+", "").toUpperCase();
+        for (Department d : Department.values()) {
+            String cand = d.name().replaceAll("[\\s_\\-]+", "").toUpperCase();
+            if (cand.equals(normalized)) return d;
+        }
+        throw new IllegalArgumentException("Unknown Department value: " + value);
+    }
+
+    @JsonValue
+    public String toValue() {
+        return this.name();
+    }
 
 //    OPERATION(1),
 //    FINANCE(2),

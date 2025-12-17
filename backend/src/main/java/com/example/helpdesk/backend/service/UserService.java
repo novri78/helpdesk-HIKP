@@ -23,20 +23,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
+    private final JwtTokenUtil jwtTokenUtil;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper, JwtTokenUtil jwtTokenUtil) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.userMapper = userMapper;
+        this.jwtTokenUtil = jwtTokenUtil;
+    }
 
     // Helper method to validate password strength
     private void validatePasswordStrength(String password) {
@@ -68,7 +68,7 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
 
         // Generate JWT token
-        String token = jwtTokenUtil.generateToken(user);
+        // String token = jwtTokenUtil.generateToken(user);
 
         // Return the saved user as DTO
         return userMapper.toDTO(user);
@@ -92,41 +92,58 @@ public class UserService implements UserDetailsService {
         logger.info("Authenticating user with email: {}", email);
 
         // Find user by email
-        User user = userRepository.findByEmail (email)
-                .orElseThrow(() -> new UsernameNotFoundException ("User not found"));
+        //User user = userRepository.findByEmail (email)
+        //        .orElseThrow(() -> new UsernameNotFoundException ("User not found"));
+
+        if (jwtTokenUtil == null) {
+            throw new IllegalStateException("JwtTokenUtil is NULL - bean not injected");
+        }
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(()-> new UsernameNotFoundException("User Not Found"));
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new BadCredentialsException("Invalid Password");
+        }
+
+        String token = jwtTokenUtil.generateToken(user);
+
+        UserDTO dto = userMapper.toDTO(user);
+        dto.setToken(token);
+        return dto;
 
         // Check if the provided password matches the stored password
-        if (passwordEncoder.matches(password, user.getPassword())) {
-            logger.info("User authenticated successfully: " + email);
-
-            // Generate JWT token and set it to the UserDTO
-            String token = jwtTokenUtil.generateToken (user);
-            UserDTO userDTO = userMapper.toDTO (user);
-            userDTO.setToken (token);               // Set token ke UserDTO
-            return userDTO;
-        } else {
-            logger.error("Invalid password for user: " + email);
-            throw new BadCredentialsException ("Invalid password");
-        }
+//        if (passwordEncoder.matches(password, user.getPassword())) {
+//            logger.info("User authenticated successfully: " + email);
+//
+//            // Generate JWT token and set it to the UserDTO
+//            String token = jwtTokenUtil.generateToken (user);
+//            UserDTO userDTO = userMapper.toDTO (user);
+//            userDTO.setToken (token);               // Set token ke UserDTO
+//            return userDTO;
+//        } else {
+//            logger.error("Invalid password for user: " + email);
+//            throw new BadCredentialsException ("Invalid password");
+//        }
     }
 
     // Method to load user by username (used by Spring Security)
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email)
-                .map(user -> {
-                    logger.info("Loading user by email: {}", email);
-                    return new org.springframework.security.core.userdetails.User(
-                            user.getEmail(),
-                            user.getPassword(),
-                            Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name()))
-                    );
-                })
-                .orElseThrow(() -> {
-                    logger.error("User not found with email: {}", email);
-                    return new UsernameNotFoundException("User not found with email: " + email);
-                });
-    }
+//    @Override
+//    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+//        return userRepository.findByEmail(email)
+//                .map(user -> {
+//                    logger.info("Loading user by email: {}", email);
+//                    return new org.springframework.security.core.userdetails.User(
+//                            user.getEmail(),
+//                            user.getPassword(),
+//                            Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name()))
+//                    );
+//                })
+//                .orElseThrow(() -> {
+//                    logger.error("User not found with email: {}", email);
+//                    return new UsernameNotFoundException("User not found with email: " + email);
+//                });
+//    }
 
     // Method to get authenticated user from token
     @Transactional(readOnly = true)

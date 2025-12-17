@@ -1,6 +1,7 @@
 package com.example.helpdesk.backend.model;
 
 import com.example.helpdesk.backend.constant.Department;
+import com.example.helpdesk.backend.constant.DepartmentConverter;
 import com.example.helpdesk.backend.constant.Role;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -12,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -43,9 +44,9 @@ public class User {
     @JsonProperty("role")
     private Role role;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @JsonProperty("department")
+    @javax.persistence.Convert(converter = DepartmentConverter.class)
     private Department department;
 
     @Column(nullable = false)
