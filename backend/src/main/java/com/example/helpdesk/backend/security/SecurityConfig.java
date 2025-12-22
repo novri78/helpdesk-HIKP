@@ -1,10 +1,7 @@
 package com.example.helpdesk.backend.security;
 
-import com.example.helpdesk.backend.repository.UserRepository;
 import com.example.helpdesk.backend.service.CustomUserDetailsService;
 import com.example.helpdesk.backend.util.JwtRequestFilter;
-import com.example.helpdesk.backend.util.JwtTokenUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +20,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -162,16 +159,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter  {
                 // PENTING: Ubah ke STATELESS karena kita pakai JWT (tidak pakai Session)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
+
                 .exceptionHandling()
-                .authenticationEntryPoint((request, response, authException) -> {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: Unauthorized (Token is missing or invalid)");
-                })
+                .authenticationEntryPoint((request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: Unauthorized (Token is missing or invalid)"))
                 .and()
                 .authorizeRequests()
                 // Endpoint publik
                 .antMatchers("/api/auth/**").permitAll()
                 // Jika controller login Anda di @PostMapping("/login") tanpa prefix /api/auth:
                 .antMatchers("/login").permitAll()
+                // --- TAMBAHKAN BARIS INI UNTUK SWAGGER ---
+                .antMatchers(
+                        "/v3/api-docs/**",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html",
+                        "/swagger-resources/**",
+                        "/webjars/**"
+                ).permitAll()
                 // Endpoint sisanya wajib TOKEN
                 .anyRequest().authenticated();
 

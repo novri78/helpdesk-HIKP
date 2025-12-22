@@ -2,15 +2,13 @@ package com.example.helpdesk.backend.controller;
 
 import com.example.helpdesk.backend.dto.UserDTO;
 import com.example.helpdesk.backend.service.UserService;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.hibernate.validator.internal.util.stereotypes.Lazy;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @RestController
@@ -45,11 +43,26 @@ public class AuthController {
 //        return ResponseEntity.ok ( userService.authenticateUser (userDTO.getEmail (), userDTO.getPassword ()) );
 //    }
 
-    @PostMapping("/me")
-    public ResponseEntity<?> getAuthenticatedUser(@RequestBody UserDTO userDTO) {
-        // Retrieve the authenticated user's email from the SecurityContext
-        // String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        // UserDTO userDTO = userService.findUserByEmail(userEmail);
-        return ResponseEntity.ok(userService.getAuthenticatedUser (userDTO.getToken ()));
+//    @PostMapping("/me")
+//    public ResponseEntity<?> getAuthenticatedUser(@RequestBody UserDTO userDTO) {
+//        // Retrieve the authenticated user's email from the SecurityContext
+//        // String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+//        // UserDTO userDTO = userService.findUserByEmail(userEmail);
+//        return ResponseEntity.ok(userService.getAuthenticatedUser (userDTO.getToken ()));
+//    }
+    @GetMapping("/me")
+    public ResponseEntity<?> getAuthenticatedUser(Authentication authentication) {
+        // Authentication objek ini otomatis diisi oleh JwtRequestFilter jika token valid
+        String email = authentication.getName();
+        return ResponseEntity.ok(userService.getAuthenticatedUser(email));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        // Dalam JWT Stateless, kita cukup memberikan respon sukses.
+        // Jika ingin lebih advance, masukkan token ini ke Blacklist (Redis).
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Logout successful. Token invalidated locally.");
+        return ResponseEntity.ok(response);
     }
 }

@@ -77,4 +77,39 @@ const store = createStore({
     },
 });
 
+/** * ==========================================
+ * AXIOS INTERCEPTORS CONFIGURATION
+ * ==========================================
+ */
+
+// 1. Request Interceptor: Menempelkan Token otomatis ke setiap request ke server
+
+axios.interceptors.request.use(
+    (config) => {
+        const token = store.state.token;
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+// 2. Response Interceptor: Menangani jika server mengirim 401 (Token Expired/Invalid)
+axios.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+        // Jika server merespon 401 Unauthorized
+        if (error.response && error.response.status === 401) {
+            console.warn("Unauthorized! Logging out...");
+            store.dispatch('logout'); // Otomatis hapus state & cookie
+        }
+        return Promise.reject(error);
+    }
+);
+
 export default store;
